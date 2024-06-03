@@ -7,83 +7,107 @@ body {
 }
 
 header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px 0;
-    text-align: center;
-}
-
-header h1 {
-    margin: 0;
-    font-family: 'Brush Script MT', cursive;
+    background-color: #ffffff; /* Removed black margin */
+    color: #000;
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
 }
 
 nav ul {
     list-style: none;
     padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end; /* Align to the right */
+    width: 100%; /* Ensure it takes the full width */
 }
 
 nav ul li {
-    display: inline;
-    margin: 0 10px;
+    margin-left: 20px;
 }
 
 nav ul li a {
-    color: #fff;
+    color: #000;
     text-decoration: none;
+    font-weight: bold;
 }
 
 #introduction {
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
     padding: 20px;
+    align-items: center;
 }
 
-#introduction h2 {
-    font-size: 24px;
+.intro-left {
+    max-width: 60%;
 }
 
-#introduction p {
+.intro-left h2 {
+    font-size: 28px;
+}
+
+.intro-left p {
     font-size: 18px;
     margin: 10px 0;
 }
 
-.profile-image {
-    max-width: 150px;
-    border-radius: 50%;
-    margin-top: 20px;
-}
-
-.social-links img {
-    width: 30px;
-    margin: 0 10px;
-}
-
-#recent-work {
-    padding: 20px;
-}
-
-#recent-work h2 {
-    font-size: 22px;
-    text-align: center;
-}
-
-#recent-work ul {
+.intro-left ul {
     list-style: none;
     padding: 0;
+}
+
+.intro-left ul li {
+    margin: 10px 0;
+}
+
+.intro-left ul li a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.intro-left ul li a:hover {
+    text-decoration: underline;
+}
+
+.profile-image {
+    max-width: 200px;
+    border-radius: 50%;
+}
+
+#social-links {
+    padding: 20px;
     text-align: center;
 }
 
-#recent-work ul li {
+#social-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#social-links ul li {
     display: inline-block;
     margin: 0 10px;
 }
 
-#recent-work ul li a {
+#social-links ul li a {
     text-decoration: none;
-    color: #333;
+    color: #000;
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#recent-work ul li a:hover {
-    text-decoration: underline;
+#social-links ul li img {
+    width: 20px; /* Adjusted icon size */
+    height: 20px; /* Adjusted icon size */
+}
+
+#social-links ul li a br {
+    display: block;
 }
