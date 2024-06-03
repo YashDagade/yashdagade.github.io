@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+}
+header, section {
+    margin-bottom: 20px;
+}
+h1 {
+    color: navy;
+}
