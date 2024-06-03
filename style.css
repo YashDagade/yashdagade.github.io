@@ -1,5 +1,5 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Georgia', sans-serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
@@ -7,12 +7,11 @@ body {
 }
 
 header {
-    background-color: #ffffff; /* Removed black margin */
+    background-color: #f4f4f4;
     color: #000;
     display: flex;
     justify-content: flex-end;
     padding: 10px 20px;
-    border-bottom: 1px solid #ccc;
 }
 
 nav ul {
@@ -20,8 +19,8 @@ nav ul {
     padding: 0;
     margin: 0;
     display: flex;
-    justify-content: flex-end; /* Align to the right */
-    width: 100%; /* Ensure it takes the full width */
+    justify-content: flex-end;
+    width: 100%;
 }
 
 nav ul li {
@@ -32,17 +31,32 @@ nav ul li a {
     color: #000;
     text-decoration: none;
     font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #007BFF;
+    color: #fff;
 }
 
 #introduction {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     padding: 20px;
+}
+
+.intro-content {
+    display: flex;
     align-items: center;
+    max-width: 800px;
+    margin: auto;
 }
 
 .intro-left {
     max-width: 60%;
+    margin-right: 20px;
 }
 
 .intro-left h2 {
@@ -67,6 +81,11 @@ nav ul li a {
     color: #007BFF;
     text-decoration: none;
     font-weight: bold;
+    font-size: 18px;
+}
+
+.intro-left ul li .project-description {
+    font-size: 18px; /* Increased font size for project descriptions */
 }
 
 .intro-left ul li a:hover {
@@ -87,11 +106,12 @@ nav ul li a {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    justify-content: center;
 }
 
 #social-links ul li {
-    display: inline-block;
-    margin: 0 10px;
+    margin: 0 15px;
 }
 
 #social-links ul li a {
@@ -104,10 +124,27 @@ nav ul li a {
 }
 
 #social-links ul li img {
-    width: 200px; /* Adjusted icon size */
-    height: 200px; /* Adjusted icon size */
+    width: 24px; /* Adjusted icon size */
+    height: 24px; /* Adjusted icon size */
 }
 
 #social-links ul li a br {
     display: block;
+}
+
+@media (max-width: 768px) {
+    .intro-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .intro-right {
+        display: none; /* Hide profile image on mobile */
+    }
+
+    .intro-left {
+        max-width: 100%;
+        margin-right: 0;
+    }
 }
