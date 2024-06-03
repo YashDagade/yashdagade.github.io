@@ -1,9 +1,89 @@
 body {
     font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
-header, section {
-    margin-bottom: 20px;
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
 }
-h1 {
-    color: navy;
+
+header h1 {
+    margin: 0;
+    font-family: 'Brush Script MT', cursive;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+#introduction {
+    text-align: center;
+    padding: 20px;
+}
+
+#introduction h2 {
+    font-size: 24px;
+}
+
+#introduction p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.profile-image {
+    max-width: 150px;
+    border-radius: 50%;
+    margin-top: 20px;
+}
+
+.social-links img {
+    width: 30px;
+    margin: 0 10px;
+}
+
+#recent-work {
+    padding: 20px;
+}
+
+#recent-work h2 {
+    font-size: 22px;
+    text-align: center;
+}
+
+#recent-work ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+#recent-work ul li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+#recent-work ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+#recent-work ul li a:hover {
+    text-decoration: underline;
 }
