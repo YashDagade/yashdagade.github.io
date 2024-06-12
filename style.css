@@ -121,8 +121,6 @@ nav ul li a:hover {
 
 
 
-
-
 #social-links {
     padding: 20px;
     text-align: center;
@@ -174,3 +172,52 @@ nav ul li a:hover {
         margin-right: 0;
     }
 }
+
+
+
+/* Press Stuff*/
+
+#press-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+#press-content h1 {
+    font-size: 28px;
+    color: #000000;
+}
+
+#press-content ul {
+    list-style-type: none; /* Removes default list styling */
+    padding: 0;
+    text-align: left;
+    width: 100%;
+    max-width: 800px; /* Ensures consistency with the introduction section */
+}
+
+#press-content ul li {
+    padding: 10px 0;
+    font-size: 21px; /* Matches introduction */
+}
+
+#press-content ul li a {
+    color: #007BFF; /* Consistent with other links */
+    text-decoration: none;
+    font-size: 21px; /* Matches introduction */
+    font-weight: bold;
+}
+
+#press-content ul li a:hover {
+    text-decoration: underline;
+}
+
+.link-title {
+    color: #000; /* Differentiate title from description */
+    font-weight: bold;
+    
+}
+
+
