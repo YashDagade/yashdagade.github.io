@@ -181,7 +181,7 @@ nav ul li a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
+    padding: 40px;
     text-align: center;
 }
 
@@ -191,11 +191,11 @@ nav ul li a:hover {
 }
 
 #press-content ul {
-    list-style-type: none; /* Removes default list styling */
+    /* Removes default list styling */
     padding: 0;
     text-align: left;
     width: 100%;
-    max-width: 800px; /* Ensures consistency with the introduction section */
+    max-width: 880px; /* Ensures consistency with the introduction section */
 }
 
 #press-content ul li {
