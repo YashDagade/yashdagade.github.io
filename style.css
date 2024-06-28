@@ -7,7 +7,7 @@ body {
 }
 
 body.fade *:not(.highlight):not(.hover-image) {
-    opacity: 0.92;
+    opacity: 0.85;
 }
 
 
