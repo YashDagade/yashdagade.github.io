@@ -171,8 +171,11 @@ nav ul li a:hover {
         max-width: 100%;
         margin-right: 0;
     }
+    
+    #friends-link-container, #friends-text, #friends-link {
+        display: none;
+    }
 }
-
 
 
 /* Press Stuff*/
@@ -220,43 +223,47 @@ nav ul li a:hover {
     
 }
 
-/* Add or modify this in your style.css file */
-#friends-link-container {
-    position: fixed;
-    width: 100%;
-    bottom: 20px;
-    text-align: right;
-    z-index: 1000;
+/* Friends Link CSS Stuff*/
+
+@media (min-width: 769px) {
+    #friends-link-container {
+        position: fixed;
+        width: 100%;
+        bottom: 20px;
+        text-align: right;
+        z-index: 1000;
+    }
+
+    #friends-text {
+        position: fixed;
+        left: 50%;
+        bottom: 30px; /* Adjust this value to align with your button if needed */
+        transform: translateX(-50%);
+        font-family: 'Georgia', sans-serif;
+        color: #666666;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #friends-link {
+        background-color: #ffffff; /* White background */
+        border: 2px solid #cccccc; /* Grey border */
+        color: #000000; /* Dark grey text */
+        padding: 8px 16px;
+        border-radius: 15px;
+        font-family: 'Georgia', sans-serif;
+        font-weight: bold;
+        font-size: 11px;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+    #friends-link:hover {
+        background-color: #d9eef9; /* Light blue on hover */
+        border-color: #408dc8; /* Darker border on hover */
+        opacity: 0.85;
+    }
 }
 
-#friends-text {
-    position: fixed;
-    left: 50%;
-    bottom: 30px; /* Adjust this value to align with your button if needed */
-    transform: translateX(-50%);
-    font-family: 'Georgia', sans-serif;
-    color: #666666;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-}
-
-#friends-link {
-    background-color: #ffffff; /* White background */
-    border: 2px solid #cccccc; /* Grey border */
-    color: #000000; /* Dark grey text */
-    padding: 8px 16px;
-    border-radius: 15px;
-    font-family: 'Georgia', sans-serif;
-    font-weight: bold;
-    font-size: 11px;
-    text-decoration: none;
-    display: inline-block;
-    margin-right: 20px;
-}
-
-#friends-link:hover {
-    background-color: #d9eef9; /* Light blue on hover */
-    border-color: #408dc8; /* Darker border on hover */
-    opacity: 0.85;
-}
