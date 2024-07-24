@@ -1,0 +1,24 @@
+# Thinking Fast and Slow (1)
+
+Date: April 8, 2024
+Tags: Book Reviews
+
+The base rate is more important, a better way to do decision making is to start with the base rate and then go forward. 
+
+Human Projections are always optimistic!
+
+We often substitute a hard problem with an easier problem through heuristics - there are many kinds of heuristics and it’s very hard to recognize when you do the substitution
+
+Our confidence is often the confidence for the heuristics answer - which is not always the same as the confidence for the real answer - hence confidence is a bad predictor for scuess
+
+Intuition isn’t any magical thing - it’s just recognition, we do it all the time! 
+
+We live in the extremes of the bell curve, when in reality - most of the things happen in the middle = by most - over 90%!!! So no wonder that we are wrong most of the time
+
+Even when we are wrong - we don’t feel wrong. We find reasons to say that we were just off in the time frame, or something unexpected happened. That’s why all the stock options are always confident and they can even recount their failures as success. 
+
+Everything is obvious in the highindsight - both saying that Biden will be the president next year and trump will be the president next year seem true. Yet if you ask anyone now, who it will be, most won’t be able to pick one. Ask the same people after the election and they will say that it is obvious that Biden is the president because all the cues were with him all the time. Which is true, but so were they for trump- we don’t remember that, we only remember how we were right!
+
+The probability of something unexpected happening is quite high and accounted for in the base rate - our predictions never account for the reality of the earth, they are on a simpler plane where unexpected things don't happen.
+
+What you see Is all there is! WYSIATI - Super important to see and a very strong ability! We tend to only keep the information that is in front of us and never consider retrieving more information outside of what is given to us!

@@ -1,0 +1,11 @@
+# On Asylum Seekers
+
+Tags: Informational
+
+I often don't understand how we, in a very similar way to what the Nazis did, dehumanize those innocent asylum seekers who are crossing the Sothern border.  We call these general group of people that include oh so much, we call all of them "criminals" not to dissimilar from how Hitler said all jews are "criminals".
+
+It's funny to me how textbook similar these two cases are. How Germany was never supposed to have any jews just like these people were never supposed to be our problem. How all jews are criminals and they hurt the economy and are a problem, just like these asylum seekers. And yet the same people who fear holocaust, proudly talk about the criminals entering in caravans crossing our country.
+
+Are there some bad actors, of course there are. But that's true for every select group of people. When we highlight the bad, why don't we talk about the brilliant, budding next generational entrepreneurs that are sitting in that caravan, who will face a lot of adversity and struggle, but will lift and make this world a better.
+
+See- the thing is that there are some issues that can be party issues and that is okay. But In no happy world can this be a party issue. If we want progress, than we should perhaps study the past and reflect the present, because ohh boy, can the reflection be SCARY!

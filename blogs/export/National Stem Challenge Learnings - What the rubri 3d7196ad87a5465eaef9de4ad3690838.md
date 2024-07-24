@@ -1,0 +1,25 @@
+# National Stem Challenge Learnings - What the rubric?
+
+Tags: Learnings
+
+Okay so for National Stem challenge, I followed the rubric rather closely and still it seemed like I was not picked a finalist.
+
+Though the challenge is in it’s early stages and the alignment between what the competition setters had in mind and how the judges perceived it isn’t hight. But I am quite certain that the reason I was not picked is mainly because my project was not “impressive” in that I did not talk about how SkyWindFarm worked or what all of these accomplishments meant. 
+
+Similarly for energy tech challenge, I don’t think following the rubric is the best thing to do - that removes taste. The best thing to do is to use it as a rather poor huresitic and for things that make my eyebrow raise - use it only when done with all the important things. 
+
+So the rule is this - 
+
+First communicate what you want to communicate
+
+Than look at the rubric and communicate what you need to communicate
+
+But for Energy Tech challenge - 
+
+Make sure to not talk more about the business plan and profits first and instead emphasize on how the technology works and why it is great for rural regions and talk about profits later
+
+For National Stem Challenge - 
+
+Talk bout how the system work and the wind energy work instead of talking about how the work I did was attached to my since childhood and I was always “motivated” since they already know that. The ISEF video would have been better. 
+
+Summary - Don’t follow the rubric too close that you forget to emphasize the importance of the key points in your project

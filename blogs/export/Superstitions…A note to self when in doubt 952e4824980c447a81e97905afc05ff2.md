@@ -1,0 +1,16 @@
+# Superstitions…A note to self when in doubt
+
+Date: March 26, 2024
+Tags: Start Here
+
+The reason you are reading this is because you are scared right now. You are uncertain. And when faced with uncertainty, we have this thing where we assume the worst possible scenario, try to live in it and just dread over it. Dread over the possibilities. 
+
+Stop doing that. It’s not helping you. There is no correlation between when you open your decision, and when a random website states that the time’s SHUBH, or when you run for a week (which you should do because it’s good, not because you are scared and you think running will help with the decision, it will help with the future decisions; not the past ones) or when you visit the temple for in anticipation. There is no correlation between all of that and the outcome of your dreaded decision.
+
+Embrace probabilities and leave it at that. 80% chance of success is that. 80%! Learn to leave it at that - it won’t help you to learn about edge cases or to devise an algorithm to predict the outcome. * The algorithm will be cool, I am sure. But it’s not the best use of your time. 
+
+Build things for the future, don’t pray for the past. The opportunity cost wasted doing absolutely nothing but fearing over decisions is huge. Do yourself a favor and start solving problems. The world needs you. 
+
+A common reason why we believe in superstitions is similar to why we believe in god. The person winning the lottery always says that god’s with her and that’s why she won, so we believe in god too because the person who won the lottery just said that god helped her do it! But don’t discount literally everyone else who didn’t win the lottery but was also a big believer in god! 
+
+You will be okay. And the decisions will be great! And yes whatever you are contemplating right now, it will turn out to be the best you hoped for in the future! You will get it and you will win! But remember that more important than validation is impact, and you will have great impact too. Do humanity a favor and celebrate the impact though, don’t celebrate the validation.
