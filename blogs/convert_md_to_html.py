@@ -47,6 +47,19 @@ def extract_metadata(markdown_content):
     
     return title, date, tags
 
+def strip_metadata(content):
+    """Remove metadata lines from the content."""
+    stripped_lines = []
+    for line in content.split('\n'):
+        if line.startswith('# '):  # Title line
+            continue
+        if line.startswith('Date: '):
+            continue
+        if line.startswith('Tags: '):
+            continue
+        stripped_lines.append(line)
+    return '\n'.join(stripped_lines)
+
 def convert_md_to_html(filename, markdown_dir, output_dir):
     """Convert a Markdown file to an HTML file with updated image paths."""
     with open(os.path.join(markdown_dir, filename), 'r', encoding='utf-8') as file:
@@ -55,8 +68,15 @@ def convert_md_to_html(filename, markdown_dir, output_dir):
     # Extract metadata
     title, date, tags = extract_metadata(content)
 
+    # Exclude posts without tags or tagged as "Personal"
+    if not tags or 'Personal' in tags:
+        return None
+
+    # Remove metadata from the content
+    stripped_content = strip_metadata(content)
+
     # Convert Markdown to HTML
-    html_content = markdown.markdown(content)
+    html_content = markdown.markdown(stripped_content)
 
     # Update image paths and copy images
     image_dir = os.path.join(markdown_dir, filename.replace('.md', ''))
@@ -85,21 +105,26 @@ def convert_md_to_html(filename, markdown_dir, output_dir):
 </html>
 """)
 
+    return {'title': title, 'date': date, 'tags': tags, 'url': output_filename}
+
 # Process markdown files from both export and posts directories
+all_posts = []
 for md_file in os.listdir(export_dir):
     if md_file.endswith('.md'):
-        convert_md_to_html(md_file, export_dir, export_pages_dir)
+        post_metadata = convert_md_to_html(md_file, export_dir, export_pages_dir)
+        if post_metadata:
+            all_posts.append(post_metadata)
 
 for md_file in os.listdir(posts_dir):
     if md_file.endswith('.md'):
-        convert_md_to_html(md_file, posts_dir, export_pages_dir)
+        post_metadata = convert_md_to_html(md_file, posts_dir, export_pages_dir)
+        if post_metadata:
+            all_posts.append(post_metadata)
 
 # Generate posts.json
 posts_json_path = os.path.join(export_pages_dir, 'posts.json')
-html_files = [f for f in os.listdir(export_pages_dir) if f.endswith('.html')]
-
 with open(posts_json_path, 'w') as json_file:
-    json.dump(html_files, json_file)
+    json.dump(all_posts, json_file)
 
 print("posts.json generated.")
 print("Conversion complete. HTML files and images are updated and organized.")

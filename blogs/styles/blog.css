@@ -1,60 +1,180 @@
+/* Global styles */
 body {
-    font-family: 'Georgia', serif;
+    font-family: 'Kievit', 'Arial', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #ffffff;
-    color: #333333;
+    color: #2c2c2c;
     line-height: 1.6;
 }
 
+/* Header styles */
 header {
     text-align: center;
     padding: 2rem 0;
+    background-color: #ffffff;
+    margin-bottom: 2rem;
+    border: none;
 }
 
 header h1 {
-    font-size: 3rem;
+    font-family: 'Charter', 'Georgia', serif;
+    font-size: 2.5rem;
+    margin: 0;
     color: #000000;
-    margin-bottom: 0.5rem;
 }
 
 header p {
     font-size: 1.2rem;
-    color: #555555;
+    color: #555;
 }
 
+/* Filters */
+#filters {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+#filters label {
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+#filters select {
+    margin-right: 1rem;
+    padding: 0.2rem;
+}
+
+/* Main grid layout */
 main {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
 }
 
 .blog-post {
-    margin-bottom: 2rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.blog-post:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .blog-post h2 {
-    font-size: 2rem;
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
     color: #000000;
-    margin-bottom: 0.5rem;
-}
-
-.post-date, .post-tags {
-    font-size: 0.9rem;
-    color: #555555;
-    margin-bottom: 0.5rem;
-}
-
-.blog-post div {
-    font-size: 1rem;
-    color: #333333;
 }
 
 .blog-post a {
     text-decoration: none;
-    color: #007BFF;
+    color: inherit;
 }
 
 .blog-post a:hover {
     text-decoration: underline;
+}
+
+.post-date, .post-tags {
+    font-size: 1rem;
+    color: #777;
+}
+
+/* Tag styling */
+.tag {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    margin-right: 0.5rem;
+    border-radius: 3px;
+    background-color: #e0e0e0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.tag.BookReviews { background-color: #d1c4e9; }
+.tag.StartHere { background-color: #ffcc80; }
+.tag.Personal { background-color: #ef9a9a; }
+.tag.Informational { background-color: #a5d6a7; }
+/* Add more tag classes as needed */
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Article styling */
+article {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: left;
+    line-height: 1.69;
+}
+
+h1, h2 {
+    font-family: 'Charter', 'Georgia', serif;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: #2c2c2c;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 125%;
+}
+
+p.date, p.tags {
+    font-size: 1rem;
+    color: #777;
+    margin-bottom: 2rem;
+}
+
+p.date {
+    margin-top: 0;
+}
+
+article p {
+    font-size: 1.2rem;
+    color: #2c2c2c;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+ul, ol {
+    margin: 1.5rem 0;
+    padding-left: 1.5rem;
+    list-style-position: outside;
+    font-size: 1.1rem;
+}
+
+ul li, ol li {
+    margin-bottom: 0.5rem;
+}
+
+ol li ul, ol li ol, ul li ul, ul li ol {
+    margin-left: 1rem;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+article img {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
