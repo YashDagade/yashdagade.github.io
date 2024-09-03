@@ -228,17 +228,16 @@ nav ul li a:hover {
 @media (min-width: 801px) {
     #friends-link-container {
         position: fixed;
-        width: 100%;
         bottom: 20px;
+        right: 20px; /* Aligns Pranav's link to the right */
         text-align: right;
         z-index: 1000;
     }
 
     #brians-link-container {
         position: fixed;
-        width: 100%;
         bottom: 20px;
-        left: 20px;
+        left: 20px; /* Aligns Brian's link to the left */
         text-align: left;
         z-index: 1000;
     }
@@ -266,7 +265,7 @@ nav ul li a:hover {
         font-size: 11px;
         text-decoration: none;
         display: inline-block;
-        margin-right: 20px;
+        margin-right: 0; /* Removed margin to prevent overlap */
     }
 
     #friends-link:hover, #brians-link:hover {
