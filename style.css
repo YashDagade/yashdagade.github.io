@@ -267,3 +267,44 @@ nav ul li a:hover {
     }
 }
 
+@media (min-width: 801px) {
+    #brians-link-container {
+        position: fixed;
+        width: 100%;
+        bottom: 20px;
+        text-align: left;
+        z-index: 1000;
+    }
+
+    #brians-text {
+        position: fixed;
+        left: 50%;
+        bottom: 30px; /* Adjust this value to align with your button if needed */
+        transform: translateX(-50%);
+        font-family: 'Georgia', sans-serif;
+        color: #666666;
+        font-size: 12px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #brians-link {
+        background-color: #ffffff; /* White background */
+        border: 2px solid #cccccc; /* Grey border */
+        color: #000000; /* Dark grey text */
+        padding: 8px 16px;
+        border-radius: 15px;
+        font-family: 'Georgia', sans-serif;
+        font-weight: bold;
+        font-size: 11px;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 20px;
+    }
+
+    #brians-link:hover {
+        background-color: #d9eef9; /* Light blue on hover */
+        border-color: #408dc8; /* Darker border on hover */
+        opacity: 0.85;
+    }
+}
