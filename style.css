@@ -231,7 +231,7 @@ nav ul li a:hover {
         bottom: 20px;
         right: 20px; /* Aligns Pranav's link to the right */
         text-align: right;
-        z-index: 1000;
+        z-index: 999;
     }
 
     #brians-link-container {
@@ -239,7 +239,7 @@ nav ul li a:hover {
         bottom: 20px;
         left: 20px; /* Aligns Brian's link to the left */
         text-align: left;
-        z-index: 1000;
+        z-index: 999;
     }
 
     #friends-text {
