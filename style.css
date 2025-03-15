@@ -24,10 +24,13 @@ body.fade *:not(.highlight):not(.hover-image) {
     width: 300px;
     height: auto;
     pointer-events: none;
-    transition: transform 0.1s ease;
     z-index: 1000;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    will-change: transform;
+    opacity: 1;
 }
 
 header {
