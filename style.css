@@ -1,27 +1,34 @@
 body {
-    font-family: 'Georgia', sans-serif;
+    font-family: Georgia, serif;
     line-height: 1.6;
     margin: 0;
     padding: 0;
     background-color: #ffffff;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 body.fade *:not(.highlight):not(.hover-image) {
     opacity: 0.85;
 }
 
-
+.highlight {
+    opacity: 1 !important;
+    position: relative;
+    z-index: 2;
+}
 
 .hover-image {
     display: block;
     position: fixed;
-    width: 225px;
+    width: 300px;
     height: auto;
     pointer-events: none;
     transition: transform 0.1s ease;
     z-index: 1000;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
 
 header {
     background-color: #ffffff;
@@ -29,6 +36,10 @@ header {
     display: flex;
     justify-content: flex-end;
     padding: 10px 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
 }
 
 nav ul {
@@ -37,7 +48,6 @@ nav ul {
     margin: 0;
     display: flex;
     justify-content: flex-end;
-    width: 100%;
 }
 
 nav ul li {
@@ -51,79 +61,113 @@ nav ul li a {
     padding: 5px 10px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    border: none;
+    background-color: transparent;
 }
 
 nav ul li a:hover {
-    background-color: #e0e0e0; /* Gray shade for hover */
-    color: #000; /* Ensure text remains black */
+    background-color: #e0e0e0;
+    color: #000;
+    border-color: transparent;
 }
 
 #introduction {
     display: flex;
     justify-content: center;
     padding: 20px;
+    width: 100%;
 }
 
 .intro-content {
     display: flex;
     align-items: center;
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
+    width: 100%;
 }
 
 .intro-left {
-    max-width: 60%;
-    margin-right: 20px;
+    max-width: 70%;
+    margin-right: 40px;
+}
+
+.intro-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .intro-left h2 {
-    font-size: 28px;
+    font-size: 32px;
+    margin-bottom: 15px;
 }
 
 .intro-left p {
     font-size: 18px;
     margin: 10px 0;
+    font-family: Georgia, serif;
+    font-weight: normal;
+}
+
+.intro-left ul li, .intro-left ul li a, .project-text {
+    font-size: 18px;
 }
 
 .intro-left ul {
     list-style: none;
     padding: 0;
+    margin-bottom: 20px;
 }
 
 .intro-left ul li {
     position: relative;
-    margin: 15px 0;
+    margin: 20px 0;
+    font-size: 18px;
+    font-family: Georgia, serif;
+    font-weight: normal;
+}
+
+.intro-left ul ul li {
+    margin: 10px 0;
+    font-size: 18px;
 }
 
 .intro-left ul li a {
-    color: #007BFF;
+    color: #0066cc;
     text-decoration: none;
     font-weight: bold;
     font-size: 18px;
+    font-family: Georgia, serif;
+}
+
+.project-text {
+    color: #0066cc;
+    font-weight: bold;
+    font-family: Georgia, serif;
 }
 
 .intro-left ul li .project-description {
     color: #000000;
     font-weight: normal;
-    font-size: 18px; /* Increased font size for project descriptions */
+    font-size: 18px;
+    font-family: Georgia, serif;
 }
 
 .intro-left ul li a:hover {
     text-decoration: underline;
 }
 
-
 .profile-image {
-    max-width: 200px;
+    max-width: 240px;
     border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
-
-
 
 #social-links {
     padding: 20px;
     text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 #social-links ul {
@@ -132,6 +176,7 @@ nav ul li a:hover {
     margin: 0;
     display: flex;
     justify-content: center;
+    gap: 30px;
 }
 
 #social-links ul li {
@@ -145,22 +190,29 @@ nav ul li a:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: 14px;
 }
 
-#social-links ul li img {
-    width: 24px; /* Adjusted icon size */
-    height: 24px; /* Adjusted icon size */
+#social-links ul li a img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
 }
 
 #social-links ul li a:hover {
-    text-decoration: underline; /* Underline on hover */
+    text-decoration: underline;
+}
+
+.friends-text-center {
+    display: none;
 }
 
 @media (max-width: 800px) {
     .intro-content {
         flex-direction: column;
         align-items: center;
-        text-align: center;
+        text-align: left;
+        padding: 0 20px;
     }
 
     .intro-right {
@@ -172,11 +224,36 @@ nav ul li a:hover {
         margin-right: 0;
     }
 
-    #friends-link-container, #friends-text, #friends-link {
+    #friends-link-container, #brians-link-container, #friends-text {
         display: none;
     }
-}
+    
+    .hover-image {
+        display: none; /* Disable hover effects on mobile */
+    }
+    
+    nav ul {
+        justify-content: center;
+    }
+    
+    nav ul li {
+        margin: 0 10px;
+    }
+    
+    #social-links {
+        margin-bottom: 20px;
+    }
+    
+    #social-links ul {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
 
+    .intro-left h2 {
+        font-size: 28px;
+        text-align: center;
+    }
+}
 
 /* Press Stuff*/
 
@@ -224,12 +301,15 @@ nav ul li a:hover {
 }
 
 /* Friends Link CSS Stuff*/
+#friends-container {
+    display: none; /* Hide this container since we're using fixed positioning */
+}
 
 @media (min-width: 801px) {
     #friends-link-container {
         position: fixed;
         bottom: 20px;
-        right: 20px; /* Aligns Pranav's link to the right */
+        right: 20px;
         text-align: right;
         z-index: 999;
     }
@@ -237,7 +317,7 @@ nav ul li a:hover {
     #brians-link-container {
         position: fixed;
         bottom: 20px;
-        left: 20px; /* Aligns Brian's link to the left */
+        left: 20px;
         text-align: left;
         z-index: 999;
     }
@@ -245,7 +325,7 @@ nav ul li a:hover {
     #friends-text {
         position: fixed;
         left: 50%;
-        bottom: 30px; /* Adjust this value to align with your button if needed */
+        bottom: 30px;
         transform: translateX(-50%);
         font-family: 'Georgia', sans-serif;
         color: #666666;
@@ -255,9 +335,9 @@ nav ul li a:hover {
     }
 
     #friends-link, #brians-link {
-        background-color: #ffffff; /* White background */
-        border: 2px solid #cccccc; /* Grey border */
-        color: #000000; /* Dark grey text */
+        background-color: #ffffff;
+        border: 2px solid #cccccc;
+        color: #000000;
         padding: 8px 16px;
         border-radius: 15px;
         font-family: 'Georgia', sans-serif;
@@ -265,12 +345,18 @@ nav ul li a:hover {
         font-size: 11px;
         text-decoration: none;
         display: inline-block;
-        margin-right: 0; /* Removed margin to prevent overlap */
+        margin-right: 0;
     }
 
     #friends-link:hover, #brians-link:hover {
-        background-color: #d9eef9; /* Light blue on hover */
-        border-color: #408dc8; /* Darker border on hover */
+        background-color: #d9eef9;
+        border-color: #408dc8;
         opacity: 0.85;
+    }
+}
+
+@media (max-width: 800px) {
+    #friends-container {
+        display: none;
     }
 }
