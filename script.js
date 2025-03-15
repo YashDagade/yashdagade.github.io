@@ -2,6 +2,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const projectLinks = document.querySelectorAll('.project-link');
     const bodyContent = document.querySelector('body');
     const isMobile = window.innerWidth <= 800;
+    const preloadedImages = {}; // Object to store preloaded images
+
+    // Preload all images
+    if (!isMobile) {
+        projectLinks.forEach(link => {
+            const imageSrc = link.getAttribute('data-image');
+            if (imageSrc) {
+                // Create and preload the image
+                const img = new Image();
+                img.src = imageSrc;
+                img.classList.add('hover-image');
+                // Store the preloaded image
+                preloadedImages[imageSrc] = img;
+            }
+        });
+    }
 
     // Only enable hover effects on non-mobile devices
     if (!isMobile) {
@@ -12,12 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.closest('li').classList.add('highlight');
 
                 const imageSrc = this.getAttribute('data-image');
-                if (imageSrc) {
-                    let hoverImage = document.createElement('img');
-                    hoverImage.src = imageSrc;
-                    hoverImage.classList.add('hover-image');
+                if (imageSrc && preloadedImages[imageSrc]) {
+                    // Clone the preloaded image
+                    const hoverImage = preloadedImages[imageSrc].cloneNode(true);
                     document.body.appendChild(hoverImage);
-
                     this.hoverImage = hoverImage;
                 }
             });
@@ -35,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link.addEventListener('mousemove', function(e) {
                 if (this.hoverImage) {
                     this.hoverImage.style.left = `${e.clientX - this.hoverImage.offsetWidth / 2}px`;
-                    this.hoverImage.style.top = `${e.clientY - this.hoverImage.offsetHeight / 2 }px`;
+                    this.hoverImage.style.top = `${e.clientY - this.hoverImage.offsetHeight / 2}px`;
                 }
             });
         });
