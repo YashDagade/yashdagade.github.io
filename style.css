@@ -4,8 +4,11 @@ body {
     margin: 0;
     padding: 0;
     background-color: #ffffff;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
+    position: relative;
+    min-height: 100vh;
+    padding-bottom: 100px;
 }
 
 body.fade *:not(.highlight):not(.hover-image) {
@@ -39,10 +42,16 @@ header {
     display: flex;
     justify-content: flex-end;
     padding: 10px 20px;
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     width: auto;
+    z-index: 999;
+}
+
+nav {
+    width: 100%;
+    max-width: 100%;
 }
 
 nav ul {
@@ -55,6 +64,10 @@ nav ul {
 
 nav ul li {
     margin-left: 20px;
+}
+
+nav ul li:last-child {
+    margin-right: 0;
 }
 
 nav ul li a {
@@ -77,7 +90,7 @@ nav ul li a:hover {
 #introduction {
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 60px 20px 20px 20px;
     width: 100%;
 }
 
@@ -315,6 +328,7 @@ nav ul li a:hover {
         right: 20px;
         text-align: right;
         z-index: 999;
+        transition: opacity 0.3s ease;
     }
 
     #brians-link-container {
@@ -323,13 +337,20 @@ nav ul li a:hover {
         left: 20px;
         text-align: left;
         z-index: 999;
+        transition: opacity 0.3s ease;
+    }
+
+    #friends-text-container {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 30px;
+        text-align: center;
+        z-index: 999;
+        transition: opacity 0.3s ease;
     }
 
     #friends-text {
-        position: fixed;
-        left: 50%;
-        bottom: 30px;
-        transform: translateX(-50%);
         font-family: 'Georgia', sans-serif;
         color: #666666;
         font-size: 12px;
