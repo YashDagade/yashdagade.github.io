@@ -70,5 +70,50 @@ document.addEventListener('DOMContentLoaded', function() {
             bodyContent.classList.remove('fade');
             document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
         }
+
+        // Update friends links position on resize
+        handleFriendsLinksPosition();
     });
+
+    // Handle friends links position to prevent overlap with social links
+    function handleFriendsLinksPosition() {
+        if (window.innerWidth <= 800) return; // Don't run on mobile
+
+        const socialLinks = document.getElementById('social-links');
+        const friendsTextContainer = document.getElementById('friends-text-container');
+        const friendsLinkContainer = document.getElementById('friends-link-container');
+        const briansLinkContainer = document.getElementById('brians-link-container');
+
+        if (!socialLinks || !friendsTextContainer || !friendsLinkContainer || !briansLinkContainer) return;
+
+        // Calculate position of social links relative to viewport
+        const socialRect = socialLinks.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const buffer = 80; // Extra space between elements in pixels
+
+        // If social links are close to or visible at bottom of viewport
+        if (socialRect.bottom > viewportHeight - buffer) {
+            // Hide friends links when social links are visible at bottom
+            friendsTextContainer.style.opacity = '0';
+            friendsLinkContainer.style.opacity = '0';
+            briansLinkContainer.style.opacity = '0';
+            // Add transition for smooth fade
+            if (!friendsTextContainer.style.transition) {
+                friendsTextContainer.style.transition = 'opacity 0.3s ease';
+                friendsLinkContainer.style.transition = 'opacity 0.3s ease';
+                briansLinkContainer.style.transition = 'opacity 0.3s ease';
+            }
+        } else {
+            // Show friends links when social links are not at bottom
+            friendsTextContainer.style.opacity = '1';
+            friendsLinkContainer.style.opacity = '1';
+            briansLinkContainer.style.opacity = '1';
+        }
+    }
+
+    // Run on initial load
+    handleFriendsLinksPosition();
+
+    // Run on scroll
+    window.addEventListener('scroll', handleFriendsLinksPosition);
 });
