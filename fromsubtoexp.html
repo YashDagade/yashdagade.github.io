@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Subsistence Towards Exploration - Yash Dagade</title>
+    <link rel="icon" href="assets/rocket-icon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Charter', Georgia, serif;
+            line-height: 1.7;
+            color: #1a1a1a;
+            background-color: #ffffff;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .header .byline {
+            font-size: 1em;
+            color: #888;
+        }
+
+        .essay-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        .essay-content h2 {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 2.5em 0 1em 0;
+            line-height: 1.3;
+        }
+
+        .essay-content p {
+            margin-bottom: 1.5em;
+            text-align: justify;
+        }
+
+        .essay-content p:first-of-type {
+            font-size: 1.15em;
+            line-height: 1.7;
+        }
+
+        .essay-content strong {
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .essay-content em {
+            font-style: italic;
+        }
+
+        /* Footnote styling */
+        .footnote-ref {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 0.9em;
+            vertical-align: super;
+            line-height: 0;
+        }
+
+        .footnote-ref:hover {
+            text-decoration: underline;
+        }
+
+        .footnotes {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .footnotes h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .footnote {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .footnote-number {
+            color: #0066cc;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Works Cited styling */
+        .works-cited {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .works-cited h3 {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #1a1a1a;
+        }
+
+        .citation {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-indent: -2em;
+            padding-left: 2em;
+            color: #444;
+        }
+
+        .citation a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .citation a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 15px;
+                max-width: 100%;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+                line-height: 1.2;
+            }
+
+            .header .subtitle {
+                font-size: 1.1em;
+            }
+
+            .essay-content {
+                font-size: 1.05em;
+                line-height: 1.7;
+            }
+
+            .essay-content p {
+                text-align: left;
+                margin-bottom: 1.3em;
+            }
+
+            .essay-content h2 {
+                font-size: 1.3em;
+                margin: 2em 0 0.8em 0;
+            }
+
+            .header {
+                margin-bottom: 35px;
+                padding-bottom: 25px;
+            }
+
+            .citation {
+                text-indent: -1.5em;
+                padding-left: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 12px;
+            }
+
+            .header h1 {
+                font-size: 1.9em;
+            }
+
+            .header .subtitle {
+                font-size: 1em;
+            }
+
+            .essay-content {
+                font-size: 1em;
+            }
+
+            .essay-content h2 {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Smooth scrolling for better UX */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection styling */
+        ::selection {
+            background-color: #b3d4fc;
+            color: #1a1a1a;
+        }
+
+        /* Link styling within text */
+        .essay-content a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .essay-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>From Subsistence Towards Exploration</h1>
+            <p class="subtitle">Should we aim to replace all jobs with AI and machine automation?</p>
+            <p class="byline">By Yash Dagade</p>
+        </div>
+
+        <div class="essay-content">
+            <p>To answer this question effectively, I want to start by differentiating "jobs" into two distinct clouds. The first kind is the jobs we do for survival—the jobs we do to live as humans, the jobs we do to scrape by. The second kind is the jobs we do as tinkerers and explorers—the things we do as a form of creativity, wit, and expression. For the former, if we can replace all these jobs with AI and machine automation, I argue that we should—in fact, we are already on an ever-smoother trajectory towards that future. For the latter, even if we wanted to replace all these jobs with AI, we simply can't. Humanity it seems has been on a long quest to automate the former while spending more and more time on the latter. Perhaps UBI is one of the ultimate forms of this shift—where, already, being a citizen of this planet gives you the right of expression, perhaps it should also give you the right to survive. Getting shelter, food, and the basic needs for survival should not depend on how lucky you were to be born to good parents. In a world where survival is a human right, humanity won't become decadent. Humans are explorers by nature. We are also a status-seeking, hierarchical species. As we have spent more time on this planet, more of our time has shifted from just scraping by to exploring. May that trend continue in the age of AI.</p>
+
+            <h2>Not All Jobs Are Created Equal</h2>
+
+            <p>Not all jobs are created equal. They fall into two distinct clouds. The first cloud consists of the jobs we do for survival: the jobs that put food on the table, that offer shelter, that make basic life possible. These are the jobs people do to scrape by. The second kind of job is entirely different: these are the jobs we pursue as tinkerers, explorers, creators. They are acts of creativity, wit, and expression. If we can replace all the jobs in the first category through AI and automation, then we absolutely should. In fact, we are already on a smooth and accelerating trajectory to doing just that.</p>
+
+            <p>At the dawn of civilization, education was a luxury that society could not afford. Majority of humanity lived a nomadic lifestyle, where the demands of survival far outweighed the opportunities for intellectual or creative exploration. Between tinkering and surviving, survival naturally took precedence. However, as humans began to assemble into structured societies and collective survival became more stable, gradually, more individuals were able to allocate time and cognitive resources toward exploration, experimentation, and creativity. We transitioned from employing the vast majority of our population in agriculture to increasingly service-based and intellectual labor. Professions such as authorship, journalism, painting, acting etc started to emerge as a consequence of civilization gaining enough surplus to sustain non-essential labor. As survival became less of a pressing concern, society could afford and even celebrate these new modes of expression. From the early agricultural era to the industrial revolution and into the digital age, humanity has steadily migrated from subsistence toward curiosity and creativity. With this vantage point, it seems that machine automation and artificial intelligence are just a progression on that trajectory. They are the mechanism by which we free ourselves from necessity and move deeper into creativity.</p>
+
+            <h2>What It Means to Be Human Doesn't Change</h2>
+
+            <p>Even as the nature of our jobs changes dramatically, their emotional significance remains constant<a href="#footnote1" class="footnote-ref">1</a>. The stress that work generates today is deeply felt. So too are the joy, pride, and ambition it inspires. A parent may experience profound pride when their child is accepted into a prestigious university such as Duke—a feeling that, to a subsistence farmer, might seem arbitrary or incomprehensible. Yet despite the changing content of our lives throughout centuries, the underlying architecture of human emotion has remained largely unchanged. Our ancestors feared droughts; we fear online humiliation. They prayed for sunlight; we pray for internet connectivity. The external stimuli may have evolved, but the internal emotional responses have not.</p>
+
+            <p>The same will be true in a future where AI performs all our jobs. What it means to be human will not disappear with automation. Though the triggers of our aspirations and struggles may shift, the emotional weight they carry will remain deeply human. Future generations will still strive, still compete, still dream—and the significance of those experiences will feel just as real as they do today. When Sam Altman remarked that "the life of my child will be so different in many ways, but deeply human in all the ways," this is precisely what he meant (<em>A Fireside Chat with Sam Altman</em>).</p>
+
+            <h2>Tinkering Can't Be Automated</h2>
+
+            <p>Even if AI could, in theory, do every job, that would not end human work. That would simply end work born of compulsion. The jobs that would remain—and proliferate—are those that come from passion, curiosity, creativity, and the joy of overcoming challenges. And even if AI tries to compete in these realms, it can never fully replace us. If anything it will be a very welcome companion that humanity is grateful for.</p>
+
+            <p>Consider music as an example. While AI-generated songs—such as those produced by platforms like <a href="https://suno.com">Suno.com</a>—can be technically impressive and sonically appealing, most people still prefer streaming music created by humans. This preference arises not just from the quality of the sound, but from an appreciation of the human story behind the art. What we value is not only the product, but the expressive act. Expression gains its meaning from the creation, not the outcome. Even today, most music is produced as a form of personal expression. It is a joyful act, not a commercial aspiration. People create ("tinker") for the love of creation.</p>
+
+            <p>If anything, AI is making this kind of expression more accessible. The barriers to creativity are rapidly diminishing. Individuals who once lacked the resources to produce a film or compose a song can now do so with minimal technical skill and cost. This democratization of creativity unlocks previously inaccessible frontiers of artistic exploration, empowering more people to turn their creative dreams into tangible works of expression.</p>
+
+            <p>Scientific research supports the idea that humans are "tinkerers" by nature. Infants, even before they can speak, behave like ideal information-seeking agents—actively seeking novelty and complexity in their environment (Kidd et al.). This tendency to explore and learn is biologically embedded. Neuroimaging studies further show that curiosity activates the brain's dopaminergic reward system and enhances memory retention (Gruber et al.). These findings suggest that our drive to explore and understand the world is not culturally imposed but evolutionarily hardwired.</p>
+
+            <h2>Validation Seeking Species</h2>
+
+            <p>Humans are also status-seeking beings. Across all societies studied, adults distinguish between dominance (based on force or fear) and prestige (based on voluntary deference to the knowledgeable), each eliciting distinct emotional responses and social dynamics (Henrich and Gil-White). Whether it manifests as academic citations, social media likes, or admission into prestigious universities, the pursuit of status and recognition is a persistent feature of human behavior. This drive for prestige is not going away with AI; if anything, it will find new forms of expression.</p>
+
+            <p>A useful metaphor to help demonstrate humanity's intrinsic desire for social validation and prestige is chess. Computers are now objectively superior to humans in this domain, yet almost no one chooses to watch two machines compete. Instead, humans tune in to watch grandmasters like Gukesh face off against Magnus—not for optimal moves, but for the distinctly human elements that make the game entertaining.</p>
+
+            <p>The same dynamic is evident in sports. There is no functional reason to train for years to become the fastest runner when machines can already exceed human speed with ease. Yet people devote their lives to athletic pursuits because the act of striving—of becoming stronger, faster, or better—is deeply meaningful. The goals may be arbitrary, but the struggle is real, and so is the joy that emerges from it.</p>
+
+            <p>Furthermore, the idea that a world with artificial superintelligence (ASI), as Dario Amodei terms it in his essay <em>Machines of Loving Grace</em>, would leave nothing left for humans to do is not only unfounded—it is mathematically implausible. Even with the emergence of ASI, the frontiers of knowledge and experience will remain far from exhausted. Much of our own planet is still unmapped, and the universe itself is incomprehensibly vast. The space of possibilities to explore is mathematically unbounded. Even in abstract spaces such as math, problems such as the Goldbach conjecture or the Collatz conjecture have remained unresolved for centuries despite significant computational and human effort. These problems offer no direct utility, yet brilliant minds continue to pursue them—not for profit, but for the elegance of the question and the joy of discovery. Even if future AI systems succeed in solving some of these puzzles, many will likely persist, and new ones will inevitably emerge. More importantly, the pursuit itself will remain deeply meaningful. People do not engage in such intellectual challenges out of economic necessity, but from a fundamental desire to explore, to understand, and to tinker. This kind of work cannot be automated away—not because AI is incapable, but because the act of striving itself is an inherently human endeavor. These are not jobs of survival; they are jobs of exploration.</p>
+
+            <h2>The Right to Survival and UBI</h2>
+
+            <p>Perhaps the most ethical future is one in which survival is no longer a reward for productivity. Just as we grant people the right to speak their minds, we should grant them the right to live—regardless of the birth lottery. From the vantage point of human progress, UBI seems inevitable. Access to food, shelter, and basic necessities should not depend on being born to the right parents. Yet a world where survival is a human right would not lead to decadence. As discussed in the sections above, humans are explorers by nature—status-seeking, hierarchical, and driven to strive. The right to survival and a universal basic income would allow more people to participate in exploring their creative selves.</p>
+
+            <h2>Conclusion</h2>
+
+            <p>Humanity is a young species. If the average mammalian species exists for about two million years, Homo sapiens—at roughly 200,000 years old—is barely in its adolescence (MacAskill). The structure of our societies may change, and the tasks we consider "work" may transform, as they always have. There will likely be short-term disruption; as Aaron James warns in his essay. But over longer time horizons, history suggests a different story. The long arc of history shows that as we have spent more time on this planet, we have moved steadily away from mere subsistence and toward exploration. If AI can automate the burden of survival, then I argue it should. Not to end human endeavor, but to make space for it to flourish. In that world, we would not work to live. We would live to explore. And in doing so, we would remain deeply, enduringly human.</p>
+
+            <div class="footnotes">
+                <h3>Notes</h3>
+                <div class="footnote" id="footnote1">
+                    <span class="footnote-number">1.</span> Note, I am not saying that there hasn't been a change in the quality of life of humans. There has, I am more commenting on the fact that the human experience, the human emotions we feel don't seem to change even if the events that cause them do change.
+                </div>
+            </div>
+
+            <div class="works-cited">
+                <h3>Works Cited</h3>
+                
+                <div class="citation">
+                    <em>A Fireside Chat with Sam Altman, OpenAI CEO at Harvard University.</em> YouTube, uploaded by Harvard i-lab, 9 Mar. 2023, <a href="https://www.youtube.com/watch?v=FVRHTWWEIz4">https://www.youtube.com/watch?v=FVRHTWWEIz4</a>.
+                </div>
+
+                <div class="citation">
+                    Amodei, Dario. <em>Machines of Loving Grace.</em> 2024, <a href="https://www.darioamodei.com/essay/machines-of-loving-grace/">www.darioamodei.com/essay/machines-of-loving-grace/</a>. Accessed 10 July 2025.
+                </div>
+
+                <div class="citation">
+                    Gruber, Matthias J., Bernard D. Gelman, and Charan Ranganath. "States of Curiosity Modulate Hippocampus-Dependent Learning via the Dopaminergic Circuit." <em>Neuron</em>, vol. 84, no. 2, 2014, pp. 486–496, <a href="https://doi.org/10.1016/j.neuron.2014.08.060">https://doi.org/10.1016/j.neuron.2014.08.060</a>.
+                </div>
+
+                <div class="citation">
+                    Henrich, Joseph, and Francisco J. Gil-White. "The Evolution of Prestige: Freely Conferred Deference as a Mechanism for Enhancing the Benefits of Cultural Transmission." <em>Evolution and Human Behavior</em>, vol. 22, no. 3, 2001, pp. 165–196.
+                </div>
+
+                <div class="citation">
+                    James, Aaron. "Planning for Mass Unemployment: Precautionary Basic Income." <em>Ethics of Artificial Intelligence</em>, edited by S. Matthew Liao, Oxford UP, 2020, pp. 207–229.
+                </div>
+
+                <div class="citation">
+                    Kidd, Celeste, Steven T. Piantadosi, and Richard N. Aslin. "The Goldilocks Effect: Human Infants Allocate Attention to Visual Sequences That Are Neither Too Simple Nor Too Complex." <em>PLOS ONE</em>, vol. 7, no. 5, 2012, <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0036399">https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0036399</a>.
+                </div>
+
+                <div class="citation">
+                    MacAskill, William. <em>What We Owe the Future: A Million-Year View.</em> Basic Books, 2022.
+                </div>
+
+                <div class="citation">
+                    Suno. <em>Suno AI.</em> Suno, <a href="https://suno.com">suno.com</a>. Accessed 10 July 2025.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
