@@ -65,34 +65,81 @@
             min-height: 100vh;
         }
 
-        /* Style Selector */
-        .style-selector {
+        /* Navigation Controls */
+        .nav-controls {
             position: fixed;
             top: 30px;
             right: 40px;
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            pointer-events: none;
         }
 
-        .style-btn {
+        .home-btn, .style-btn {
             background: transparent;
             border: none;
-            font-size: 48px;
             cursor: pointer;
             opacity: 0.4;
             transition: opacity 0.3s ease;
             padding: 0;
-            font-family: inherit;
-            color: inherit;
             line-height: 1;
+            pointer-events: auto;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
+        .home-btn {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            filter: grayscale(100%);
+            transform: translateY(10px);
+        }
+
+        .style-btn {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            color: inherit;
+        }
+
+        body.contrast .home-btn,
         body.contrast .style-btn {
             color: #ffffff;
             opacity: 0.6;
         }
 
+        body.contrast .home-btn {
+            filter: grayscale(100%) brightness(10);
+        }
+
+        .home-btn:hover,
         .style-btn:hover {
             opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .nav-controls {
+                right: 20px;
+                gap: 15px;
+            }
+
+            .home-btn {
+                font-size: 20px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .style-btn {
+                font-size: 40px;
+                width: 40px;
+                height: 40px;
+            }
         }
 
         /* Typography Styles */
@@ -297,7 +344,8 @@
     </style>
 </head>
 <body class="classic">
-    <div class="style-selector">
+    <div class="nav-controls">
+        <a href="/index.html" class="home-btn" aria-label="Home">🚀</a>
         <button class="style-btn" id="styleBtn" aria-label="Change style">.</button>
     </div>
 
