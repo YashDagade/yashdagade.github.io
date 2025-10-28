@@ -329,6 +329,9 @@ nav ul li a:hover {
         text-align: right;
         z-index: 999;
         transition: opacity 0.3s ease;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
     }
 
     #brians-link-container {
@@ -338,6 +341,9 @@ nav ul li a:hover {
         text-align: left;
         z-index: 999;
         transition: opacity 0.3s ease;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
     }
 
     #friends-text-container {
@@ -358,7 +364,7 @@ nav ul li a:hover {
         text-align: center;
     }
 
-    #friends-link, #brians-link {
+    #pranav-link, #marco-link, #brians-link, #maxx-link {
         background-color: #ffffff;
         border: 2px solid #cccccc;
         color: #000000;
@@ -372,7 +378,7 @@ nav ul li a:hover {
         margin-right: 0;
     }
 
-    #friends-link:hover, #brians-link:hover {
+    #pranav-link:hover, #marco-link:hover, #brians-link:hover, #maxx-link:hover {
         background-color: #d9eef9;
         border-color: #408dc8;
         opacity: 0.85;
