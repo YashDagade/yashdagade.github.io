@@ -341,10 +341,14 @@
                 transform: translateY(0);
             }
         }
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
     </style>
 </head>
 <body class="classic">
-    <div class="nav-controls">
+    <div class="nav-controls no-select">
         <a href="/index.html" class="home-btn" aria-label="Home">🚀</a>
         <button class="style-btn" id="styleBtn" aria-label="Change style">.</button>
     </div>
