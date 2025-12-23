@@ -1,0 +1,215 @@
+%-------------------------
+% One-page resume (Jake Gutierrez template base)
+% Tweaked for William Li-like spacing + clean sans font + left-aligned header
+%-------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
+
+% ---------- Font (clean sans like William Li) ----------
+\usepackage[T1]{fontenc}
+\usepackage[sfdefault]{sourcesanspro}
+\renewcommand{\familydefault}{\sfdefault}
+
+% ---------- Links (blue + underlined) ----------
+\usepackage{xcolor}
+\definecolor{LinkBlue}{RGB}{0,0,200}
+\usepackage[colorlinks=true, urlcolor=LinkBlue]{hyperref}
+
+% ---------- Page / margins ----------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins (slightly tighter for 1-page fit)
+\addtolength{\oddsidemargin}{-0.52in}
+\addtolength{\evensidemargin}{-0.52in}
+\addtolength{\textwidth}{1.04in}
+\addtolength{\topmargin}{-.58in}
+\addtolength{\textheight}{1.18in}
+
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Slightly tighter line height (safe, common for quant resumes)
+\linespread{0.965}
+
+% ---------- Section formatting (tight like William Li) ----------
+\titleformat{\section}{
+  \vspace{-7pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-7pt}]
+
+% ATS
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands (Jake template, tightened)
+\newcommand{\resumeItem}[1]{
+  \item\small{#1}
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-14pt}\item
+    \begin{tabular*}{0.985\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small #3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-6pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \vspace{-14pt}\item
+    \begin{tabular*}{0.985\textwidth}{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-6pt}
+}
+
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.12in, label={}]\vspace{8pt}}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}\vspace{-6pt}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*, itemsep=1pt, topsep=2pt, parsep=0pt, partopsep=0pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-7pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING (left-aligned like William Li)----------
+{\LARGE \textbf{Yash Dagade}}\\[2pt]
+\small
+\href{mailto:me@yashdagade.com}{\underline{me@yashdagade.com}} \,|\, 
+\href{https://yashdagade.com}{\underline{yashdagade.com}} \,|\, 
+\href{https://www.linkedin.com/in/yashdagade}{\underline{linkedin.com/in/yashdagade}} \,|\, 
+\href{https://github.com/yashdagade}{\underline{github.com/yashdagade}} \,|\, 
+\href{https://wandb.ai/yash21-dagade}{\underline{wandb.ai/yash21-dagade}}
+\vspace{-8pt}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+
+    % --- Duke ---
+    \resumeSubheading
+      {Duke University}{Durham, NC}
+      {B.S. in Mathematics and Computer Science (\href{https://ousf.duke.edu/profile/yash-dagade/}{A.B. Duke Full-Ride Merit Scholar})}
+      {2024 -- 2028 \quad GPA: 4.0}
+      \resumeItemListStart
+        \resumeItem{\textbf{Coursework:} ECE 685D Intro to Deep Learning; ECE 689 Advanced Topics in Deep Learning; ECE 687D Theory \& Algorithms of Machine Learning; COMPSCI 572 Natural Language Processing; COMPSCI 590 Advanced Topics in Computer Science (Advanced Web App Development); MATH 501 Algebraic Structures I; MATH 221 Linear Algebra; MATH 281S Problem Solving Seminar; THEATRST 242S The Art of Improvising.}
+      \resumeItemListEnd
+      \vspace{1pt}
+      {\small * Duke: course number $\ge$ 500 indicates graduate-level.}
+
+    % --- UMN ---
+    \resumeSubheading
+      {University of Minnesota, Twin Cities}{Minneapolis, MN}
+      {Dual Enrollment (PSEO)}
+      {2022 -- 2024 \quad GPA: 4.0}
+      \resumeItemListStart
+        \resumeItem{\textbf{Coursework:} CSCI 1133 Introduction to Programming Concepts; CSCI 2011 Discrete Structures; CSCI 1933 Introduction to Algorithms and Data Structures; CSCI 2041 Advanced Programming Principles (OCaml); CSCI 3003 Introduction to Computing in Biology; CSCI 4511W Introduction to Artificial Intelligence; CSCI 5521 Machine Learning Fundamentals; CSCI 5461 Functional Genomics, Systems Biology, and Bioinformatics; MATH 2373 Linear Algebra and Differential Equations; PHYS 1401V Honors Physics I (Top 10\%); ME 3331 Thermodynamics; ME 3332 Fluid Mechanics.}
+      \resumeItemListEnd
+      \vspace{1pt}
+      {\small * UMN: course number $\ge$ 5000 indicates graduate-level.}
+
+    % --- Oxford ---
+    \resumeSubheading
+      {University of Oxford, New College}{Oxford, UK}
+      {Visiting Student (A.B. Duke Scholarship): Ethics and Philosophy of Artificial Intelligence}
+      {Summer 2025 \quad Grade: A--}
+      \resumeItemListStart
+        \resumeItem{\textbf{Coursework:} Ethics and Philosophy of Artificial Intelligence.} \vspace{-2pt}
+      \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \resumeSubHeadingListStart
+
+    \resumeSubheading
+      {Deep Learning Visiting Researcher}{New York, NY}
+      {\href{https://wp.nyu.edu/cilvr/}{Computational Intelligence, Vision, and Robotics Lab at NYU}}
+      {May 2025}
+      \resumeItemListStart
+        \resumeItem{Collobrated with Yilun Kuang, Tim Rudner, Randall Balestriero, Yann LeCun}
+        \resumeItem{Worked on \href{https://openreview.net/pdf?id=pQ2LZnZDDp}{Radial-VCReg}, a self-supervised learning method augmenting VICReg with a radial Gaussianization loss}
+        \resumeItem{Proved theoretical guarantees showing Radial-VCReg transforms a broader class of feature distributions toward normality compared to VCReg; demonstrated consistent empirical improvements on synthetic and real-world benchmarks.}
+        \resumeItem{Presented at \textbf{NeurIPS 2025} workshops: \href{https://openreview.net/pdf?id=WrhcrooAl8}{Symmetry and Geometry in Neural Representations} and \href{https://openreview.net/pdf?id=pQ2LZnZDDp}{UniReps}; \href{https://openreview.net/attachment?id=WrhcrooAl8&name=poster_pdf}{poster}.} \vspace{4pt}
+      \resumeItemListEnd
+
+    \resumeSubheading
+      {Research Engineer — University of Minnesota, Twin Cities}{Minneapolis, MN}
+      {\href{https://www.jiaronghonglab.com/}{Flow Feild Imaging Lab}}
+      {2022 -- 2024}
+      \resumeItemListStart \vspace{2pt}
+        \resumeItem{Led development of \href{https://www.youtube.com/watch?v=Z6k2j59-ubo}{SkyWindFarm}, an airborne wind energy system; first author and inventor on a \href{https://patents.google.com/patent/US20250243843A1/en?inventor=Yash+Dagade}{utility patent}.}
+        \resumeItem{Applied Reynolds--Averaged Navier--Stokes with SST $k$--$\omega$ turbulence modeling to optimize vertical-axis wind turbines, improving the coefficient of performance ($C_p$) as a function of tip-speed ratio ($\lambda$).}
+        \resumeItem{Conducted 6-DoF CFD simulations on the Agate supercomputer at UMN MSI, wind tunnel experiments at the Akerman Hall wind tunnel, and outdoor flying-prototype field tests to design, validate, and advance the system to TRL 4.}
+        \resumeItem{\textbf{Won \$30K+ in awards}, including 3rd Place Grand Award at ISEF 2023 \& 2024, \$10,000 Special Prize (ISEF 2024), and Regeneron Science Talent Search 2024 Finalist}
+        \resumeItem{\href{https://yashdagade.com/assets/swf.pdf}{Project paper}; \href{https://youtu.be/Z6k2j59-ubo}{prototype flight video}; \href{https://youtu.be/gDUk6V607js}{technical explanation}.}
+      \resumeItemListEnd \vspace{-2pt}
+
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+  \resumeSubHeadingListStart
+
+    \resumeProjectHeading
+      {ConnectU.ai}{2025}
+      \resumeItemListStart
+        \resumeItem{Built \href{https://connectu.ai/}{ConnectU.ai}, a mentor--mentee pairing platform; formulated matching as a constrained optimization problem and implemented matching via the Hungarian algorithm over embedding similarity.}
+
+        \resumeItem{Deployed end-to-end on AWS using EKS, EC2, ECR, Route~53, ALB, ACM, HPA, and S3 with scalable Kubernetes-based infrastructure.} \vspace{3pt}
+      \resumeItemListEnd
+    \resumeProjectHeading
+      {AI Systems for Distracted Driving Prevention}{2022} \vspace{-8pt}
+    \resumeItemListStart
+      \resumeItem{\textbf{Safer Route Planning Algorithm}}
+      \resumeItemListStart
+        \resumeItem{Designed a momentum-based routing algorithm optimized over \textbf{3.1M+ accident records spanning 22 years} of historical data from the Minnesota Department of Transportation to construct mathematically safer routes.}
+        \resumeItem{Deployed as a live route-planning system at \href{https://idontwannadie.lol}{idontwannadie.lol}; demo \href{https://www.youtube.com/watch?v=A9ToFxCVF9c}{video}.}
+        \resumeItem{Won \textbf{Best Use of Statistics} and \textbf{Best Community Impact} awards at \textbf{PennApps XXV}.} \vspace{4pt}
+      \resumeItemListEnd
+    
+      \resumeItem{\textbf{Eye Distraction Alertness (EyeDa) Device}}
+      \resumeItemListStart
+        \resumeItem{Prototyped a real-time distracted-driving detection system and led a \textbf{15-person} engineering team.}
+        \resumeItem{Presented at the \textbf{Minnesota Towards Zero Deaths Conference} to law enforcement and policymakers.}
+        \resumeItem{Media coverage: \href{https://www.kare11.com/article/news/local/kare11-sunrise/eden-prairie-distraction-free-driving-club-eyedas/89-e3831ebe-e3f2-40cc-8579-432a2615e15c}{KARE11}, \href{https://www.cbsnews.com/minnesota/news/twin-cities-nonprofit-funding-high-school-groups-device-to-curb-distracted-driving/}{CBS}, \href{https://www.startribune.com/eden-prairie-students-developing-distracted-driving-warning-device/600194593}{Star Tribune}; device \href{https://www.youtube.com/watch?v=9jK_eDdDwZg}{video}.}
+      \resumeItemListEnd
+    \resumeItemListEnd
+
+
+  \resumeSubHeadingListEnd
+
+%-----------OTHER-----------
+\section{Other}
+\vspace{1pt}
+\small
+
+% \textbf{Awards:} YC AI Startup School 1st Place Hackathon; Duke Llamathon 1st Place (\$2{,}000 award); USNCO Qualifier (5th, MN); JSHS Tri-State 1st Place Winner (2$\times$); National STEM Champion. \\[1pt]
+
+\textbf{Skills:} Python, PyTorch, Slurm, Weights \& Biases, C/C++, JavaScript/TypeScript, React.js, Node.js, Express.js, HTML/CSS, Java, Django, SQL, GraphQL, MongoDB, Apache Spark, Docker, Kubernetes, AWS, Julia, MATLAB, SolidWorks, ANSYS Fluent. \\[1pt]
+
+\textbf{Languages:} English (Fluent), Hindi (Fluent), Love (Informally Proficient). \\[1pt]
+
+\textbf{Interests:} Philosophy (Nietzsche, Girard), Building and Understanding Intelligence, Mathematics, Rowing, Long-Distance Running.
+
+
+\end{document}
