@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.18)  24 JAN 2026 19:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.4.18)  3 FEB 2026 16:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main
+**/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex
 (/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-03-26>
@@ -518,23 +518,23 @@ Overfull \hbox (0.49864pt too wide) in paragraph at lines 158--159
  []
 
 
-Overfull \hbox (0.49864pt too wide) in paragraph at lines 174--175
+Overfull \hbox (0.49864pt too wide) in paragraph at lines 173--174
 []  
  []
 
 
-Overfull \hbox (0.49864pt too wide) in paragraph at lines 181--182
+Overfull \hbox (0.49864pt too wide) in paragraph at lines 180--181
 [] 
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+SourceSansPro-TLF on input line 184.
+LaTeX Font Info:    Trying to load font information for TS1+SourceSansPro-TLF on input line 183.
 (/usr/local/texlive/2025/texmf-dist/tex/latex/sourcesanspro/TS1SourceSansPro-TLF.fd
 File: TS1SourceSansPro-TLF.fd 2020/01/19 (autoinst) Font definitions for TS1/SourceSansPro-TLF.
 )
 LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/m/n' aliased to
-(Font)              `TS1/SourceSansPro-TLF/regular/n' on input line 184.
+(Font)              `TS1/SourceSansPro-TLF/regular/n' on input line 183.
 LaTeX Font Info:    Font shape `TS1/SourceSansPro-TLF/regular/n' will be
-(Font)              scaled to size 10.0pt on input line 184.
+(Font)              scaled to size 10.0pt on input line 183.
 
 
 
@@ -559,12 +559,12 @@ Here is how much of TeX's memory you used:
  38864 multiletter control sequences out of 15000+600000
  704811 words of font info for 60 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,670b,484s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,674b,484s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2025/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Bold.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-It.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/adobe/sourcesanspro/SourceSansPro-Regular.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on main.pdf (1 page, 210455 bytes).
+Output written on main.pdf (1 page, 209429 bytes).
 PDF statistics:
- 93 PDF objects out of 1000 (max. 8388607)
- 75 compressed objects within 1 object stream
+ 98 PDF objects out of 1000 (max. 8388607)
+ 80 compressed objects within 1 object stream
  6 named destinations out of 1000 (max. 500000)
  33 words of extra memory for PDF output out of 10000 (max. 10000000)
 
