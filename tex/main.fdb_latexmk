@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1771609229.27181 "/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex" "main.pdf" "main" 1771609229.84136 0
-  "/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex" 1771609229.09669 11310 61602a6b74c0198a43674abc6722ad53 ""
+["pdflatex"] 1771609486.55265 "/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex" "main.pdf" "main" 1771609487.07766 0
+  "/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex" 1771609486.38414 11310 017017ffa2b9b26d7b639eef6077c9c5 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc" 1587936753 3267 177411e539fcc6ace86309ff03b22da6 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc" 1587936753 3344 37c976a8b2fa4b8f132a488735054f7d ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc" 1587936753 3021 665788e9679767ade2a71155215d25e0 ""
@@ -104,9 +104,9 @@
   "/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1744997576 5521867 6304ab00c2e80e2083791ee20c6f762c ""
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1744997810 3561460 150f6c5c1f27856810e56ebab3590c4e ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
-  "main.aux" 1771609229.77337 700 ac47f0dc4ec7918cbf7339134ab94a7b "pdflatex"
-  "main.out" 1771609229.77382 332 3c37d1be4700a8da7e11d4c0ab2abd2d "pdflatex"
-  "main.tex" 1771609229.09669 11310 61602a6b74c0198a43674abc6722ad53 ""
+  "main.aux" 1771609487.01195 700 ac47f0dc4ec7918cbf7339134ab94a7b "pdflatex"
+  "main.out" 1771609487.01259 332 3c37d1be4700a8da7e11d4c0ab2abd2d "pdflatex"
+  "main.tex" 1771609486.38414 11310 017017ffa2b9b26d7b639eef6077c9c5 ""
   (generated)
   "main.aux"
   "main.log"
