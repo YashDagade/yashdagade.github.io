@@ -5,3 +5,4 @@ node_modules/
 *.aux
 *.out
 .DS_Store
+patent.md
