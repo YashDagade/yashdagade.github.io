@@ -1,0 +1,219 @@
+/* ============================================================
+   Shared essay/manifesto theme system
+   Used by: build.html, fromsubtoexp.html, dearmorderneducation.html
+   Provides: reset, 6 cycling style themes (CSS variables + fonts),
+   paper-grain texture, nav controls, reading progress bar.
+   Pair with scripts/essay-theme.js.
+   ============================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    transition: background 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+}
+
+/* ---------- Style themes ---------- */
+body.classic {
+    --bg: #fdfcf9;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #8b3a2f;
+    --rule: rgba(26, 26, 26, 0.12);
+    --texture-opacity: 0.5;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+}
+
+body.modern {
+    --bg: #fafafa;
+    --text: #0a0a0a;
+    --muted: #737373;
+    --accent: #2563eb;
+    --rule: rgba(10, 10, 10, 0.1);
+    --texture-opacity: 0.35;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+body.editorial {
+    --bg: #fffff8;
+    --text: #2d2d2d;
+    --muted: #757567;
+    --accent: #a05e2b;
+    --rule: rgba(45, 45, 45, 0.14);
+    --texture-opacity: 0.55;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Playfair Display', Georgia, serif;
+}
+
+body.elegant {
+    --bg: #f8f7f4;
+    --text: #1f1f1f;
+    --muted: #6e6a63;
+    --accent: #5e4b8b;
+    --rule: rgba(31, 31, 31, 0.12);
+    --texture-opacity: 0.5;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+body.mono {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --accent: #0f766e;
+    --rule: rgba(26, 26, 26, 0.12);
+    --texture-opacity: 0.25;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+body.contrast {
+    --bg: #000000;
+    --text: #f2f2f2;
+    --muted: #9a9a9a;
+    --accent: #7dd3fc;
+    --rule: rgba(255, 255, 255, 0.18);
+    --texture-opacity: 0.3;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+}
+
+/* ---------- Subtle paper-grain texture ---------- */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--texture-opacity, 0.4);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+body.contrast::before {
+    filter: invert(1);
+}
+
+/* Keep page content above the texture layer */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ---------- Reading progress bar ---------- */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0%;
+    background: var(--accent);
+    z-index: 1001;
+    transition: width 0.1s linear;
+}
+
+/* ---------- Navigation controls ---------- */
+.nav-controls {
+    position: fixed;
+    top: 30px;
+    right: 40px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    pointer-events: none;
+}
+
+.home-btn, .style-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+    padding: 0;
+    line-height: 1;
+    pointer-events: auto;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.home-btn {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    filter: grayscale(100%);
+    transform: translateY(10px);
+}
+
+.style-btn {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: inherit;
+}
+
+body.contrast .home-btn,
+body.contrast .style-btn {
+    color: #ffffff;
+    opacity: 0.6;
+}
+
+body.contrast .home-btn {
+    filter: grayscale(100%) brightness(10);
+}
+
+.home-btn:hover,
+.style-btn:hover {
+    opacity: 1;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+    background-color: var(--accent);
+    color: var(--bg);
+}
+
+/* ---------- Fade-in animation ---------- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+    .nav-controls {
+        right: 20px;
+        gap: 15px;
+    }
+
+    .style-btn {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+    }
+}

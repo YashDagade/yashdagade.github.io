@@ -8,138 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400&family=Cormorant+Garamond:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/essay-theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Style Themes */
-        body.classic {
-            background: #fff;
-            color: #1a1a1a;
-            font-family: 'Crimson Pro', Georgia, serif;
-        }
-
-        body.modern {
-            background: #fafafa;
-            color: #0a0a0a;
-            font-family: 'Inter', -apple-system, sans-serif;
-        }
-
-        body.editorial {
-            background: #fffff8;
-            color: #2d2d2d;
-            font-family: 'Playfair Display', Georgia, serif;
-        }
-
-        body.mono {
-            background: #ffffff;
-            color: #1a1a1a;
-            font-family: 'IBM Plex Mono', 'Courier New', monospace;
-        }
-
-        body.contrast {
-            background: #000000;
-            color: #ffffff;
-            font-family: 'Space Grotesk', -apple-system, sans-serif;
-        }
-
-        body.elegant {
-            background: #f8f8f8;
-            color: #1f1f1f;
-            font-family: 'Cormorant Garamond', Georgia, serif;
-        }
-
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 80px 40px 120px;
             min-height: 100vh;
-        }
-
-        /* Navigation Controls */
-        .nav-controls {
-            position: fixed;
-            top: 30px;
-            right: 40px;
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            pointer-events: none;
-        }
-
-        .home-btn, .style-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            opacity: 0.4;
-            transition: opacity 0.3s ease;
-            padding: 0;
-            line-height: 1;
-            pointer-events: auto;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .home-btn {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-            filter: grayscale(100%);
-            transform: translateY(10px);
-        }
-
-        .style-btn {
-            font-size: 48px;
-            width: 48px;
-            height: 48px;
-            color: inherit;
-        }
-
-        body.contrast .home-btn,
-        body.contrast .style-btn {
-            color: #ffffff;
-            opacity: 0.6;
-        }
-
-        body.contrast .home-btn {
-            filter: grayscale(100%) brightness(10);
-        }
-
-        .home-btn:hover,
-        .style-btn:hover {
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .nav-controls {
-                right: 20px;
-                gap: 15px;
-            }
-
-            .home-btn {
-                font-size: 20px;
-                width: 40px;
-                height: 40px;
-            }
-
-            .style-btn {
-                font-size: 40px;
-                width: 40px;
-                height: 40px;
-            }
         }
 
         /* Typography Styles */
@@ -326,24 +201,9 @@
             }
         }
 
-        /* Fade in animation */
+        /* Fade in animation (keyframes defined in essay-theme.css) */
         .manifesto {
             animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .no-select {
-            user-select: none;
-            -webkit-user-select: none;
         }
     </style>
 </head>
@@ -459,39 +319,6 @@
         </div>
     </div>
 
-    <script>
-        // Style cycling functionality
-        const styleBtn = document.getElementById('styleBtn');
-        const body = document.body;
-
-        // All available styles in order
-        const styles = ['classic', 'modern', 'editorial', 'elegant', 'mono', 'contrast'];
-
-        // Load saved style from localStorage or default to classic
-        let currentStyleIndex = 0;
-        const savedStyle = localStorage.getItem('manifestoStyle');
-        if (savedStyle) {
-            const savedIndex = styles.indexOf(savedStyle);
-            if (savedIndex !== -1) {
-                currentStyleIndex = savedIndex;
-            }
-        }
-        body.className = styles[currentStyleIndex];
-
-        // Cycle to next style on button click
-        styleBtn.addEventListener('click', () => {
-            currentStyleIndex = (currentStyleIndex + 1) % styles.length;
-            const newStyle = styles[currentStyleIndex];
-            body.className = newStyle;
-            localStorage.setItem('manifestoStyle', newStyle);
-        });
-
-        // Keyboard shortcut - press 's' to cycle styles
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 's' || e.key === 'S') {
-                styleBtn.click();
-            }
-        });
-    </script>
+    <script src="scripts/essay-theme.js"></script>
 </body>
 </html>

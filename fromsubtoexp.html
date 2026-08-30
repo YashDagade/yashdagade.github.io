@@ -5,257 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>From Subsistence Towards Exploration</title>
     <link rel="icon" href="assets/rocket-icon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            }
-        };
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/essay-theme.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Charter', Georgia, serif;
-            line-height: 1.7;
-            color: #1a1a1a;
-            background-color: #ffffff;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
+        /* ---------- Page layout ---------- */
         .container {
-            max-width: 720px;
+            max-width: 700px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 90px 24px 120px;
         }
 
+        /* ---------- Header ---------- */
         .header {
             text-align: center;
-            margin-bottom: 50px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e5e5e5;
+            margin-bottom: 64px;
+            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .header h1 {
-            font-size: 2.8em;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 20px;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
+            font-size: 2.7em;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
+            margin-bottom: 22px;
         }
+
+        body.mono .header h1 { font-size: 2.1em; }
+        body.elegant .header h1 { font-size: 3em; font-weight: 500; }
+        body.editorial .header h1 { font-weight: 700; }
 
         .header .subtitle {
-            font-size: 1.3em;
-            color: #666;
+            font-size: 1.25em;
+            color: var(--muted);
             font-style: italic;
-            margin-bottom: 10px;
+            max-width: 34em;
+            margin: 0 auto;
+            line-height: 1.5;
         }
 
-        .header .byline {
-            font-size: 1em;
-            color: #888;
+        body.mono .header .subtitle,
+        body.modern .header .subtitle { font-style: normal; }
+
+        .header::after {
+            content: "";
+            display: block;
+            width: 56px;
+            height: 1px;
+            background: var(--rule);
+            margin: 40px auto 0;
         }
 
+        /* ---------- Essay body ---------- */
         .essay-content {
-            font-size: 1.1em;
-            line-height: 1.8;
+            font-size: 1.16em;
+            line-height: 1.85;
+            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.classic .essay-content { font-size: 1.22em; line-height: 1.85; }
+        body.modern .essay-content { font-size: 1.06em; line-height: 1.8; font-weight: 300; letter-spacing: -0.005em; }
+        body.editorial .essay-content { font-size: 1.18em; line-height: 1.9; }
+        body.elegant .essay-content { font-size: 1.3em; line-height: 1.85; font-weight: 400; }
+        body.mono .essay-content { font-size: 0.98em; line-height: 1.95; font-weight: 300; }
+        body.contrast .essay-content { font-size: 1.1em; line-height: 1.85; font-weight: 300; }
+
+        .essay-content p {
+            margin-bottom: 1.55em;
+            text-align: left;
+        }
+
+        .essay-content > p:first-of-type {
+            font-size: 1.08em;
         }
 
         .essay-content h2 {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin: 2.5em 0 1em 0;
+            font-size: 1.42em;
+            font-weight: 600;
             line-height: 1.3;
+            margin: 2.6em 0 0.9em;
+            letter-spacing: -0.01em;
         }
 
-        .essay-content p {
-            margin-bottom: 1.5em;
-            text-align: justify;
+        body.editorial .essay-content h2 { font-weight: 700; }
+        body.elegant .essay-content h2 { font-weight: 500; font-size: 1.55em; }
+        body.mono .essay-content h2 { font-size: 1.2em; font-weight: 500; }
+        body.modern .essay-content h2 { font-weight: 500; }
+
+        .essay-content h2::before {
+            content: "";
+            display: block;
+            width: 34px;
+            height: 2px;
+            background: var(--accent);
+            opacity: 0.55;
+            margin-bottom: 18px;
         }
 
-        .essay-content p:first-of-type {
-            font-size: 1.15em;
-            line-height: 1.7;
-        }
+        .essay-content em { font-style: italic; }
+        body.mono .essay-content em { font-style: normal; background: rgba(0,0,0,0.05); padding: 1px 3px; }
+        body.contrast .essay-content em { color: #ffffff; }
 
-        .essay-content strong {
-            font-weight: 700;
-            color: #1a1a1a;
-        }
-
-        .essay-content em {
-            font-style: italic;
-        }
-
-        /* Footnote styling */
-        .footnote-ref {
-            color: #0066cc;
+        /* ---------- Links ---------- */
+        .essay-content a,
+        .citation a {
+            color: var(--accent);
             text-decoration: none;
-            font-size: 0.9em;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.25s ease;
+            word-break: break-word;
+        }
+
+        .essay-content a:hover,
+        .citation a:hover {
+            border-bottom-color: currentColor;
+        }
+
+        /* ---------- Footnotes ---------- */
+        .footnote-ref {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.78em;
             vertical-align: super;
             line-height: 0;
         }
 
-        .footnote-ref:hover {
-            text-decoration: underline;
-        }
+        .footnote-ref:hover { text-decoration: underline; }
 
         .footnotes {
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid #e5e5e5;
+            margin-top: 72px;
+            padding-top: 32px;
+            border-top: 1px solid var(--rule);
         }
 
-        .footnotes h3 {
-            font-size: 1.2em;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #1a1a1a;
+        .footnotes h3,
+        .works-cited h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 22px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
         }
+
+        body.elegant .footnotes h3,
+        body.elegant .works-cited h3 { letter-spacing: 0.18em; }
 
         .footnote {
-            font-size: 0.95em;
-            line-height: 1.6;
+            font-size: 0.9em;
+            line-height: 1.7;
             margin-bottom: 15px;
-            color: #555;
+            color: var(--muted);
         }
 
         .footnote-number {
-            color: #0066cc;
-            font-weight: 700;
+            color: var(--accent);
+            font-weight: 600;
             margin-right: 8px;
         }
 
-        /* Works Cited styling */
+        /* ---------- Works cited ---------- */
         .works-cited {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid #e5e5e5;
-        }
-
-        .works-cited h3 {
-            font-size: 1.3em;
-            font-weight: 700;
-            margin-bottom: 25px;
-            color: #1a1a1a;
+            margin-top: 56px;
+            padding-top: 32px;
+            border-top: 1px solid var(--rule);
         }
 
         .citation {
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            font-size: 0.9em;
+            line-height: 1.7;
+            margin-bottom: 18px;
             text-indent: -2em;
             padding-left: 2em;
-            color: #444;
+            color: var(--muted);
         }
 
-        .citation a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        .citation a:hover {
-            text-decoration: underline;
-        }
-
-        /* Mobile responsiveness */
+        /* ---------- Mobile ---------- */
         @media (max-width: 768px) {
             .container {
-                padding: 30px 15px;
-                max-width: 100%;
+                padding: 70px 18px 90px;
             }
 
-            .header h1 {
-                font-size: 2.2em;
-                line-height: 1.2;
-            }
+            .header { margin-bottom: 44px; }
+            .header h1 { font-size: 2em; }
+            body.elegant .header h1 { font-size: 2.2em; }
+            .header .subtitle { font-size: 1.08em; }
 
-            .header .subtitle {
-                font-size: 1.1em;
-            }
+            .essay-content { font-size: 1.05em; line-height: 1.75; }
+            body.classic .essay-content { font-size: 1.1em; }
+            body.elegant .essay-content { font-size: 1.15em; }
+            body.mono .essay-content { font-size: 0.9em; }
 
-            .essay-content {
-                font-size: 1.05em;
-                line-height: 1.7;
-            }
-
-            .essay-content p {
-                text-align: left;
-                margin-bottom: 1.3em;
-            }
-
-            .essay-content h2 {
-                font-size: 1.3em;
-                margin: 2em 0 0.8em 0;
-            }
-
-            .header {
-                margin-bottom: 35px;
-                padding-bottom: 25px;
-            }
+            .essay-content h2 { font-size: 1.25em; margin: 2.1em 0 0.8em; }
 
             .citation {
                 text-indent: -1.5em;
                 padding-left: 1.5em;
             }
         }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 25px 12px;
-            }
-
-            .header h1 {
-                font-size: 1.9em;
-            }
-
-            .header .subtitle {
-                font-size: 1em;
-            }
-
-            .essay-content {
-                font-size: 1em;
-            }
-
-            .essay-content h2 {
-                font-size: 1.2em;
-            }
-        }
-
-        /* Smooth scrolling for better UX */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Selection styling */
-        ::selection {
-            background-color: #b3d4fc;
-            color: #1a1a1a;
-        }
-
-        /* Link styling within text */
-        .essay-content a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        .essay-content a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
-<body>
+<body class="classic">
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="nav-controls no-select">
+        <a href="/index.html" class="home-btn" aria-label="Home">🚀</a>
+        <button class="style-btn" id="styleBtn" aria-label="Change style">.</button>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>From Subsistence Towards Exploration</h1>
@@ -314,7 +271,7 @@
 
             <div class="works-cited">
                 <h3>Works Cited</h3>
-                
+
                 <div class="citation">
                     <em>A Fireside Chat with Sam Altman, OpenAI CEO at Harvard University.</em> YouTube, uploaded by Harvard i-lab, 9 Mar. 2023, <a href="https://www.youtube.com/watch?v=FVRHTWWEIz4">https://www.youtube.com/watch?v=FVRHTWWEIz4</a>.
                 </div>
@@ -349,5 +306,7 @@
             </div>
         </div>
     </div>
+
+    <script src="scripts/essay-theme.js"></script>
 </body>
 </html>

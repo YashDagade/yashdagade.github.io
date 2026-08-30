@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dear Modern Education - Yash Dagade</title>
     <link rel="icon" href="assets/rocket-icon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Charter:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/essay-theme.css">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>
         window.MathJax = {
@@ -17,150 +19,135 @@
         };
     </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Charter', Georgia, serif;
-            line-height: 1.7;
-            color: #1a1a1a;
-            background-color: #ffffff;
-            max-width: 100%;
-            overflow-x: hidden;
-        }
-
+        /* ---------- Page layout ---------- */
         .container {
-            max-width: 680px;
+            max-width: 660px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 90px 24px 120px;
         }
 
+        /* ---------- Header ---------- */
         .header {
             text-align: center;
-            margin-bottom: 50px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e5e5e5;
+            margin-bottom: 60px;
+            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-            letter-spacing: -0.02em;
+            font-size: 2.6em;
+            font-weight: 600;
+            letter-spacing: -0.015em;
+            line-height: 1.15;
+            margin-bottom: 18px;
         }
 
+        body.mono .header h1 { font-size: 2em; }
+        body.elegant .header h1 { font-size: 2.9em; font-weight: 500; }
+        body.editorial .header h1 { font-weight: 700; }
+
         .header .byline {
-            font-size: 1.1em;
-            color: #666;
+            font-size: 1.15em;
+            color: var(--muted);
             font-style: italic;
         }
 
-        .letter-content {
-            font-size: 1.1em;
-            line-height: 1.8;
+        body.mono .header .byline,
+        body.modern .header .byline { font-style: normal; }
+
+        .header::after {
+            content: "";
+            display: block;
+            width: 56px;
+            height: 1px;
+            background: var(--rule);
+            margin: 36px auto 0;
         }
 
+        /* ---------- Letter body ---------- */
+        .letter-content {
+            font-size: 1.16em;
+            line-height: 1.85;
+            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.classic .letter-content { font-size: 1.22em; line-height: 1.85; }
+        body.modern .letter-content { font-size: 1.06em; line-height: 1.8; font-weight: 300; letter-spacing: -0.005em; }
+        body.editorial .letter-content { font-size: 1.18em; line-height: 1.9; }
+        body.elegant .letter-content { font-size: 1.3em; line-height: 1.85; font-weight: 400; }
+        body.mono .letter-content { font-size: 0.98em; line-height: 1.95; font-weight: 300; }
+        body.contrast .letter-content { font-size: 1.1em; line-height: 1.85; font-weight: 300; }
+
         .letter-content p {
-            margin-bottom: 1.5em;
-            text-align: justify;
+            margin-bottom: 1.55em;
+            text-align: left;
         }
 
         .letter-content p:first-child {
-            font-size: 1.15em;
-            line-height: 1.7;
+            font-size: 1.08em;
         }
 
         .letter-content strong {
-            font-weight: 700;
-            color: #1a1a1a;
+            font-weight: 600;
+            color: var(--accent);
         }
 
-        .letter-content em {
-            font-style: italic;
-        }
+        .letter-content em { font-style: italic; }
+        body.mono .letter-content em { font-style: normal; background: rgba(0,0,0,0.05); padding: 1px 3px; }
+        body.contrast .letter-content em { color: #ffffff; }
 
+        /* ---------- Signature ---------- */
         .signature {
-            margin-top: 40px;
+            margin-top: 56px;
             text-align: left;
             font-style: italic;
-            color: #666;
-            border-top: 1px solid #e5e5e5;
-            padding-top: 30px;
+            color: var(--muted);
+            border-top: 1px solid var(--rule);
+            padding-top: 32px;
         }
+
+        body.mono .signature { font-style: normal; }
 
         .signature p {
             margin-bottom: 0.5em;
         }
 
         .signature .name {
-            font-weight: 700;
-            color: #1a1a1a;
+            font-weight: 600;
+            color: var(--text);
             font-style: normal;
         }
 
-        /* Math styling */
+        /* ---------- Math styling ---------- */
         .MathJax {
             font-size: 1em !important;
         }
 
-        /* Mobile responsiveness */
+        /* ---------- Mobile ---------- */
         @media (max-width: 768px) {
             .container {
-                padding: 30px 15px;
+                padding: 70px 18px 90px;
             }
 
-            .header h1 {
-                font-size: 2em;
-                line-height: 1.2;
-            }
+            .header { margin-bottom: 42px; }
+            .header h1 { font-size: 2em; }
+            body.elegant .header h1 { font-size: 2.2em; }
+            .header .byline { font-size: 1.05em; }
 
-            .letter-content {
-                font-size: 1.05em;
-                line-height: 1.7;
-            }
-
-            .letter-content p {
-                text-align: left;
-                margin-bottom: 1.3em;
-            }
-
-            .header {
-                margin-bottom: 35px;
-                padding-bottom: 25px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 25px 12px;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .letter-content {
-                font-size: 1em;
-            }
-        }
-
-        /* Smooth scrolling for better UX */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Selection styling */
-        ::selection {
-            background-color: #b3d4fc;
-            color: #1a1a1a;
+            .letter-content { font-size: 1.05em; line-height: 1.75; }
+            body.classic .letter-content { font-size: 1.1em; }
+            body.elegant .letter-content { font-size: 1.15em; }
+            body.mono .letter-content { font-size: 0.9em; }
         }
     </style>
 </head>
-<body>
+<body class="classic">
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="nav-controls no-select">
+        <a href="/index.html" class="home-btn" aria-label="Home">🚀</a>
+        <button class="style-btn" id="styleBtn" aria-label="Change style">.</button>
+    </div>
+
     <div class="container">
         <div class="header">
             <h1>Dear Modern Education</h1>
@@ -202,5 +189,7 @@
             </div>
         </div>
     </div>
+
+    <script src="scripts/essay-theme.js"></script>
 </body>
-</html> 
+</html>
