@@ -1,189 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Yash Dagade</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="assets/rocket-icon.png" type="image/png" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <header class="no-select">
-      <nav>
-        <ul>
-          <li><a href="index.html">About</a></li>
-          <li><a href="press.html">Press</a></li>
-        </ul>
-      </nav>
-    </header>
-    <section id="introduction">
-      <div class="intro-content">
-        <div class="intro-left">
-          <h2>👋 Hi, I'm Yash Dagade.</h2>
-          <p>
-          I love to <a href="build.html">build</a>.
-          </p>
-          <p>
-          I'm interested in energy and intelligence. They seem to be the defining problems of our generation.
-          </p>
-          <p>
-          I'm currently doing research at CILVR on robotics and planning.
-          </p>
-          <p>
-          Here are some of the things I have built:
-          </p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Yash Dagade</title>
+  <meta name="description" content="Yash Dagade builds at the intersection of energy and intelligence: sparse world models, self-supervised learning, and high-altitude wind.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/rocket-icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="site/css/site.css?v=r3">
+</head>
+<body>
+  <header class="chrome-top">
+    <a class="wordmark" href="#lpwm" aria-label="Yash Dagade, home">Yash Dagade</a>
+    <button class="pill pill--menu" type="button" aria-haspopup="dialog" aria-controls="menu">[M]</button>
+  </header>
 
-          <ul>
-            <li>
-              <a
-                href="https://lpjepa.com"
-                target="_blank"
-                class="project-link"
-                data-image="assets/lpjepa.png"
-              >
-                <span class="project-text">RectifiedLpJEPA</span>
-              </a>: A controllable sparsity-based self-supervised learning method that trains models on maximum-entropy sparse representations, enabling highly sparse yet performant pretraining
-              (<a href="https://arxiv.org/pdf/2602.01456" target="_blank">paper</a>)
-              (<a href="https://yilunkuang.github.io/blog/2026/rectified-lp-jepa/" target="_blank">blog</a>)
-            </li>
-            <li>
-              <a
-                href="https://openreview.net/pdf?id=pQ2LZnZDDp"
-                target="_blank"
-                class="project-link"
-                data-image="assets/radialvcreg.png"
-              >
-                <span class="project-text">Radial-VCReg</span>
-              </a>: A self-supervised learning method augmenting VICReg with a radial Gaussianization loss that transforms a broader class of feature distributions toward normality. Presented at NeurIPS workshops.
-              (<a href="https://openreview.net/pdf?id=WrhcrooAl8" target="_blank">Symmetry and Geometry in Neural Representations</a>)
-              (<a href="https://openreview.net/pdf?id=pQ2LZnZDDp" target="_blank">UniReps</a>)
-              (<a href="https://openreview.net/attachment?id=WrhcrooAl8&name=poster_pdf" target="_blank">poster</a>)
-            </li>
-            <li>
-              <a
-                href="https://projectboard.world/isef/project/egsd018-skywindfarm"
-                target="_blank"
-                class="project-link"
-                data-image="assets/SkyWindFarm.png"
-              >
-                <span class="project-text">SkyWindFarm</span>
-              </a>: Harnessing High Altitude Wind Power at Scale 
-              (<a
-                href="https://youtu.be/gDUk6V607js"
-                target="_blank"
-                class="project-link"
-                data-image="assets/explanation.png"
-              >Explanation Video</a
-              >) 
-              (<a href="https://youtu.be/Z6k2j59-ubo" target="_blank"
-                >Flying Video</a
-              >)
-              (<a 
-                href="https://patents.google.com/patent/US20250243843A1/en?inventor=Yash+Dagade"
-                target="_blank"
-                class="project-link"
-                >Utility Patent</a
-              >)
-            </li>
-            <li>
-              <a
-                href="https://shreyadixit.org/shreya-innovation-lab/"
-                target="_blank"
-                class="project-link"
-                data-image="assets/EyeDa.png"
-              >
-                <span class="project-text">EyeDa</span>
-              </a>: An international non-profit with over 20 members dedicated to solving distracted driving through research initiatives
-              <ul style="margin-left: 20px; margin-top: 5px;">
-                <li>
-                  <a
-                    href="https://idontwannadie.lol/"
-                    target="_blank"
-                    class="project-link"
-                    data-image="assets/safemaps.png"
-                  >
-                    <span class="project-text">I Dont Wanna Die . (lol)</span>
-                  </a>: Utilizing historical accident data to create safer routes
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a
-                href="https://connectu.ai/"
-                target="_blank"
-                class="project-link"
-                data-image="assets/connectu.png"
-              >
-                <span class="project-text">ConnectU</span>
-              </a>: Connecting people with meaningful conversations based on their genuine interests and communication styles
-            </li>
-          </ul>
-        </div>
-        <div class="intro-right no-select">
-          <img
-            src="assets/yash_image.png"
-            alt="Yash Dagade"
-            class="profile-image"
-          />
-        </div>
+  <main id="stage"></main>
+
+  <div class="chrome-headline" id="headline" aria-live="polite"></div>
+  <div class="chrome-left" id="controls"></div>
+  <div class="chrome-caption" id="caption" aria-live="polite"></div>
+  <nav class="chrome-index" id="index" aria-label="Projects"></nav>
+  <div class="chrome-links" id="links"></div>
+  <button class="pill pill--find" type="button" aria-haspopup="dialog" aria-controls="find">Find [F]</button>
+  <button class="sound-toggle" id="sound" type="button" aria-label="Toggle sound [S]">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <path d="M2.5 6h2.5l3.5-3v10l-3.5-3H2.5z" stroke-linejoin="round"/>
+      <path class="wave" d="M10.8 5.6c.9.7 1.4 1.5 1.4 2.4s-.5 1.7-1.4 2.4"/>
+      <path class="wave" d="M12.4 3.9c1.4 1.1 2.1 2.5 2.1 4.1s-.7 3-2.1 4.1"/>
+      <path class="x" d="M11 6l3 3m0-3l-3 3"/>
+    </svg>
+  </button>
+  <div class="hint" id="hint" role="status"></div>
+  <div class="reveal-card" id="reveal" aria-hidden="true"></div>
+
+  <div class="overlay" id="find" role="dialog" aria-modal="true" aria-label="Find" aria-hidden="true">
+    <div class="palette">
+      <label class="palette__input">
+        <span class="prefix">yashdagade/</span><span class="typed"></span><span class="cursor"></span>
+        <input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search pages">
+      </label>
+      <ul class="palette__list" role="listbox"></ul>
+      <div class="palette__foot">
+        <span class="l"><span>[↓] [↑]</span><span>[?] Shortcuts</span></span>
+        <span>[enter] to visit</span>
       </div>
-    </section>
-    <section id="social-links" class="no-select">
-      <ul>
-        <li>
-          <a href="https://x.com/YashDagad"
-            ><img src="assets/twitter-icon.png" alt="X" /><br />X</a
-          >
-        </li>
-        <li>
-          <a href="https://www.linkedin.com/in/yashdagade/"
-            ><img
-              src="assets/linkedin-icon.png"
-              alt="LinkedIn"
-            /><br />LinkedIn</a
-          >
-        </li>
-        <li>
-          <a href="mailto:me@yashdagade.com"
-            ><img src="assets/email-icon.png" alt="Email" /><br />Email</a
-          >
-        </li>
-        <li>
-          <a href="https://github.com/YashDagade"
-            ><img src="assets/github-icon.png" alt="GitHub" /><br />GitHub</a
-          >
-        </li>
-        <li>
-          <a href="https://scholar.google.com/citations?user=o56NnCkAAAAJ&hl=en"
-            ><img src="assets/google_scholar.png" alt="Google Scholar" /><br />Scholar</a
-          >
-        </li>
-        <li>
-          <a href="tex/main.pdf"
-            ><img src="assets/resume-icon.png" alt="Resume" /><br />Resume</a
-          >
-        </li>
-      </ul>
-    </section>
-
-    <div id="friends-text-container" class="no-select">
-      <span id="friends-text"> << check out my friends sites >> </span>
     </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
 
-    <div id="friends-link-container" class="no-select">
-      <a href="https://marcoschonert.com/" id="marco-link">Marco →</a>
-      <a href="https://pranavponnusamy.com/" id="pranav-link">Pranav →</a>
+  <div class="overlay" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+    <nav class="menu-panel"></nav>
+  </div>
+
+  <div class="overlay" id="shortcuts" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" aria-hidden="true">
+    <div class="palette shortcuts">
+      <h3>Shortcuts</h3>
+      <dl>
+        <dt>[1]–[5]</dt><dd>Jump to a project</dd>
+        <dt>[←] [→]</dt><dd>Previous / next project</dd>
+        <dt>[↑] [↓]</dt><dd>Previous / next step</dd>
+        <dt>[space]</dt><dd>Pause / play the animation</dd>
+        <dt>[F]</dt><dd>Find anything</dd>
+        <dt>[M]</dt><dd>Menu</dd>
+        <dt>[S]</dt><dd>Sound on / off</dd>
+        <dt>[esc]</dt><dd>Close</dd>
+      </dl>
     </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
 
-    <div id="brians-link-container" class="no-select">
-      <a href="https://briankmason.com/" id="brians-link">← Brian</a>
-      <a href="https://www.maxxiong.dev/" id="maxx-link">← Max</a>
-    </div>
-
-    <script src="script.js"></script>
-  </body>
+  <script src="site/js/audio.js?v=r3"></script>
+  <script src="site/js/core.js?v=r3"></script>
+  <script src="site/js/scenes/lpwm.js?v=r3"></script>
+  <script src="site/js/scenes/lpjepa.js?v=r3"></script>
+  <script src="site/js/scenes/radialvcreg.js?v=r3"></script>
+  <script src="site/js/scenes/skywindfarm.js?v=r3"></script>
+  <script src="site/js/scenes/build-score.js?v=r3"></script>
+  <script src="site/js/scenes/build.js?v=r3"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () { window.Site && Site.boot(); });
+  </script>
+</body>
 </html>

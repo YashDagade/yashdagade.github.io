@@ -7,3 +7,13 @@ node_modules/
 .DS_Store
 patent.md
 yc_llm_aisus.md.playwright-cli/
+
+# local dev tooling (preview server config lives in the main checkout .claude/)
+.claude/
+
+# personal images kept local (not used by the site; see privacy notes)
+site/img/projects/arbor.jpg
+site/img/photos/fair-poster-suit-2024.jpg
+site/img/photos/fair-dc-poster-2024.jpg
+site/img/photos/hack-electrodes-2026.jpg
+site/img/photos/hack-electrodes-2026-sq.jpg
