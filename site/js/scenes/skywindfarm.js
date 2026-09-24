@@ -124,22 +124,22 @@
       head: `Wind speed increases significantly with altitude, so the sky holds far more energy than the${NB}ground.`,
       sub: `Above London the wind rises from about 7${NB}m/s at 100${NB}m to 26.7${NB}m/s at 3${NB}km. Up there, each square metre of wind carries about 100× the power it does 10${NB}m above the${NB}ground.`,
       short: `About 7${NB}m/s at 100${NB}m, 26.7${NB}m/s at 3${NB}km over${NB}London.`,
-      cap: 'Solid: measured over London, paper\nFig. 2. Dotted: the textbook 1/7 law.\nHover the sky to probe any altitude.' },
+      cap: 'Solid: measured over London, paper\nFig. 2. Dotted: textbook 1/7 law.\nHover the sky to probe any altitude.' },
     { id: 'sky', label: 'Into the sky', dur: 13,
       head: `So as a species we should harness energy from the sky. The only reason we don’t: it’s${NB}an${NB}engineering${NB}problem.`,
       sub: `SkyWindFarm Energy Units are designed to fly at about 3${NB}km: each 1.75${NB}t unit is held up by 600${NB}m³ of helium plus a lift wing, and its tether leans back only about${NB}16°.`,
       short: `SkyWindFarm units are designed to fly at ~3${NB}km.`,
-      cap: 'Designed for ~3 km; the prototype has\nflown to about 150 m (flight test).\nHover a drawing to see the real thing.' },
+      cap: 'Designed for ~3 km; the prototype\nhas flown to ~150 m (flight test).\nHover a drawing for the real thing.' },
     { id: 'unit', label: 'The unit', dur: 15,
       head: `SkyWindFarm lifts counter-rotating vertical-axis turbines on a helium shell and tethers the power${NB}down.`,
       sub: `My high-school design: four Darrieus turbines in counter-rotating pairs, with two diffuser walls. They capture 43% of the power in the wind passing through them: about 157${NB}kW per unit at 26.7${NB}m/s.`,
       short: `My high-school design: four Darrieus${NB}turbines.`,
-      cap: 'Cp 0.43 at tip-speed ratio 3 (paper\nFig. 15): rotors at about 510 rpm.\nHover the parts. Flow is illustrative.' },
+      cap: 'Cp 0.43 at tip-speed ratio 3 (paper\nFig. 15): rotors at about 510 rpm.\nHover the parts. Flow is schematic.' },
     { id: 'power', label: 'Tethered power', dur: 13,
       head: `A conducting tether brings the power down to the grid: about${NB}127${NB}kW${NB}per${NB}unit.`,
       sub: `157${NB}kW harvested at the 26.7${NB}m/s design wind, less about 10% each in the tether and generator. My paper estimates about 25% lower energy cost than today’s FlyGen airborne wind${NB}turbines.`,
       short: `157${NB}kW harvested × 0.9 (tether) × 0.9${NB}(generator).`,
-      cap: 'Runs from 18 to 33 m/s (paper p. 20).\nCost bars read from paper Fig. 25.\nHover the cost chart for the figure.' },
+      cap: 'Runs at 18–33 m/s (paper p. 20).\nCost bars read from paper Fig. 25.\nHover the cost chart for the figure.' },
     { id: 'life', label: 'Energy & life', dur: 16,
       head: `Energy and quality of life rise${NB}together.`,
       sub: `Each dot is one of 44 countries: primary energy use per person (log scale) against the UN Human Development Index; correlation \${r = 0.91}$ across all 187${NB}countries.`,
@@ -793,8 +793,9 @@
         if (m) {
           // phones, top to bottom: the headline, two callouts, the unit, two callouts, the formula block, and
           // ≥ 12 px above the slider. Full: 2-line callouts under the bridle and the 3-line formula. Short phones:
-          // the lower callouts become titles beside the bridle and the formula drops its TSR line (the caption
-          // carries it).
+          // the lower callouts become titles beside the bridle and the formula is one line, "P = … = 157 kW at
+          // 26.7 m/s", without its TSR line (the caption carries it), so the unit keeps its size under the taller
+          // headline.
           L.stack = true; L.cx = Math.round(W * 0.5);
           const s0 = Math.min(2.3, ((W - 32) / 100) * 0.66);
           // first baseline of the top callouts (under the headline) and their lower edge (2 lines)
@@ -807,7 +808,8 @@
             const yMin = topBot + 8 + 39 * sFit, yMax = fyFull - 52 - 76 * sFit;
             L.cs = sFit; L.fy = fyFull; L.cy = Math.round(clamp(H * 0.44, yMin, yMax));
           } else {
-            L.fy = L.ctrlTop - 12 - 22;
+            // (the one-line block: its plate spans fy − 26 … fy + 4)
+            L.fy = L.ctrlTop - 12 - 4;
             const room = L.fy - 26 - 6 - 4 - (topBot + 8);
             L.cs = clamp(room / 89, 1.4, s0);
             L.cy = Math.round(topBot + 8 + 39 * L.cs);
@@ -900,7 +902,7 @@
         const fb = api.headlineBottom() || (m ? 170 : 160);
         const floor = m ? L.ctrlTop : L.ground;
         const room = v => floor - Math.max.apply(null, v) - 20;
-        const hv = room(full) >= (m ? 330 : 320) ? 'full' : room(short) >= (m ? 225 : 290) ? 'short' : 'bare';
+        const hv = room(full) >= (m ? 330 : 320) ? 'full' : room(short) >= (m ? 225 : 255) ? 'short' : 'bare';
         const hb = (hv === 'full' ? full : hv === 'short' ? short : bare).map(b => b || fb);
         const changed = L.hlVar !== hv;
         L.hlVar = hv; L.sub = hv === 'full'; L.hbS = hb; L.hbMax = Math.max.apply(null, hb);
@@ -2701,14 +2703,31 @@
           const u = units[1];
           const y = L.m ? L.fy
             : Math.round(Math.min(L.H - 118, L.stack ? Math.max(u.y + 52 * u.s + 40, (L.closeBottom || 0) + 44) : u.y + 52 * u.s + 60));
-          // short phones: the TSR · Cp line is in the caption; the block is two lines
-          const tsr = !(L.m && L.mShort), bh = tsr ? 66 : 48;
+          if (L.m && L.mShort) {
+            // short phones: one line, "P = ½ρv³CpAN = 157 kW at 26.7 m/s", centred (the TSR · Cp line is in the
+            // caption); where the pair would not fit the width, the wind speed goes
+            const T = TEX.unitP;
+            T.size_(16);
+            if (!T.w) { T.w = T.el.offsetWidth; T.h = T.el.offsetHeight; }
+            const tw = T.w || 128, gap = 7, lim = L.W - 32;
+            let s1 = inWin ? `= ${fmtInt(P / 1000)} kW at ${f1(vd)} m/s` : `= 0 kW (outside ${V_IN}–${V_OUT} m/s)`;
+            if (tw + gap + textW(s1) > lim) s1 = inWin ? `= ${fmtInt(P / 1000)} kW` : '= 0 kW';
+            const bw = tw + gap + textW(s1), x0 = Math.round(L.W / 2 - bw / 2);
+            plate(x0 - 6, y - 26, bw + 12, 30, a);
+            T.place(x0, y - 22, a, 'left');
+            text(s1, x0 + tw + gap, y - 6, { color: inWin ? C.accent : SEC });
+            L.cpLine = null;
+            reg(x0 - 6, y - 26, bw + 12, 30);
+            ctx.restore();
+            return;
+          }
+          const bh = 66;
           const l2 = inWin ? `= ${fmtInt(P / 1000)} kW at ${f1(vd)} m/s` : L.m ? `0 kW: outside ${V_IN}–${V_OUT} m/s (${fmtInt(P / 1000)} kW in theory)`
             : `${fmtInt(P / 1000)} kW theoretical · 0 kW outside ${V_IN}–${V_OUT} m/s`;
           const hl = hoverId === 'cp' || hoverId === 'tunnel';
           const col = hl ? C.accent : SEC, a0 = 'TSR 3 · ', a1 = '0.43 · r > 0.95 vs tunnel';
           const w0 = textW(a0), tw = TEX.cp.w || 17, w1 = textW(a1), wl = w0 + tw + 5 + w1;
-          const bw = Math.max(tsr ? wl : 0, textW(l2), TEX.unitP.w || 150);
+          const bw = Math.max(wl, textW(l2), TEX.unitP.w || 150);
           // centred under the unit; on a compact window slid sideways (≤ 90 px) off any callout it would touch
           let cx = L.m ? L.W / 2 : u.x;
           if (!L.m) {
@@ -2723,13 +2742,11 @@
           TEX.unitP.size_(16);
           TEX.unitP.place(cx, y - 22, a, 'center');
           text(l2, cx, y + 16, { align: 'center', color: inWin ? C.accent : SEC });
-          if (tsr) {
-            text(a0, x0, y + 33, { color: col });
-            TEX.cp.accent_(hl);
-            TEX.cp.place(x0 + w0, y + 33 - 12, a, 'left');
-            text(a1, x0 + w0 + tw + 5, y + 33, { color: col });
-            L.cpLine = { x: x0 - 4, y: y + 19, w: wl + 8, h: 19 };
-          } else L.cpLine = null;
+          text(a0, x0, y + 33, { color: col });
+          TEX.cp.accent_(hl);
+          TEX.cp.place(x0 + w0, y + 33 - 12, a, 'left');
+          text(a1, x0 + w0 + tw + 5, y + 33, { color: col });
+          L.cpLine = { x: x0 - 4, y: y + 19, w: wl + 8, h: 19 };
           reg(cx - bw / 2 - 6, y - 26, bw + 12, bh);
           ctx.restore();
           return;
@@ -2844,7 +2861,8 @@
         if (al < 0.01) return;
         const u = units[1];
         const bp = { x: u.x - 3 * u.s, y: u.y + 52 * u.s };
-        const yEnd = L.m ? Math.max(bp.y + 20, L.fy + 22) : L.H - 90;
+        // (phones: it fades out behind the formula block's plate)
+        const yEnd = L.m ? Math.max(bp.y + 20, L.fy + (L.mShort ? 4 : 22)) : L.H - 90;
         const g = ctx.createLinearGradient(0, bp.y, 0, yEnd);
         g.addColorStop(0, rgba((0.8 * al).toFixed(3))); g.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.strokeStyle = hoverId === 'tether' ? C.accent : g;
