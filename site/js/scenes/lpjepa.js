@@ -35,7 +35,8 @@
    out of plots (step 4; step 5 only when its plot is short) and drop the side tables for a one-line Table 5 readout
    (step 5); short art boxes trade the secondary lines (sampling rule, per-row mean, Table 5 line, the table's q line,
    the sliced-mean row) for chart height, and the 1-D histograms of steps 2–3 keep ≥ 40 px where they can. Step 3
-   always keeps its toy-training block on desktops (it is what backs the headline's claim).
+   always keeps its toy-training block on desktops (it is what backs the headline's claim). Readout rows under the
+   step 5 plot that reach the links column's band (short desktops) take a shorter wording that stops short of it.
 
    Numbers and formulas: research brief for Kuang, Dagade, Rudner, Balestriero, LeCun,
    "Rectified LpJEPA", ICML 2026. The 2-D training is a labelled toy simulation.
@@ -1275,6 +1276,18 @@
           else { G.legOut = true; bottom = thumbsAt(legOutAt(bottom0)); G.by1 = plotY1(bottom); }
         }
         if (G.legOut) { G.legDense = legDenseV[0]; G.legW = legWOf(G.legDense); }
+        // short desktops (the taller headline pushes the chart down): a row under the plot that reaches the links
+        // column's band (bottom-right) takes a shorter wording that stops short of it, so the two never read as one line
+        if (!mob) {
+          const lk = linksTL();
+          const room = y => (y + 10 >= lk.y - 4 ? Math.min(cw, lk.x - 24 - bx0) : cw);
+          const wMu = room(G.by1 + G.muDy);
+          if (wMu < cw) for (let v = G.muV; v <= 2; v++) { G.muV = v; prime('paMu', muRowHTML(7, v)); if (measure('paMu').w <= wMu) break; }
+          if (G.pline) {
+            const wPl = room(G.by1 + G.plDy);
+            if (wPl < cw) for (let v = G.plV; v <= 3; v++) { G.plV = v; prime('paPl', plineHTML(0.5, v)); if (measure('paPl').w <= wPl) break; }
+          }
+        }
         const { by0, by1 } = G;
         G.kx = mob ? bx0 - 26 : A.x0; G.ky = by0 - 36;
         // Tables 1 and 5 (wide desktop): under the step counter; Table 1 goes when both would reach the links column
@@ -1317,12 +1330,17 @@
         G.thumbY = by1 + (G.thDy || 100);
         // thumbnails near the bottom stop short of the links column (bottom-right)
         G.thR = bx1;
-        if (G.thumbs && G.thumbY > H - 135) {
-          let lx = L.w - 40 - tw('lpjepa.com ↗', FM(11)) - 6;
-          try { const g = document.querySelector('.links-group[data-scene="lpjepa"]'); const r = g && g.getBoundingClientRect(); if (r && r.width > 0) lx = Math.min(lx, r.left); } catch (e) {}
-          G.thR = Math.min(bx1, lx - 16);
-        }
+        if (G.thumbs && G.thumbY > H - 135) G.thR = Math.min(bx1, linksTL().x - 16);
         L.pa = G;
+      }
+      // the top-left corner of the links column (bottom-right; estimated until it first shows)
+      function linksTL() {
+        let x = L.w - 40 - tw('lpjepa.com ↗', FM(11)) - 6, y = L.h - 132;
+        try {
+          const g = document.querySelector('.links-group[data-scene="lpjepa"]'), r = g && g.getBoundingClientRect();
+          if (r && r.width > 0) { x = Math.min(x, r.left); y = r.top; }
+        } catch (e) {}
+        return { x, y };
       }
 
       api.onResize(() => { layout(); });
