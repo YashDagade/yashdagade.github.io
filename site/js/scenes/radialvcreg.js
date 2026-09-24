@@ -195,8 +195,8 @@
   // and the live readouts. Step 1's key formula is live: the definition of Σ̂ and its current value.
   const STEPS = [
     { label: 'Raw features', dur: 7.5, settle: 3.5,
-      hl: { t: 'Encoders want Gaussian features, the most informative kind; raw ones are correlated, stretched, not Gaussian.',
-        s: 'Radial-VCReg is a cheap loss that makes features more Gaussian (for a given spread, the Gaussian carries the most information). Below: a 2-D feature cloud, its covariance $\\hat\\Sigma$ and its spread along each axis.',
+      hl: { t: 'Radial-VCReg is a cheap loss that pulls an encoder’s features toward a Gaussian, the maximum-information prior.',
+        s: 'We want encoders with a maximum-information prior, and for a given spread that is the Gaussian. On top of whitening, Radial-VCReg minimizes the KL between the lengths of your features and a Gaussian’s. Raw features, below, are correlated, stretched and not Gaussian.',
         m: 'Below: a 2-D feature cloud and its covariance $\\hat\\Sigma.$' },
       eq: '\\hat\\Sigma = \\frac{1}{N-1}\\sum_i\\,(z_i-\\bar z)(z_i-\\bar z)^{\\top}', live: true, tag: '' },
     { label: 'Whiten (VCReg)', dur: 12.5, settle: 11,

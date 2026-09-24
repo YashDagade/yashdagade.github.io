@@ -935,9 +935,9 @@
       // when it stands alone · tp: the title alone on phones. Step 6 (Capacity) follows the open / closed-loop toggle
       // (HLC: Fig 1b closed-loop, MLP∘LTI(k): 75.33% vs 14.00%; without a transformer, dense ≤ 14.0%).
       const HL = [
-        { t: 'A world model understands and predicts the world, so acting becomes search, not generation.',
-          s: 'That helps it plan in situations it has never seen. Here, in a toy world of four zones, the encoder turns frames into features, the predictor imagines the future from them and the next action, and the planner (CEM) searches for actions.',
-          ss: 'The encoder sees, the predictor imagines, the planner (CEM) searches.' },
+        { t: 'A world model brings together an encoder, a predictor and a planner.',
+          s: 'The model understands and predicts the world, so actions become search, not generation: the encoder turns frames into features, the predictor imagines the future from them and the next action, and the planner (CEM) searches for actions.',
+          ss: 'It understands and predicts the world, so actions become search, not generation.' },
         { t: 'The encoder is a Vision Transformer, and we study how to make its features sparse.',
           s: 'The frame is cut into patches that become tokens, 12 attention blocks mix them, and the summary token (CLS) goes through an MLP and a ReLU, which sets negative values to exactly zero: the sparse code.',
           ss: 'Patches become tokens; after an MLP, a ReLU zeroes every negative.' },

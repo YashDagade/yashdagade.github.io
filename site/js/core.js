@@ -604,9 +604,25 @@
   }
 
   // Sound lifecycle: sound(true) only while active + audio ready + enabled.
+  let readyHooked = false;
   function syncSound(rec) {
     if (!rec) return;
     const a = audio();
+    if (a && !a.ready) {
+      // Music is on by default: however audio becomes ready, every scene is synced at that moment; and a visitor who
+      // has already interacted with the site (a reload, a link from another page of it: the browser carries that
+      // activation over) needs no new gesture.
+      if (!readyHooked && typeof a.onReady === 'function') {
+        readyHooked = true;
+        // (a microtask later: when a keydown's unlock is ready at once, the key it navigates by is handled first)
+        a.onReady(() => Promise.resolve().then(() => {
+          unlocked = true; hideHint(); renderSound();
+          try { if (activeId) a.fadeBus(activeId, busTrim(activeId), 0.3); } catch (e) {}
+          for (const id in inst) syncSound(inst[id]);
+        }));
+      }
+      if (activeId === rec.def.id && navigator.userActivation && navigator.userActivation.hasBeenActive) { try { a.unlock(); } catch (e) {} }
+    }
     const want = activeId === rec.def.id && !!(a && a.ready && a.enabled);
     if (want === rec.soundOn) return;
     rec.soundOn = want;
@@ -895,8 +911,7 @@
       panel.append(a);
     }
     panel.append(link('About', 'me.html'));
-    panel.append(link('Books', 'books.html', 'quiet'));
-    panel.append(link('Old website', 'old/index.html', 'quiet'));
+    panel.append(link('Books', 'books.html'));
     panel.append(h('div', { class: 'sep' }));
     const small = h('div', { class: 'small' },
       link('X', LINKS.x, null, true), link('LinkedIn', LINKS.linkedin, null, true),
@@ -906,7 +921,8 @@
     panel.append(h('div', { class: 'page-links' }));
     // Attribution: always credit where the ideas came from.
     panel.append(h('div', { class: 'credit' },
-      'Design inspired by ', link('paradigm.xyz', 'https://www.paradigm.xyz', null, true)));
+      'Design inspired by ', link('paradigm.xyz', 'https://www.paradigm.xyz', null, true),
+      ' · ', link('Old website', 'old/index.html')));
     ui.menu.addEventListener('pointerdown', e => { if (e.target === ui.menu) close(); });
   }
 
@@ -935,12 +951,19 @@
     for (const id in inst) syncSound(inst[id]);
   }
 
-  let unlocked = false;
+  let unlocked = false, gestureHooks = false;
   function unlockAudio() {
-    if (unlocked) return;
     const a = audio();
-    if (!a) return;
+    if (!a || (unlocked && a.ready)) return;
+    // Any gesture counts. A touchstart (or a touch pointerdown) is not a user activation, so keep trying on the ones
+    // that are (the tap's end, its click) until the context really runs, and resume it directly: a resume() refused
+    // before a gesture can stay pending inside audio.js.
+    if (!gestureHooks) {
+      gestureHooks = true;
+      ['pointerup', 'touchend', 'click'].forEach(ev => window.addEventListener(ev, unlockAudio, { passive: true, capture: true }));
+    }
     try {
+      if (a.ctx && a.ctx.state !== 'running' && typeof a.ctx.resume === 'function') { const r = a.ctx.resume(); if (r && r.catch) r.catch(() => {}); }
       const p = a.unlock();
       unlocked = true;
       const after = () => {
