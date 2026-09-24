@@ -14,6 +14,10 @@
  * pneumatic / snap / relay / compile / ping / chime, cnc()), each guarded with a fallback to the older voices.
  * The typed poem is voiced as real keystrokes: a space bar on spaces, a key press otherwise, an Enter on slams.
  * The projects-by-year grouping of the index is called "Stints" (the owner's word).
+ * Music is on by default: arriving by any gesture (key 5, arrows, index, menu, Find, a swipe) the film and the score
+ * start together at 0:00; a direct link (no gesture yet) plays the film silently under a "Play with sound" pill.
+ * The biped (the hidden #robot page) appears as ONE photo (the owner's pick) closing the cold-open montage, its Stints
+ * row (thumbnail + a "[robot]" chip → #robot) and, with the CAD line-art render, on "And they yearn to build".
  * Settled mode: the full poem in serif with hoverable phrases (project images + curated personal photos),
  * an index of every project with thumbnails (hover → image, click → link), socials, friends' sites and
  * the attribution lines. SkyWindFarm units and tethers are drawn with Site.art.swfUnit / swfTether
@@ -151,13 +155,18 @@
     optionGlass: 'site/img/projects/option-glass.jpg', simpl: 'site/img/projects/simpl.jpg',
     resq: 'site/img/projects/resq.jpg', drift: 'site/img/projects/central-america-drift.jpg',
     wesifted: 'site/img/projects/wesifted.jpg',
+    // the biped: ONE photo of it (the owner's pick: looking down at it in hand; the other shots were too alike and
+    // are gone), its 600² crop, and the CAD's line-art render exported by the #robot page (robot.js render mode)
+    robot: 'site/img/robot/robot-held-inspecting.jpg', robotSq: 'site/img/robot/robot-held-inspecting-sq.jpg',
+    robotCad: 'site/img/robot/renders/robot-three-quarter.png',
   };
   // w / h of every image a card can show, so cards are sized before the image has loaded
   const AR = {};
   [[IMG.connectu, 1200 / 631], [IMG.eyeda, 1200 / 553], [IMG.hermes, 1.6], [IMG.idw, 1200 / 699], [IMG.lpjepa, 1172 / 1200],
     [IMG.radial, 291 / 300], [IMG.cp, 638 / 468], [IMG.cfd, 1334 / 649], [IMG.render, 1110 / 828], [IMG.poster, 862 / 542],
     [IMG.flight, 1400 / 786], [IMG.system, 1400 / 873], [IMG.sky, 1400 / 752], [IMG.ground, 1136 / 273], [IMG.arbor, 634 / 750],
-    [IMG.optionGlass, 690 / 580], [IMG.simpl, 1200 / 675], [IMG.resq, 1200 / 725], [IMG.drift, 1.6], [IMG.wesifted, 1200 / 654]]
+    [IMG.optionGlass, 690 / 580], [IMG.simpl, 1200 / 675], [IMG.resq, 1200 / 725], [IMG.drift, 1.6], [IMG.wesifted, 1200 / 654],
+    [IMG.robot, 1120 / 1400], [IMG.robotSq, 1], [IMG.robotCad, 1200 / 1500]]
     .forEach(([s, a]) => { AR[s] = a; });
   // Source crops (px of the file): Arbor's public page is half sign-in form; only its left panel ("Follow the
   // question. Keep the discoveries." + the research tree) is shown. Canvas draws crop directly; <img> uses a
@@ -207,6 +216,8 @@
   PHOTOS.forEach(p => { if (p.fy != null) { FY[ph(p.id)] = p.fy; FY[sq(p.id)] = p.fy; } });
   IMG.yash && (FY[IMG.yash] = 0.3);
   FY[IMG.arbor] = 0.56; // (its crop, in landscape frames: the headline and the whole research tree)
+  FY[IMG.robotSq] = 0.5; // (landscape crops of the robot photo: his face looking down and the robot in his hands)
+  FY[IMG.robot] = 0.34; FY[IMG.robotCad] = 0.12; // (the phone sheet's landscape crops: face + robot; the torso + upper legs)
 
   const ARBOR = 'https://research-planner.bluemushroom-5aac49f7.eastus2.azurecontainerapps.io/';
   const FIELDS = ['Research', 'Energy', 'Safety', 'Products', 'Tools', 'Experiments'];
@@ -222,7 +233,7 @@
     { id: 'arbor', name: 'Arbor', year: '2026', y0: 2026, field: 'Tools', one: 'Research workspace: syncs W&B, GitHub and Notion into a research tree that knows what I’m working on and keeps me on track', idx: 'W&B, GitHub and Notion → a research tree that keeps me on track', href: ARBOR, img: IMG.arbor, meta: 'Live · private login', film: true },
     { id: 'hermes', name: 'Hermes', year: '2026', y0: 2026, field: 'Tools', one: 'Chrome extension that reads articles aloud with live word highlighting, 0.75–4×', idx: 'Chrome extension: reads articles aloud, word-synced, 0.75–4×', href: 'https://github.com/YashDagade/browser-reader', img: IMG.hermes, meta: 'Chrome extension · GitHub', film: true },
     { id: 'option-glass', name: 'Option Glass', year: '2026', y0: 2026, field: 'Tools', one: 'macOS screen assistant: double-tap Option to ask about whatever is on screen', idx: 'macOS assistant: double-tap Option, ask about the screen', href: null, img: IMG.optionGlass, meta: 'macOS · Swift', film: true },
-    { id: 'biped', name: 'Biped', year: '2026', y0: 2026, field: 'Experiments', one: 'Bipedal robot on HiWonder LX-16A bus servos; build log in progress', idx: 'Bipedal robot on LX-16A bus servos; build log in progress', href: 'biped/', gen: 'title', meta: 'Build log · Notion' },
+    { id: 'biped', name: 'Biped', year: '2026', y0: 2026, field: 'Experiments', one: 'Bipedal robot on HiWonder LX-16A bus servos; build log in progress', idx: 'Bipedal robot on LX-16A bus servos; build log in progress', href: 'biped/', img: IMG.robot, thumb: IMG.robotSq, meta: 'Build log · Notion', film: true },
     { id: 'central-america-drift', name: 'Central America Drift', year: '2026', y0: 2026, field: 'Experiments', one: 'JS rigid-body sim of Central America rifting apart into islands', idx: 'Rigid-body JS sim of Central America rifting into islands', href: 'https://github.com/YashDagade/central_america_drift', img: IMG.drift, meta: 'Simulation · GitHub', film: true },
     { id: 'simpl', name: 'Simpl', year: '2025–26', y0: 2025, y1: 2026, field: 'Products', one: 'iOS daily coach: turns quick food, sleep and exercise logs into what to do next', idx: 'iOS coach: food, sleep and exercise logs → what to do next', href: null, img: IMG.simpl, meta: 'iOS app · Expo', film: true },
     { id: 'connectu', name: 'ConnectU', year: '2025–26', y0: 2025, y1: 2026, field: 'Products', one: 'Mentor–mentee matching: LLM bios, embeddings and Hungarian-algorithm pairing', idx: 'Mentor matching: LLM bios, embeddings, Hungarian pairing', href: 'https://connectu-frontend.vercel.app/', img: IMG.connectu, meta: 'Matching platform', film: true },
@@ -247,11 +258,12 @@
     { label: 'Scholar', href: 'https://scholar.google.com/citations?user=o56NnCkAAAAJ&hl=en' },
     { label: 'Resume', href: 'tex/main.pdf' },
   ];
+  // (just the names: the old site's pointing arrows are gone, round 4)
   const FRIENDS = [
-    { name: 'Marco', label: 'Marco →', href: 'https://marcoschonert.com/' },
-    { name: 'Pranav', label: 'Pranav →', href: 'https://pranavponnusamy.com/' },
-    { name: 'Brian', label: '← Brian', href: 'https://briankmason.com/' },
-    { name: 'Max', label: '← Max', href: 'https://www.maxxiong.dev/' },
+    { name: 'Marco', label: 'Marco', href: 'https://marcoschonert.com/' },
+    { name: 'Pranav', label: 'Pranav', href: 'https://pranavponnusamy.com/' },
+    { name: 'Brian', label: 'Brian', href: 'https://briankmason.com/' },
+    { name: 'Max', label: 'Max', href: 'https://www.maxxiong.dev/' },
   ];
   const PRESS = ['KARE11', 'CBS', 'Star Tribune', 'Fox 9', 'UMN ME', 'Duke Today'];
 
@@ -268,6 +280,7 @@
     MF('atrium'), MF('launch'), MF('aloft'), { src: ph('aerial'), year: 2024 }, MF('fair'), MP('idontwannadie'),
     MP('radial-vcreg'), MP('connectu'), MP('resq'), MP('simpl'), MP('rectified-lpjepa'), MP('lpwm'),
     MP('hermes'), MP('arbor'), MP('option-glass'), MP('central-america-drift'),
+    Object.assign(MP('biped'), { fy: FY[IMG.robotSq] }), // (the last frame, on the cut to bar 5: what I'm building now)
   ];
   PROJECTS.slice().reverse().forEach(p => { if (p.film && !MONTAGE.some(m => m.id === p.id) && (p.img || p.gen === 'code')) MONTAGE.push(MP(p.id)); });
   // The flipbook starts when "builders" inks (bar 3 beat 3) and cuts to the roll call on the bar-5 downbeat:
@@ -326,15 +339,19 @@
       { src: IMG.optionGlass, title: 'Option Glass', meta: 'Double-tap Option, ask about the screen' },
       { src: IMG.simpl, title: 'Simpl', meta: 'A daily coach from quick logs' }] },
     // (a text card carries its own words: its caption is only the title, never a repeat of the card)
+    // (the biped: its one photo and its CAD render open the robot's own page, #robot; the render is optional: a card
+    // whose image failed to load is left out, see phraseCfg)
     'And they yearn to build': { mode: 'jump', proj: ['lpwm', 'biped'], cards: [
-      { gen: 'text', head: 'Now building', title: 'Biped build log →', meta: null, lines: ['World models for robots', 'NYU CILVR · Pantheon', 'Biped build log'], href: 'biped/' },
+      { gen: 'text', head: 'Now building', title: 'Biped build log', meta: null, lines: ['World models for robots', 'NYU CILVR · Pantheon', 'Biped build log'], href: 'biped/' },
+      { src: IMG.robot, title: 'My biped, in hand', meta: '45 cm · eight servos', href: '#robot' },
+      { src: IMG.robotCad, title: 'The biped, from its CAD', meta: 'Open the robot page', href: '#robot', optional: true },
       { src: ph('laser'), title: 'At the laser cutter', meta: 'SkyWindFarm, 2023' }] },
-    'the same life': { mode: 'friends', title: 'Fellow builders', meta: 'Marco → Pranav → ← Brian ← Max' },
+    'the same life': { mode: 'friends', title: 'Fellow builders', meta: 'Marco · Pranav · Brian · Max' },
     'race unrelentingly toward creating value': { mode: 'jump', proj: ['skywindfarm', 'rectified-lpjepa'], cards: [
       { src: ph('aerial'), title: 'Energy · SkyWindFarm', meta: 'Flight test, 2024', href: SWF_HREF },
       { src: IMG.lpjepa, title: 'Intelligence · Rectified LpJEPA', meta: 'ICML 2026', href: 'https://arxiv.org/abs/2602.01456' }] },
     'ignore them': { mode: 'jump', cards: [
-      { gen: 'text', head: 'Press', title: 'All press coverage →', meta: null, lines: PRESS, href: 'press.html' },
+      { gen: 'text', head: 'Press', title: 'All press coverage', meta: null, lines: PRESS, href: 'press.html' },
       { src: ph('fairDC'), title: 'Science expo, Washington DC', meta: 'April 2024' }] },
     'change things': { mode: 'mosaic', srcs: [sq('aloft'), IMG.lpjepa, sq('cluster'), IMG.eyeda, IMG.idw, sq('tunnelY'), IMG.arbor, IMG.hermes, sq('fair')], title: 'So far', meta: '3 papers · 1 patent application · ISEF ’23 + ’24 · 1 nonprofit' },
   };
@@ -590,7 +607,6 @@
 .scene--build .bd-row .th img { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--g100); }
 .scene--build .bd-row:hover .th, .scene--build .bd-row.is-lit .th, .scene--build .bd-row:focus-visible .th { border-color: var(--accent); }
 .scene--build .bd-row .n { display: block; font-family: var(--serif); font-size: 17px; line-height: 21px; letter-spacing: 0; transition: color .15s ease; }
-.scene--build .bd-row .n i { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--g500); margin-left: 6px; }
 .scene--build .bd-row .n em { font-style: normal; font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: #555; margin-left: 8px; }
 .scene--build .bd-row .n .sc { font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: var(--accent); margin-left: 8px; cursor: pointer; border-bottom: 1px solid transparent; transition: border-color .15s ease; }
 .scene--build .bd-row .n .sc:hover { border-color: var(--accent); }
@@ -677,7 +693,25 @@
   .scene--build .bd-row { grid-template-columns: 20px 52px minmax(0, 1fr) auto; column-gap: 10px; }
   .scene--build .bd-row .th { width: 52px; height: 36px; }
 }
-@media (prefers-reduced-motion: reduce) { .scene--build .bd-cur, .scene--build .bd-jl .ld.is-energy { animation: none; } }
+/* "Play with sound": browsers only start audio after a gesture, so a film that opens without one (a direct link to
+   #build) plays silently under a light veil with this pill; any click, tap or key starts it from 0:00 with the music */
+.scene--build .bd-veil { position: absolute; inset: 0; z-index: 6; background: rgba(255, 255, 255, .64); cursor: pointer;
+  opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s linear .45s; }
+.scene--build .bd-go { position: absolute; left: 50%; top: 50%; z-index: 7; display: inline-flex; align-items: center; gap: 12px;
+  padding: 14px 24px 14px 19px; border-radius: 26px; background: var(--g200); color: var(--ink); cursor: pointer; white-space: nowrap;
+  font-family: var(--mono); font-size: 14px; line-height: 18px; letter-spacing: .02em;
+  opacity: 0; visibility: hidden; transform: translate(-50%, -50%) translateY(6px);
+  transition: opacity .35s ease, transform .35s var(--ease), visibility 0s linear .35s, background-color .15s ease; }
+.scene--build.is-waiting .bd-veil { opacity: 1; visibility: visible; transition: opacity .6s ease, visibility 0s; }
+.scene--build.is-waiting .bd-go { opacity: 1; visibility: visible; transform: translate(-50%, -50%);
+  transition: opacity .5s ease .1s, transform .5s var(--ease) .1s, visibility 0s, background-color .15s ease; }
+.scene--build .bd-go:hover, .scene--build .bd-go:focus-visible { background: var(--g300); outline: none; }
+.scene--build .bd-go .dot { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.scene--build .bd-go .dot::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid var(--accent); opacity: 0; animation: bd-ping 1.8s ease-out infinite; }
+@keyframes bd-ping { 0% { transform: scale(.45); opacity: .8; } 70%, 100% { transform: scale(1.35); opacity: 0; } }
+.scene--build .bd-go .pl { font-size: 11px; margin-right: 3px; }
+.scene--build .bd-go .k { color: var(--g600); margin-left: 2px; }
+@media (prefers-reduced-motion: reduce) { .scene--build .bd-cur, .scene--build .bd-jl .ld.is-energy, .scene--build .bd-go .dot::after { animation: none; } }
 `;
 
   /* ================================================================== scene */
@@ -3306,9 +3340,11 @@
           }
         } catch (e) { bed = null; }
         try {
-          const r = rng(77);
+          // (its pulses and ticks wait for the grain cloud's 2.5 s fade-in: at the end of the film that is the crossfade,
+          // the score's last chord and grains ringing out while the bed rises, with no pulse landing on top of them)
+          const r = rng(77), from = a.now() + 2.4;
           bedOff = a.clock && a.clock.on((step, time) => {
-            if (!soundOn || mode !== 'settled') return;
+            if (!soundOn || mode !== 'settled' || time < from) return;
             const s64 = step % 64;
             if (s64 === 0) play('sub', D(0, -2), { when: time, dur: 1.1, gain: 0.17, dest });
             if (s64 === 32) play('sub', D(3, -3), { when: time, dur: 1.1, gain: 0.14, dest });
@@ -3330,23 +3366,84 @@
         try { const ns = a.clock.nextStep(1); return ns.time + (k || 0) * a.clock.stepDur; } catch (e) { return a.now(); }
       }
 
+      /* ---------------------------------------------------------- play with sound */
+      // Music is on by default, but a browser starts audio only after a gesture. Arriving by one (key 5, the arrows,
+      // the index, the menu, Find, a stepper) the film and the music start together at 0:00: sound(true) lands a few ms
+      // after enter(), and a film younger than FRESH seconds is restarted from 0 with the score. Arriving without one (a
+      // direct link to #build) the film plays silently under a light veil with a "Play with sound" pill; the first click,
+      // tap or key (anywhere: they all unlock audio) starts it again from 0:00 with the music. Taking the controls
+      // (a step, the slider, pause, skip) instead keeps the film where it is, and the music joins it there.
+      const FRESH = 0.35;
+      const goBtn = H('button', { type: 'button', class: 'bd-go', 'aria-label': 'Play the film with sound' },
+        H('span', { class: 'dot', 'aria-hidden': 'true' }), H('span', null, H('span', { class: 'pl', 'aria-hidden': 'true', text: '▶' }), ' Play with sound'),
+        TOUCH ? null : H('span', { class: 'k', text: '[space]' }));
+      const veil = H('div', { class: 'bd-veil', 'aria-hidden': 'true' });
+      el.append(veil, goBtn);
+      let pillUp = false, pillT = 0, restart0 = false, holdUntil = 0;
+      const audioLive = () => { const a = AU(); return !!(a && a.ready); };
+      function pill(on) {
+        clearTimeout(pillT); pillT = 0;
+        on = !!on && mode === 'film' && !api.reduced && api.isActive() && !audioLive();
+        if (on === pillUp) return;
+        pillUp = on;
+        if (on) placePill();
+        el.classList.toggle('is-waiting', on);
+      }
+      // centred on the film's frame (the scene's centre of mass), not the viewport
+      function placePill() {
+        if (!G) return;
+        const F = G.F;
+        goBtn.style.left = Math.round((F.x0 + F.x1) / 2) + 'px';
+        goBtn.style.top = Math.round(Math.max(F.y0 + 40, Math.min(F.y1 - 40, (F.y0 + F.y1) / 2))) + 'px';
+      }
+      // (shown a moment after enter(): a gesture's unlock takes a few ms to land, and must not flash the pill)
+      function pillSoon(ms) { clearTimeout(pillT); pillT = setTimeout(() => pill(true), ms); }
+      // the user took the controls: the film stays where they put it, and the music joins it there
+      function pillTaken() { restart0 = false; holdUntil = 0; if (pillUp) pill(false); }
+      function playWithSound() {
+        const a = AU();
+        // (the same gesture's unlock may already have started film and score from 0:00: then there is nothing to redo)
+        const started = soundOn && mode === 'film' && playing && sPlaying() && pos < 0.8;
+        pill(false);
+        if (!started) {
+          restart0 = true; // (sound(true) restarts the film at 0:00 if it arrives after this: the unlock is async)
+          replay();
+          if (!soundOn) holdUntil = performance.now() + 450; // (and the first frame waits for it)
+        }
+        try {
+          if (a && a.ctx && a.ctx.state !== 'running' && typeof a.ctx.resume === 'function') { const r = a.ctx.resume(); if (r && r.catch) r.catch(() => {}); }
+          if (a && typeof a.unlock === 'function') a.unlock();
+          if (a && !a.enabled && typeof a.setEnabled === 'function') a.setEnabled(true); // (explicitly asked for sound)
+        } catch (e) { /* audio must never break the film */ }
+      }
+      goBtn.addEventListener('click', e => { e.stopPropagation(); playWithSound(); });
+      veil.addEventListener('click', () => playWithSound());
+      // audio became ready by any path while the pill was up: that gesture is the "play with sound". (It can happen inside
+      // the very keydown or pointerdown that key() or the pill's click then sees, so they remember the pill for a moment.)
+      let pillGoneAt = -1e9;
+      const pillWasUp = () => pillUp || performance.now() - pillGoneAt < 400;
+      try { const a0 = AU(); if (a0 && typeof a0.onReady === 'function') a0.onReady(() => { if (pillUp) { if (AU().enabled) restart0 = true; pill(false); pillGoneAt = performance.now(); } }); } catch (e) {}
+
       /* ---------------------------------------------------------- transport */
       let mode = 'film', pos = 0, playing = false, bedTimer = 0, tailTimer = 0, watched = false, shownT = 0, hintUntil = 0, settledAt = -1e9;
       function seek(at, fromUser) {
         if (mode !== 'film') { mode = 'film'; el.classList.remove('is-settled', 'is-shown'); clearTimeout(shownT); showControls(); api.caption(CAP_FILM); stopBed(); }
         pos = Math.max(0, Math.min(DUR - 0.01, at));
         lastSlider = -1;
+        if (fromUser) pillTaken();
         if (fromUser && soundOn && playing) { scoreStop(0.05); scorePlay(pos); }
         render(); syncControls();
       }
       function scrub(v) {
         pos = Math.max(0, Math.min(DUR - 0.01, v));
         lastSlider = pos;
+        pillTaken();
         if (playing) scoreRestartSoon();
         render();
       }
       function togglePlay() {
         if (mode !== 'film') { replay(); return; }
+        pillTaken();
         playing = !playing;
         if (playing) scorePlay(pos); else scoreStop(0.15);
         render(); syncControls();
@@ -3358,7 +3455,7 @@
         showControls(); api.caption(CAP_FILM);
         stopBed(); settledAt = -1e9; // (leaving mid-replay and coming back restarts the film, not the index)
         pos = 0; playing = true; lastSlider = -1; lastSi = -1;
-        if (soundOn) { scoreStop(0.05); scorePlay(0); }
+        if (soundOn) { restart0 = false; scoreStop(0.05); scorePlay(0); }
         render(); syncControls();
       }
       // why: 'end' (the film finished) · 'skip' (the user skipped) · 'return' (re-entering [5] soon after it settled)
@@ -3366,6 +3463,7 @@
       function settle(why) {
         if (mode === 'settled') return;
         mode = 'settled'; playing = false; settledAt = performance.now();
+        restart0 = false; pill(false);
         stopFoley(); stopHums(0.3);
         // skip (Enter): a mechanical Enter and a compile tick, the build done early
         if (why === 'skip') { scoreStop(0.8); const a0 = aud(); if (a0) { const w = a0.now() + 0.01; fxKey('enter', { when: w, gain: 0.7, pan: 0, dest: bus() }); fx('compile', { when: w + 0.02, gain: 0.4, pan: -0.3, dest: bus() }); } }
@@ -3481,11 +3579,12 @@
       secIndex.append(list);
       const rows = {}, thumbs = {};
       // the four research rows name their scene: "[n]" (click → that scene; the row itself still opens the paper)
-      const SCENE_OF = { lpwm: ['lpwm', SN.lpwm], 'rectified-lpjepa': ['lpjepa', SN.lpjepa], 'radial-vcreg': ['radial-vcreg', SN.radial], skywindfarm: ['skywindfarm', SN.swf] };
+      // (the biped's chip opens the robot's own page, #robot: its CAD, part by part, and the photo)
+      const SCENE_OF = { lpwm: ['lpwm', SN.lpwm], 'rectified-lpjepa': ['lpjepa', SN.lpjepa], 'radial-vcreg': ['radial-vcreg', SN.radial], skywindfarm: ['skywindfarm', SN.swf], biped: ['robot', 'robot'] };
       function sceneChip(p) {
         const sc = SCENE_OF[p.id];
         if (!sc) return null;
-        const c = H('span', { class: 'sc', text: `[${sc[1]}]`, title: `Scene [${sc[1]}]: ${p.name}` });
+        const c = H('span', { class: 'sc', text: `[${sc[1]}]`, title: typeof sc[1] === 'number' ? `Scene [${sc[1]}]: ${p.name}` : `The robot page: ${p.name}, from its CAD` });
         c.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); ui('select'); location.hash = '#' + sc[0]; });
         c.addEventListener('pointerenter', () => ui('hover'));
         return c;
@@ -3503,7 +3602,7 @@
         thumbs[p.id] = th; // generated thumbnails (no image) are filled in once the fonts are in (see GEN)
         const r = H(p.href ? 'a' : 'div', { class: 'bd-row', href: p.href || null, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null, tabindex: p.href ? null : '0' },
           H('span', { class: 'no', text: pad2(i + 1) }), th,
-          H('span', { class: 'nm' }, H('span', { class: 'n' }, p.name, p.href ? H('i', { text: ext ? '↗' : '→' }) : null, p.arch ? H('em', { text: 'archived' }) : null, sceneChip(p)),
+          H('span', { class: 'nm' }, H('span', { class: 'n' }, p.name, p.arch ? H('em', { text: 'archived' }) : null, sceneChip(p)),
             H('span', { class: 'o', text: p.idx || p.one })),
           H('span', { class: 'yr' }, p.year, H('span', { text: p.field })));
         r.dataset.id = p.id;
@@ -3514,12 +3613,12 @@
       const ll = H('div', { class: 'bd-links bd-links--soc' });
       SOCIALS.forEach(s => {
         const ext = /^https?:/.test(s.href) || /\.pdf$/.test(s.href);
-        ll.append(H('a', { href: s.href, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null }, H('span', { text: s.label }), ext && /^https?:/.test(s.href) ? ' ↗' : ''));
+        ll.append(H('a', { href: s.href, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null }, H('span', { text: s.label })));
       });
       const ll2 = H('div', { class: 'bd-links bd-links--sub' },
         H('a', { href: 'press.html' }, H('span', { text: 'Press' })), H('a', { href: 'build.html' }, H('span', { text: 'Read as text' })), H('a', { href: 'about.html' }, H('span', { text: 'About' })));
       secElse.append(ll, ll2);
-      const secFr = H('section', { class: 'bd-fr' }, H('div', { class: 'h', text: '<< check out my friends’ sites >>' }));
+      const secFr = H('section', { class: 'bd-fr' }, H('div', { class: 'h', text: 'Check out my friends’ sites' }));
       const fl = H('div', { class: 'bd-links' });
       FRIENDS.forEach(f => fl.append(H('a', { href: f.href, target: '_blank', rel: 'noopener' }, H('span', { text: f.label }))));
       secFr.append(fl);
@@ -3664,10 +3763,15 @@
         if (cfg.mode === 'flip') {
           j = Object.assign({}, cfg, { meta: TOUCH ? cfg.meta.replace('hover', 'tap') : cfg.meta, frames: MONTAGE.map(m => ({ src: m.draw === 'code' ? codeURL() : m.src, fy: m.fy })).filter(f => f.src) });
         } else if (cfg.mode === 'jump' || cfg.mode === 'friends') {
-          j = Object.assign({}, cfg, { cards: (cfg.cards || []).map(c => {
+          // an optional card (an image another page exports) is shown only once its image has loaded; while it is still
+          // loading, this phrase's config is not kept, so the next hover tries again; if it failed, it stays out
+          const opt = (cfg.cards || []).filter(c => c.optional && c.src), pend = opt.some(c => { const im = img(c.src); return im && !im.complete; });
+          const cards = (cfg.cards || []).filter(c => !c.optional || !c.src || ready(img(c.src)));
+          j = Object.assign({}, cfg, { cards: cards.map(c => {
             if (c.gen === 'text' && !c.src) { const cv2 = genText(c.head || c.title, c.lines); return Object.assign({}, c, { src: toURL(cv2), ar: cv2.width / cv2.height }); }
             return c;
           }) });
+          if (pend) return j; // (not kept: see above)
         } else { // one image → one card
           let it = { src: cfg.src || null, ar: AR[cfg.src] || null, title: cfg.title, meta: cfg.meta, href: cfg.href || null }, w = cfg.w || 280;
           if (cfg.gen === 'code') { it.src = codeURL(); it.ar = 600 / 375; }
@@ -4054,11 +4158,14 @@
       /* ---------------------------------------------------------- loop */
       api.loop((t, dt) => {
         if (mode !== 'film') { settledTick(t); return; }
+        // (the gesture that brought us here is still unlocking audio: hold the first frame so film and music start together)
+        if (playing && !soundOn && holdUntil && performance.now() < holdUntil) { render(); syncControls(); return; }
         if (playing) {
           let p = pos + dt;
           if (soundOn && sPlaying()) {
             const sp = sHeard();
-            if (isFinite(sp)) { const err = sp - p; p = Math.abs(err) > 0.35 ? sp : p + err * 0.12; }
+            // (never more than 30 ms ahead of what is heard: at a start the picture waits for the score's first sound)
+            if (isFinite(sp)) { const err = sp - p; p = Math.abs(err) > 0.35 ? sp : Math.min(p + err * 0.12, sp + 0.03); }
           }
           pos = Math.max(0, Math.min(DUR, p));
           if (pos >= SETTLE_AT) { settle('end'); return; }
@@ -4066,11 +4173,11 @@
         render();
         syncControls();
       });
-      api.onResize(() => { relayout(); resetText(); stanzaTops = null; checkSticky(); if (mode === 'film') render(); jumpHide(); showControls(); });
+      api.onResize(() => { relayout(); resetText(); stanzaTops = null; checkSticky(); if (mode === 'film') render(); jumpHide(); showControls(); if (pillUp) placePill(); });
       api.links(SOCIALS.map(s => ({ label: s.label, href: s.href })));
       // tiny inspection hook (used by visual tests): el._bd.seek(seconds), el._bd.state()
       el._bd = { seek: s => { if (mode !== 'film') replay(); seek(s, true); }, pause: () => { if (playing) togglePlay(); },
-        state: () => ({ mode, pos, playing, soundOn, score: !!score, scorePlaying: sPlaying(), scorePos: score ? sPos() : null, frames: MONTAGE.length, projects: PROJECTS.length }),
+        state: () => ({ mode, pos, playing, soundOn, score: !!score, scorePlaying: sPlaying(), scorePos: score ? sPos() : null, bed: !!bed, pill: pillUp, frames: MONTAGE.length, projects: PROJECTS.length }),
         bus: () => api.bus(), flip: FLIP, foley: () => FOLEY.map(e => Object.assign({}, e)), bench: () => G && benchGeom(), engine: () => G && engGeom() };
 
       /* ---------------------------------------------------------- lifecycle */
@@ -4086,12 +4193,20 @@
           if (watched && performance.now() - settledAt < RETURN_MS) { settle('return'); return; }
           showControls(); api.caption(CAP_FILM);
           relayout(); render(); syncControls();
+          holdUntil = 0;
+          if (!audioLive()) {
+            // an unlock is on its way (a gesture just created the audio context, or the browser carried the visitor's
+            // activation over from the page before): hold the first frame for it; else, after a beat, invite a gesture
+            const a = AU(), coming = !!(a && (a.ctx || (navigator.userActivation && navigator.userActivation.hasBeenActive)));
+            if (coming) holdUntil = performance.now() + 450;
+            pillSoon(450);
+          }
           // (keyboard hint: only where there is a keyboard; it never outlives film mode — settle() clears it)
           if (!TOUCH && innerWidth >= 800) setTimeout(() => { if (api.isActive() && aud() && mode === 'film' && pos < 3) { api.hint('Space pause · Enter skip to the index', 3200); hintUntil = performance.now() + 3200; } }, 1400);
         },
         exit() {
           if (mode === 'settled') settledAt = performance.now(); // (the index was on screen until now)
-          playing = false;
+          playing = false; restart0 = false; holdUntil = 0; pill(false);
           scoreStop(0.3); stopBed(); jumpHide(); ovHideAll();
           clearTimeout(bedTimer); clearTimeout(tailTimer); clearTimeout(scrubTimer);
         },
@@ -4100,12 +4215,19 @@
           if (soundOn) {
             const a = aud();
             FOLEY_ON = !!(a && a.play && typeof a.play.click === 'function');
-            if (mode === 'film' && playing) scorePlay(pos);
-            else if (mode === 'settled') startBed();
+            // the first sound of a film that began without it (the pill was up, or it asked for 0:00, or the film is only
+            // a moment old: the gesture that brought us here is still unlocking audio): picture and music start together
+            const r0 = restart0 || pillUp;
+            restart0 = false; holdUntil = 0; pill(false);
+            if (mode === 'film' && playing) {
+              if (r0 || pos < FRESH) { pos = 0; lastSlider = -1; render(); syncControls(); }
+              scorePlay(pos);
+            } else if (mode === 'settled') startBed();
           } else { scoreStop(0.25); stopBed(); }
         },
         key(e) {
           const k = e.key;
+          if ((k === ' ' || k === 'Spacebar' || k === 'Enter') && mode === 'film' && pillWasUp()) { pillGoneAt = -1e9; playWithSound(); return true; }
           if (k === ' ' || k === 'Spacebar') { if (mode === 'film') togglePlay(); else replay(); ui('tick'); return true; }
           if (k === 'Enter') { if (mode === 'film') { settle('skip'); return true; } return false; }
           if (k === 'r' || k === 'R') { ui('select'); replay(); return true; }
