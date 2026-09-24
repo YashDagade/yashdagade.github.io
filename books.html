@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Books read — Yash Dagade</title>
+  <meta name="description" content="Books Yash Dagade has read: his latest read first, then the rest in no particular order.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/rocket-icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site/css/site.css?v=r3">
+  <script>
+    // Titles and authors type themselves in as they scroll into view. Decide before first paint, so nothing
+    // flashes; without JS, IntersectionObserver or with reduced motion everything is simply shown.
+    try {
+      if ('IntersectionObserver' in window && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+        document.documentElement.classList.add('books-anim');
+      }
+    } catch (e) {}
+  </script>
+  <style>
+    /* Books page (page mode). Page-private: every rule is scoped to .books / .book / .books-veil. */
+    .page.books { max-width: 1160px; padding: 74px 40px 150px; }
+
+    /* Context headline: same place and type scale as a scene's api.headline (centered serif, top 74 px,
+       title clamp(19–25 px), sub clamp(14–16.5 px) #444, words fade in), but in the page flow, since pages scroll. */
+    .books .page-headline { max-width: 900px; margin: 0 auto; text-align: center; font-family: var(--serif); color: var(--ink); letter-spacing: 0; text-wrap: balance; }
+    .books .page-headline .hl-title { margin: 0; font-size: clamp(19px, 1.62vw, 25px); line-height: 1.3; letter-spacing: -.012em; font-weight: 400; }
+    .books .page-headline .hl-sub { margin: 8px auto 0; max-width: 820px; font-size: clamp(14px, 1.08vw, 16.5px); line-height: 1.45; color: #444; }
+    .books .page-headline em { font-style: italic; }
+    .books .page-headline .hl-in { display: inline-block; animation: yd-hl-in .55s var(--ease) both; }
+    .books-anim .books .page-headline:not(.is-split) { visibility: hidden; }
+
+    .books .shelf-head {
+      display: flex; align-items: center; gap: 16px;
+      margin: 64px 0 34px;
+      font: 400 12px/15px var(--mono); letter-spacing: .02em; color: #555;
+    }
+    .books section:first-of-type .shelf-head { margin-top: 52px; }
+    .books .shelf-head .rule { flex: 1; height: 1px; background: var(--g300); transform-origin: 0 50%; }
+    .books .shelf-head .n { min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+
+    .books .shelf {
+      list-style: none; margin: 0; padding: 0;
+      display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: 36px; row-gap: 56px;
+    }
+    .book { position: relative; min-width: 0; cursor: default; }
+    /* Every cover is the same height and sits on the same baseline; widths follow the real jackets. */
+    .book .cover { position: relative; aspect-ratio: 7 / 10; }
+    .book .cover img {
+      position: absolute; left: 0; bottom: 0;
+      display: block; width: auto; height: 100%; max-width: 100%;
+      background: var(--g100);
+      outline: 1px solid rgba(0, 0, 0, .1); outline-offset: -1px;
+    }
+    /* hover: a tiny deep-blue tick draws under the cover */
+    .book .cover::after {
+      content: ''; position: absolute; left: 0; bottom: -9px;
+      width: 18px; height: 1px; background: var(--accent);
+      transform: scaleX(0); transform-origin: 0 50%;
+      transition: transform .28s var(--ease);
+    }
+    .book:hover .cover::after { transform: scaleX(1); }
+
+    .book .t {
+      display: block; margin-top: 18px;
+      font-style: normal; font-size: 15.5px; line-height: 1.3; letter-spacing: -.003em; color: var(--ink);
+    }
+    .book .a {
+      display: block; margin-top: 5px;
+      font-family: var(--mono); font-size: 12px; line-height: 1.45; letter-spacing: .01em; color: #555;
+    }
+    .book .latest {
+      display: inline-flex; align-items: center; gap: 7px; margin-top: 9px;
+      font-family: var(--mono); font-size: 12px; line-height: 15px; letter-spacing: .02em; color: var(--accent);
+    }
+    .book .latest::before { content: ''; width: 5px; height: 5px; background: var(--accent); }
+
+    .books .note { margin: 96px 0 0; font: 12px/15px var(--mono); letter-spacing: .02em; color: #555; }
+    .books .sr {
+      position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+
+    /* Once the page scrolls, a taller top veil keeps colorful covers out from under the wordmark.
+       Off at the top, so it never fades the headline. Below .chrome-top (40) and the hint (35). */
+    .books-veil {
+      position: fixed; inset: 0 0 auto 0; height: 84px; z-index: 30; pointer-events: none;
+      background: linear-gradient(#fff 62%, rgba(255, 255, 255, 0));
+      opacity: 0; transition: opacity .25s ease;
+    }
+    .books-veil.is-on { opacity: 1; }
+
+    /* ---- motion: covers fade up, then title and author type on behind a thin caret ---- */
+    .books-anim .book .cover img { opacity: 0; transform: translateY(10px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    .books-anim .book.is-in.is-loaded .cover img { opacity: 1; transform: none; }
+    .books-anim .book .t, .books-anim .book .a { visibility: hidden; }
+    .books-anim .book.is-typed .t, .books-anim .book.is-typed .a { visibility: visible; }
+    .books .ty .on, .books .ty .caret { visibility: visible; }
+    .books .ty .caret { position: relative; }
+    .books .ty .caret::after {
+      content: ''; position: absolute; left: .5px; top: .1em; bottom: .04em; width: 1px;
+      background: var(--accent); opacity: 0;
+    }
+    .books .ty.is-typing .caret::after { opacity: 1; }
+    .books .ty.is-resting .caret::after { animation: yd-blink .5s steps(2, jump-none) 2; }
+    .books-anim .book .latest { opacity: 0; transition: opacity .6s var(--ease); }
+    .books-anim .book.is-typed .latest { opacity: 1; }
+    .books-anim .shelf-head .rule { transform: scaleX(0); transition: transform 1.2s var(--ease-io); }
+    .books-anim .shelf-head .n { opacity: 0; transition: opacity .3s; }
+    .books-anim .shelf-head.is-in .rule { transform: none; }
+    .books-anim .shelf-head.is-in .n { opacity: 1; }
+
+    /* wide screens: the shelf grows with the window, so a big screen never shows smaller covers than a laptop */
+    @media (min-width: 1401px) {
+      .page.books { max-width: min(1320px, calc(100vw - 160px)); }
+    }
+    @media (max-width: 1100px) {
+      .books .shelf { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 30px; row-gap: 50px; }
+    }
+    @media (max-width: 900px) {
+      .books .shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    /* short laptop / tablet-landscape windows: lift the first row so the latest read and its label sit above the fold */
+    @media (max-height: 720px) and (min-width: 801px) {
+      .books section:first-of-type .shelf-head { margin: 34px 0 24px; }
+    }
+    @media (max-height: 720px) and (min-width: 801px) and (max-width: 900px) {
+      .books .shelf { grid-template-columns: repeat(5, minmax(0, 1fr)); column-gap: 20px; }
+    }
+    @media (max-width: 800px) {
+      /* phones: like a scene's headline, left-aligned from top 58 px at 17 / 13.5 px */
+      .page.books { padding: 58px 16px 130px; }
+      .books .page-headline { text-align: left; text-wrap: pretty; }
+      .books .page-headline .hl-title { font-size: 17px; line-height: 1.3; }
+      .books .page-headline .hl-sub { margin-top: 5px; font-size: 13.5px; }
+      .books .shelf-head { margin: 44px 0 22px; }
+      .books section:first-of-type .shelf-head { margin-top: 30px; }
+      .books .shelf { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 14px; row-gap: 32px; }
+      .book .t { margin-top: 14px; font-size: 14px; }
+      /* names are kept whole by the script (non-breaking spaces, relaxed only when a name cannot fit);
+         a 6 px overhang into the 14 px gap lets 15-character names stay on one line at 375 px */
+      .book .a { margin-top: 4px; margin-right: -6px; letter-spacing: 0; overflow-wrap: anywhere; }
+      .book .cover::after { bottom: -7px; }
+      .books .note { margin-top: 64px; }
+      .books-veil { height: 76px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="chrome-top">
+    <a class="wordmark" href="index.html" aria-label="Yash Dagade, home">Yash Dagade</a>
+    <button class="pill pill--menu" type="button" aria-haspopup="dialog" aria-controls="menu">[M]</button>
+  </header>
+  <div class="books-veil" aria-hidden="true"></div>
+
+  <article class="page books">
+    <header class="page-headline">
+      <h1 class="sr">Books read</h1>
+      <p class="hl-title">Books I’ve read, in no particular order.</p>
+      <p class="hl-sub">Except the first: my latest read, <em>Lee Kuan Yew</em> by Graham Allison and Robert D. Blackwill. Then 26 other recent reads and 10 from earlier.</p>
+    </header>
+
+    <section aria-labelledby="shelf-recent">
+      <h2 class="shelf-head"><span id="shelf-recent">Recently</span><span class="rule" aria-hidden="true"></span><span class="n" data-n="27">27</span></h2>
+      <ul class="shelf">
+        <li class="book is-latest">
+          <div class="cover"><img src="site/img/books/lee-kuan-yew.jpg" srcset="site/img/books/hd/lee-kuan-yew.jpg 2x" width="241" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t" title="Lee Kuan Yew: The Grand Master’s Insights on China, the United States, and the World">Lee Kuan Yew</cite>
+          <span class="a">Graham&nbsp;Allison &amp;&nbsp;Robert&nbsp;D.&nbsp;Blackwill, with&nbsp;Ali&nbsp;Wyne</span>
+          <span class="latest">Latest read</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/history-of-love.jpg" srcset="site/img/books/hd/history-of-love.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The History of Love</cite>
+          <span class="a">Nicole&nbsp;Krauss</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/iliad.jpg" srcset="site/img/books/hd/iliad.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Iliad</cite>
+          <span class="a">Homer</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/poor-charlies-almanack.jpg" srcset="site/img/books/hd/poor-charlies-almanack.jpg 2x" width="250" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Poor Charlie’s Almanack</cite>
+          <span class="a">Charles&nbsp;T.&nbsp;Munger</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/infinite-machine.jpg" srcset="site/img/books/hd/infinite-machine.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Infinite Machine</cite>
+          <span class="a">Camila&nbsp;Russo</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/how-will-you-measure-your-life.jpg" srcset="site/img/books/hd/how-will-you-measure-your-life.jpg 2x" width="241" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">How Will You Measure Your Life?</cite>
+          <span class="a">Clayton&nbsp;M.&nbsp;Christensen, James&nbsp;Allworth &amp;&nbsp;Karen&nbsp;Dillon</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/unreasonable-hospitality.jpg" srcset="site/img/books/hd/unreasonable-hospitality.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Unreasonable Hospitality</cite>
+          <span class="a">Will&nbsp;Guidara</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/surely-youre-joking.jpg" srcset="site/img/books/hd/surely-youre-joking.jpg 2x" width="234" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Surely You’re Joking, Mr. Feynman!</cite>
+          <span class="a">Richard&nbsp;P.&nbsp;Feynman</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/cant-hurt-me.jpg" srcset="site/img/books/hd/cant-hurt-me.jpg 2x" width="233" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Can’t Hurt Me</cite>
+          <span class="a">David&nbsp;Goggins</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/becoming-steve-jobs.jpg" srcset="site/img/books/hd/becoming-steve-jobs.jpg 2x" width="233" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Becoming Steve Jobs</cite>
+          <span class="a">Brent&nbsp;Schlender &amp;&nbsp;Rick&nbsp;Tetzeli</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/7-powers.jpg" srcset="site/img/books/hd/7-powers.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">7 Powers</cite>
+          <span class="a">Hamilton&nbsp;Helmer</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/let-my-people-go-surfing.jpg" srcset="site/img/books/hd/let-my-people-go-surfing.jpg 2x" width="246" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Let My People Go Surfing</cite>
+          <span class="a">Yvon&nbsp;Chouinard</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/zero-to-one.jpg" srcset="site/img/books/hd/zero-to-one.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Zero to One</cite>
+          <span class="a">Peter&nbsp;Thiel with&nbsp;Blake&nbsp;Masters</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/when-breath-becomes-air.jpg" srcset="site/img/books/hd/when-breath-becomes-air.jpg 2x" width="244" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">When Breath Becomes Air</cite>
+          <span class="a">Paul&nbsp;Kalanithi</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/make-time.jpg" srcset="site/img/books/hd/make-time.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Make Time</cite>
+          <span class="a">Jake&nbsp;Knapp &amp;&nbsp;John&nbsp;Zeratsky</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/start-with-why.jpg" srcset="site/img/books/hd/start-with-why.jpg 2x" width="237" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Start with Why</cite>
+          <span class="a">Simon&nbsp;Sinek</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/what-we-owe-the-future.jpg" srcset="site/img/books/hd/what-we-owe-the-future.jpg 2x" width="233" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">What We Owe the Future</cite>
+          <span class="a">William&nbsp;MacAskill</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/hard-thing.jpg" srcset="site/img/books/hd/hard-thing.jpg 2x" width="246" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Hard Thing About Hard Things</cite>
+          <span class="a">Ben&nbsp;Horowitz</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/algorithms-to-live-by.jpg" srcset="site/img/books/hd/algorithms-to-live-by.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Algorithms to Live By</cite>
+          <span class="a">Brian&nbsp;Christian &amp;&nbsp;Tom&nbsp;Griffiths</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/infinite-game.jpg" srcset="site/img/books/hd/infinite-game.jpg 2x" width="213" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Infinite Game</cite>
+          <span class="a">Simon&nbsp;Sinek</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/worlds-i-see.jpg" srcset="site/img/books/hd/worlds-i-see.jpg 2x" width="237" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Worlds I See</cite>
+          <span class="a">Fei-Fei&nbsp;Li</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/atomic-habits.jpg" srcset="site/img/books/hd/atomic-habits.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Atomic Habits</cite>
+          <span class="a">James&nbsp;Clear</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/thinking-fast-and-slow.jpg" srcset="site/img/books/hd/thinking-fast-and-slow.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Thinking, Fast and Slow</cite>
+          <span class="a">Daniel&nbsp;Kahneman</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/short-history.jpg" srcset="site/img/books/hd/short-history.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">A Short History of Nearly Everything</cite>
+          <span class="a">Bill&nbsp;Bryson</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/how-to-win-friends.jpg" srcset="site/img/books/hd/how-to-win-friends.jpg 2x" width="232" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">How to Win Friends and Influence People</cite>
+          <span class="a">Dale&nbsp;Carnegie</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/thank-you-for-arguing.jpg" srcset="site/img/books/hd/thank-you-for-arguing.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Thank You for Arguing</cite>
+          <span class="a">Jay&nbsp;Heinrichs</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/born-of-this-land.jpg" srcset="site/img/books/hd/born-of-this-land.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Born of This Land</cite>
+          <span class="a">Chung&nbsp;Ju-yung</span>
+        </li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="shelf-also">
+      <h2 class="shelf-head"><span id="shelf-also">Also read</span><span class="rule" aria-hidden="true"></span><span class="n" data-n="10">10</span></h2>
+      <ul class="shelf">
+        <li class="book">
+          <div class="cover"><img src="site/img/books/real-world-of-college.jpg" srcset="site/img/books/hd/real-world-of-college.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Real World of College</cite>
+          <span class="a">Wendy&nbsp;Fischman &amp;&nbsp;Howard&nbsp;Gardner</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/101-essays.jpg" srcset="site/img/books/hd/101-essays.jpg 2x" width="230" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">101 Essays That Will Change the Way You Think</cite>
+          <span class="a">Brianna&nbsp;Wiest</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/no-rules-rules.jpg" srcset="site/img/books/hd/no-rules-rules.jpg 2x" width="237" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">No Rules Rules</cite>
+          <span class="a">Reed&nbsp;Hastings &amp;&nbsp;Erin&nbsp;Meyer</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/experiments-with-truth.jpg" srcset="site/img/books/hd/experiments-with-truth.jpg 2x" width="242" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Story of My Experiments with Truth</cite>
+          <span class="a">M.&nbsp;K.&nbsp;Gandhi</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/few-billion-dollars.jpg" srcset="site/img/books/hd/few-billion-dollars.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">How to Make a Few Billion Dollars</cite>
+          <span class="a">Brad&nbsp;Jacobs</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/made-to-stick.jpg" srcset="site/img/books/hd/made-to-stick.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Made to Stick</cite>
+          <span class="a">Chip&nbsp;Heath &amp;&nbsp;Dan&nbsp;Heath</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/grinding-it-out.jpg" srcset="site/img/books/hd/grinding-it-out.jpg 2x" width="216" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Grinding It Out</cite>
+          <span class="a">Ray&nbsp;Kroc with&nbsp;Robert&nbsp;Anderson</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/culture-of-growth.jpg" srcset="site/img/books/hd/culture-of-growth.jpg 2x" width="242" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">A Culture of Growth</cite>
+          <span class="a">Joel&nbsp;Mokyr</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/grit.jpg" srcset="site/img/books/hd/grit.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">Grit</cite>
+          <span class="a">Angela&nbsp;Duckworth</span>
+        </li>
+        <li class="book">
+          <div class="cover"><img src="site/img/books/medici-effect.jpg" srcset="site/img/books/hd/medici-effect.jpg 2x" width="240" height="360" alt="" loading="lazy" decoding="async"></div>
+          <cite class="t">The Medici Effect</cite>
+          <span class="a">Frans&nbsp;Johansson</span>
+        </li>
+      </ul>
+    </section>
+
+    <p class="note">Cover art © the respective publishers.</p>
+  </article>
+
+  <button class="pill pill--find" type="button" aria-haspopup="dialog" aria-controls="find">Find [F]</button>
+  <button class="sound-toggle" id="sound" type="button" aria-label="Toggle sound [S]">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <path d="M2.5 6h2.5l3.5-3v10l-3.5-3H2.5z" stroke-linejoin="round"/>
+      <path class="wave" d="M10.8 5.6c.9.7 1.4 1.5 1.4 2.4s-.5 1.7-1.4 2.4"/>
+      <path class="wave" d="M12.4 3.9c1.4 1.1 2.1 2.5 2.1 4.1s-.7 3-2.1 4.1"/>
+      <path class="x" d="M11 6l3 3m0-3l-3 3"/>
+    </svg>
+  </button>
+  <div class="hint" id="hint" role="status"></div>
+  <div class="reveal-card" id="reveal" aria-hidden="true"></div>
+
+  <div class="overlay" id="find" role="dialog" aria-modal="true" aria-label="Find" aria-hidden="true">
+    <div class="palette">
+      <label class="palette__input">
+        <span class="prefix">yashdagade/</span><span class="typed"></span><span class="cursor"></span>
+        <input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search pages">
+      </label>
+      <ul class="palette__list" role="listbox"></ul>
+      <div class="palette__foot">
+        <span class="l"><span>[↓] [↑]</span><span>[?] Shortcuts</span></span>
+        <span>[enter] to visit</span>
+      </div>
+    </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
+  <div class="overlay" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+    <nav class="menu-panel"></nav>
+  </div>
+  <div class="overlay" id="shortcuts" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" aria-hidden="true">
+    <div class="palette shortcuts">
+      <h3>Shortcuts</h3>
+      <dl>
+        <dt>[F]</dt><dd>Find anything</dd>
+        <dt>[M]</dt><dd>Menu</dd>
+        <dt>[S]</dt><dd>Sound on / off</dd>
+        <dt>[esc]</dt><dd>Close</dd>
+      </dl>
+    </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
+
+  <script src="site/js/audio.js?v=r3"></script>
+  <script src="site/js/core.js?v=r3"></script>
+  <script>
+    // Scene metadata only (for the palette + menu); scenes themselves are not loaded here.
+    [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['radial-vcreg', 3, 'Radial-VCReg'], ['skywindfarm', 4, 'SkyWindFarm'], ['build', 5, 'Build']]
+      .forEach(function (s) { Site.register({ id: s[0], n: s[1], title: s[2], path: '/' + s[0], create: function () { return {}; } }); });
+    document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'books' }); });
+
+    // Context headline: words fade in one by one (the scenes' yd-hl-in entrance, same 22 ms stagger).
+    // The taller top veil switches on once the page has scrolled.
+    (function () {
+      'use strict';
+      var g = document.querySelector('.books .page-headline');
+      try {
+        if (g && document.documentElement.classList.contains('books-anim')) {
+          var i = 0;
+          Array.prototype.forEach.call(g.querySelectorAll('.hl-title, .hl-sub'), function wrap(node) {
+            Array.prototype.slice.call(node.childNodes).forEach(function (c) {
+              if (c.nodeType === 1) { wrap(c); return; }
+              if (c.nodeType !== 3) return;
+              var frag = document.createDocumentFragment();
+              c.nodeValue.split(/(\s+)/).forEach(function (w) {
+                if (!w) return;
+                if (/^\s+$/.test(w)) { frag.appendChild(document.createTextNode(w)); return; }
+                var s = document.createElement('span');
+                s.className = 'w hl-in';
+                s.style.animationDelay = Math.min(i++ * 22, 900) + 'ms';
+                s.textContent = w;
+                frag.appendChild(s);
+              });
+              node.replaceChild(frag, c);
+            });
+          });
+        }
+      } catch (e) { /* the headline must always show */ }
+      if (g) g.classList.add('is-split');
+
+      var veil = document.querySelector('.books-veil'), on = false, ticking = false;
+      function sync() {
+        ticking = false;
+        var want = (window.scrollY || document.documentElement.scrollTop || 0) > 24;
+        if (want !== on) { on = want; veil.classList.toggle('is-on', on); }
+      }
+      if (veil) {
+        window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(sync); } }, { passive: true });
+        sync();
+      }
+    })();
+
+    (function () {
+      'use strict';
+      var anim = document.documentElement.classList.contains('books-anim');
+      var books = Array.prototype.slice.call(document.querySelectorAll('.book'));
+      var heads = Array.prototype.slice.call(document.querySelectorAll('.shelf-head'));
+
+      // Sound: core's micro-foley UI voices. Silent until the first gesture unlocks audio, and while muted.
+      function ui(name, o) {
+        try {
+          var a = window.Site && Site.audio;
+          if (a && a.ready && a.enabled && a.ui && a.ui[name]) a.ui[name](o);
+        } catch (e) { /* sound must never break the page */ }
+      }
+      var lastKey = 0, lastHover = 0;
+      function keystroke(now) {            // rate-limited: a soft run of switches, never a machine gun
+        if (now - lastKey < 90) return;
+        lastKey = now;
+        ui('type', { gain: 0.5 });
+      }
+
+      books.forEach(function (b) {
+        b.addEventListener('pointerenter', function (e) {
+          if (e.pointerType && e.pointerType !== 'mouse') return;
+          var now = performance.now();
+          if (now - lastHover < 60) return;
+          lastHover = now;
+          ui('hover');
+        });
+        var img = b.querySelector('img');
+        var loaded = function () { b.classList.add('is-loaded'); };
+        if (img.complete && img.naturalWidth) loaded();
+        else { img.addEventListener('load', loaded); img.addEventListener('error', loaded); }
+      });
+
+      // ---- names stay whole ----
+      // In the markup every person's name, with the "&" or "with" that introduces it, is one unit (U+00A0
+      // between its parts), so a credit wraps between people, never inside a name. When a column is too narrow
+      // for a unit (phones, or a long name like "Clayton M. Christensen,"), it is split once, as early as the
+      // rest still fits, so the surname keeps as much of the name as possible ("& Robert / D. Blackwill,").
+      // NBSP and space are both one character, so typing timings never change.
+      var NB = ' ';
+      function norm(s) { return s.replace(/[ \t\r\n]+/g, ' ').trim(); }   // not \s: that would eat the NBSPs
+      function fitTok(tok, cols) {
+        if (tok.length <= cols || tok.indexOf(NB) < 0) return tok;
+        var parts = tok.split(NB);
+        for (var i = 1; i < parts.length; i++) {
+          var tail = parts.slice(i).join(NB);
+          if (tail.length <= cols) return fitTok(parts.slice(0, i).join(NB), cols) + ' ' + tail;
+        }
+        return parts.join(' ');
+      }
+      function fit(full, cols) {
+        return full.split(' ').map(function (tok) { return fitTok(tok, cols); }).join(' ');
+      }
+      var authors = books.map(function (b) { return b.querySelector('.a'); });
+      function columns() {                 // characters that fit on one author line (monospace)
+        var el = authors[0], p = document.createElement('span');
+        p.style.cssText = 'position:absolute;left:0;top:0;visibility:hidden;white-space:pre';
+        p.textContent = '0000000000';
+        el.appendChild(p);
+        var cw = p.getBoundingClientRect().width / 10;
+        el.removeChild(p);
+        return cw > 0 ? Math.max(6, Math.floor((el.clientWidth + 0.5) / cw)) : 99;
+      }
+      var cols = columns();
+      authors.forEach(function (el) { el._full = norm(el.textContent); });
+
+      function refit() {
+        var c = columns();
+        if (c === cols) return;
+        cols = c;
+        books.forEach(function (b, i) {
+          var el = authors[i], L = b._lines && b._lines[1], t = fit(el._full, cols);
+          if (!L) { if (el.textContent !== t) el.textContent = t; return; }
+          if (t === L.text) return;
+          L.text = t;
+          L.sr.textContent = t;
+          if (L.done) el.textContent = t;
+          else { L.on.textContent = t.slice(0, L.k); L.off.textContent = t.slice(L.k); }
+        });
+      }
+      var rt = 0;
+      window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(refit, 120); });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(refit);
+
+      if (!anim) {
+        authors.forEach(function (el) { el.textContent = fit(el._full, cols); });
+        return;
+      }
+
+      // Split a line into [typed | caret | not yet typed]. The untyped rest keeps its space (visibility:hidden),
+      // so wrapping is final from the first frame and nothing below ever moves.
+      function prepare(el, speed) {
+        var full = el._full || norm(el.textContent);
+        var text = fit(full, cols);
+        var sr = document.createElement('span');
+        sr.className = 'sr';
+        sr.textContent = text;
+        var ty = document.createElement('span');
+        ty.className = 'ty';
+        ty.setAttribute('aria-hidden', 'true');
+        var on = document.createElement('span');
+        on.className = 'on';
+        var caret = document.createElement('span');
+        caret.className = 'caret';
+        var off = document.createElement('span');
+        off.className = 'off';
+        off.textContent = text;
+        ty.appendChild(on); ty.appendChild(caret); ty.appendChild(off);
+        el.textContent = '';
+        el.appendChild(sr); el.appendChild(ty);
+        // quick and even: long lines type faster per key, with a little human jitter and a breath at spaces
+        var n = text.length, dt = Math.max(9, Math.min(28, speed / Math.max(1, n)));
+        var times = [0], t = 0;
+        for (var i = 1; i <= n; i++) {
+          t += dt * (0.65 + Math.random() * 0.7) + (/[  ]/.test(text.charAt(i - 1)) ? dt * 0.6 : 0);
+          times.push(t);
+        }
+        return { el: el, sr: sr, ty: ty, on: on, off: off, text: text, times: times, k: 0, done: false };
+      }
+
+      books.forEach(function (b) {
+        b._lines = [prepare(b.querySelector('.t'), 440), prepare(b.querySelector('.a'), 380)];
+      });
+
+      var jobs = [], raf = 0, nextSlot = 0;
+      function queue(b, step) {
+        var now = performance.now();
+        var at = Math.max(now, nextSlot);
+        nextSlot = at + step;                // books that arrive together start one after another
+        jobs.push({ b: b, at: at, stage: 0, line: 0, t0: 0 });
+        if (!raf) raf = requestAnimationFrame(frame);
+      }
+
+      function finish(job) {
+        job.b._lines.forEach(function (L) { L.el.textContent = L.text; L.done = true; });
+        job.b.classList.add('is-typed');
+      }
+
+      function frame(now) {
+        raf = 0;
+        for (var j = jobs.length - 1; j >= 0; j--) {
+          var job = jobs[j];
+          if (now < job.at) continue;
+          if (job.stage === 0) {                           // cover fades up, typing follows a beat later
+            job.b.classList.add('is-in');
+            job.stage = 1;
+            job.t0 = now + 170;
+            continue;
+          }
+          var L = job.b._lines[job.line];
+          if (job.stage === 1) {
+            if (now < job.t0) continue;
+            var el = now - job.t0, k = L.k, n = L.text.length;
+            if (!L.started) { L.started = true; L.ty.classList.add('is-typing'); keystroke(now); }
+            while (k < n && L.times[k + 1] <= el) k++;
+            if (k !== L.k) {
+              if (Math.floor(k / 5) !== Math.floor(L.k / 5)) keystroke(now);
+              L.k = k;
+              L.on.textContent = L.text.slice(0, k);
+              L.off.textContent = L.text.slice(k);
+            }
+            if (k >= n) {
+              L.ty.classList.remove('is-typing');
+              if (job.line === 0) { job.line = 1; job.t0 = now + 90; }
+              else { job.stage = 2; job.t0 = now; L.ty.classList.add('is-resting'); }
+            }
+          } else if (job.stage === 2 && now - job.t0 > 520) {  // caret blinks twice, then steps away
+            finish(job);
+            jobs.splice(j, 1);
+          }
+        }
+        if (jobs.length) raf = requestAnimationFrame(frame);
+      }
+
+      function countUp(h) {
+        h.classList.add('is-in');
+        var n = h.querySelector('.n'), N = Number(n.getAttribute('data-n')) || 0, t0 = performance.now();
+        (function step(now) {
+          var p = Math.min(1, Math.max(0, (now - t0) / 700)), e = 1 - Math.pow(1 - p, 3);
+          n.textContent = String(Math.round(N * e));
+          if (p < 1) requestAnimationFrame(step);
+        })(t0);
+      }
+
+      var order = heads.concat(books);
+      order.sort(function (a, b) { return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+      order.forEach(function (el, i) { el._i = i; });
+
+      var io = new IntersectionObserver(function (entries) {
+        var hits = entries
+          .filter(function (e) { return e.isIntersecting; })
+          .sort(function (a, b) { return a.target._i - b.target._i; });
+        // a row arrives as a quick cascade; a long jump down the page compresses it so nothing waits long
+        var nb = hits.filter(function (e) { return e.target.classList.contains('book'); }).length;
+        var step = Math.min(65, 720 / Math.max(1, nb));
+        hits.forEach(function (e) {
+          io.unobserve(e.target);
+          if (e.target.classList.contains('shelf-head')) countUp(e.target);
+          else queue(e.target, step);
+        });
+      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.15 });
+      order.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
+</body>
+</html>
