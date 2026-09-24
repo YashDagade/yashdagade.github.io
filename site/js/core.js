@@ -46,7 +46,6 @@
     { group: 'Pages', title: 'Books read', path: '/books', href: 'books.html' },
     { group: 'Pages', title: 'Press', path: '/press', href: 'press.html' },
     { group: 'Pages', title: 'Build (manifesto)', path: '/build', href: 'build.html' },
-    { group: 'Pages', title: 'Soundtracks (compare)', path: '/soundtracks', href: 'soundtracks.html' },
     { group: 'Writing', title: 'Dear Modern Education', path: '/dearmorderneducation', href: 'dearmorderneducation.html' },
     { group: 'Writing', title: 'From Subsistence Towards Exploration', path: '/fromsubtoexp', href: 'fromsubtoexp.html' },
     { group: 'Elsewhere', title: 'Resume', path: '/resume.pdf', href: LINKS.resume, ext: true },

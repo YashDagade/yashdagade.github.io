@@ -333,6 +333,7 @@ a fast, syncopated, polyrhythmic "assembly engine"; sub hums, server-fan whirs a
 it; it resolves with a clean "compile success" chime and crossfades into the chill background bed.
 Keep the round-2/3 rules (no flute, registers, small-speaker body).
 
-**New pages (menu only, not 1–5):** `books.html` (Books read). Soundtrack comparison: `soundtracks.html`.
-**Archives:** `site/legacy/r3/` = the site as of round 3 (first composed Build score); `site/legacy/r1/` =
-the round-1 "flute era" Build sound (reconstructed). Do not edit archives.
+**New pages (menu only, not 1–5):** `books.html` (Books read).
+**Build soundtrack:** "Bits & Atoms" (`build-score.js`) is the chosen score. Earlier versions (round-1
+microsound bed, round-3 first composed score) and a comparison page were archived in commit 2c59e57
+and then removed from the tree.
