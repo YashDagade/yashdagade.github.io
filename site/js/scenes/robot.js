@@ -337,6 +337,7 @@
       const gLn = document.createElementNS(NS, 'g'); svg.append(gLn);
       const gPl = document.createElementNS(NS, 'g'); svg.append(gPl);   // white plates under labels
       const gTx = document.createElementNS(NS, 'g'); svg.append(gTx);
+      const gHv = document.createElementNS(NS, 'g'); svg.append(gHv);   // the hover card, above every other label
       const loadEl = mk('div', 'rb-load', stage);
       loadEl.textContent = 'loading model · 0%';
       stage.setAttribute('role', 'img');
@@ -515,12 +516,17 @@
         L.top = STILL ? 0 : L.hb + (L.m ? 14 : 22);
         L.bottom = STILL ? H : H - (L.m ? 112 : 86);
         L.panelW = L.m ? 0 : clamp(Math.round(W * 0.19), 210, 290);
+        // right-hand readout panels only where the drawing keeps ≥ 420 px beside them (not on tablets / narrow windows)
+        L.side = !STILL && !L.m && W - L.gut - L.panelW - 44 - L.left >= 420;
         L.clipB = STILL ? 0 : L.m ? 96 : 70;
         if (STILL) { L.left = 0; L.gut = 0; }
         const hlTop = STILL ? null : L.m ? 94 : null;
         if (!STILL && hlTop !== L.hlTop) { L.hlTop = hlTop; api.headlineTop(hlTop); }
       }
-      const artRect = (panel, extraR) => ({ x0: L.left, x1: W - L.gut - (panel && !L.m ? L.panelW + 44 : 0) - (extraR || 0), y0: L.top, y1: L.bottom });
+      const artRect = (panel, extraR) => ({ x0: L.left, x1: W - L.gut - (panel && L.side ? L.panelW + 44 : 0) - (extraR || 0), y0: L.top, y1: L.bottom });
+      // Brain & power without the side panel: every label in one column at the right
+      const brainCol = () => L.m || !L.side;
+      const brainColW = () => (L.m ? nameW(BRAIN_LABELS) : labW(BRAIN_LABELS));
 
       // Per-step framing (targets for the smoothed camera). Called on step change, resize and headline change.
       function refit() {
@@ -544,13 +550,13 @@
           T1.el = 13;
           const keep = new Set(['torso_frame', 'deck', 'pi', 'battery', 'buck', 'busboard', 'servo_hip_yaw_R', 'servo_hip_yaw_L']);
           const e = extRange(pts((p) => (keep.has(p.id) ? BRAIN_LIFT[p.id] || 0 : false)), azRange(-44, -28, 4), T1.el, T);
-          f = L.m ? fitTo(e, artRect(false, nameW(BRAIN_LABELS) + 26), { l: 4, r: 4, t: 20, b: 60, max: 2.6 })
+          f = brainCol() ? fitTo(e, artRect(false, brainColW() + (L.m ? 26 : 56)), { l: L.m ? 4 : 20, r: 4, t: 20, b: L.m ? 60 : 90, max: 2.6 })
             : fitTo(e, artRect(true), { l: 190, r: 170, t: 20, b: 110, max: 2.6 });
         } else if (id === 'joints') {
           T1.el = 7;
           const e = extOf(pts(), -58, T1.el, T);
           e.x0 -= 40; e.x1 += 40;
-          f = fitTo(e, artRect(true), { l: L.m ? 96 : 190, r: L.m ? 20 : 60, t: 10, b: 14 });
+          f = fitTo(e, artRect(true), { l: L.m ? 96 : L.side ? 190 : 150, r: L.m ? 20 : 60, t: 10, b: 14 });
         } else if (id === 'dims') {
           return fitDims();
         } else if (id === 'walk') {
@@ -577,10 +583,19 @@
         const P = pts();
         const eF = extOf(P, 0, 0, T), eS = extOf(P, -90, 0, T);
         const r = artRect(false);
-        if (L.m) {
-          const pad = { l: 58, r: 58, t: 34, b: 50 };
+        // side by side unless that halves the drawing (tall tablets): then one view at a time, like phones
+        const pad = L.m ? { l: 58, r: 58, t: 34, b: 50 } : { l: 84, r: 84, t: 44, b: 62 };
+        const s1 = Math.min(fitTo(eF, r, pad).s, fitTo(eS, r, pad).s);
+        let s2 = 0;
+        if (!L.m) {
+          const mid0 = (r.x0 + r.x1) / 2;
+          s2 = Math.min(fitTo(eF, { x0: r.x0, x1: mid0 - 10, y0: r.y0, y1: r.y1 }, { l: 70, r: 50, t: 40, b: 58 }).s,
+            fitTo(eS, { x0: mid0 + 10, x1: r.x1, y0: r.y0, y1: r.y1 }, { l: 70, r: 96, t: 40, b: 58 }).s, 2.2);
+        }
+        L.dimsAlt = L.m || s2 < 0.72 * Math.min(s1, 2.2);
+        if (L.dimsAlt) {
           const fF = fitTo(eF, r, pad), fS = fitTo(eS, r, pad);
-          const s = Math.min(fF.s, fS.s);
+          const s = Math.min(fF.s, fS.s, 2.2);
           const a = fitTo(eF, r, Object.assign({ max: s }, pad)), b = fitTo(eS, r, Object.assign({ max: s }, pad));
           Object.assign(T1, { az: 0, el: 0, s, cx: a.cx, cy: a.cy });
           Object.assign(T2, { az: -90, el: 0, s, cx: b.cx, cy: b.cy });
@@ -630,7 +645,7 @@
         if (STILL) return;
         const id = STEPS[S.step].id;
         const x = W - L.gut - L.panelW;
-        const on = { brain: !L.m && id === 'brain', joints: !L.m && id === 'joints', walk: !L.m && id === 'walk', hand: id === 'hand' };
+        const on = { brain: L.side && id === 'brain', joints: L.side && id === 'joints', walk: L.side && id === 'walk', hand: id === 'hand' };
         pBrain.classList.toggle('is-on', on.brain);
         pJoint.classList.toggle('is-on', on.joints);
         pWalk.classList.toggle('is-on', on.walk);
@@ -656,21 +671,20 @@
         const capH = 25;
         const aw = r.x1 - r.x0, ah = r.y1 - r.y0;
         let pw = Math.round((ah - capH - 8) * 0.8);
-        pw = Math.max(120, Math.min(pw, Math.round(aw * (L.m ? 0.6 : 0.44)), 560));
+        pw = Math.max(120, Math.min(pw, Math.round(aw * (L.m ? 0.6 : W <= 1100 ? 0.56 : 0.44)), 560));
         const ph = Math.round(pw * 1.25);
         const yt0 = PH_TOP * ph, yb0 = PH_BOT * ph;
         const s = (yb0 - yt0) / (TOP * Math.cos(6 * D2R));
         const mR = RING_R * s;                              // the model's half-width on screen (turntable)
         const gap = L.m ? 14 : Math.round(clamp(aw * 0.07, 48, 110));
-        const dimW = L.m ? 0 : 84;                          // room for the 446.2 mm dimension left of the model
-        const pairW = dimW + 2 * mR + gap + pw;
-        let x;
-        if (L.m) x = r.x1 - pw;
-        else x = Math.round(r.x0 + Math.max(0, (aw - pairW) / 2) + dimW + 2 * mR + gap);
-        const mx = L.m ? Math.round((r.x0 + x - gap) / 2) : x - gap - mR;
+        const dimW = 84;                                    // room for the 446.2 mm dimension left of the model
+        // compact (phones, tablets): photo flush right, the model centred in what is left, no dimension line
+        const compact = L.m || dimW + 2 * mR + gap + pw > aw;
+        const x = compact ? r.x1 - pw : Math.round(r.x0 + (aw - (dimW + 2 * mR + gap + pw)) / 2 + dimW + 2 * mR + gap);
+        const mx = compact ? Math.round((r.x0 + x - gap) / 2) : x - gap - mR;
         const totalH = ph + capH;
         const y = Math.round(clamp((r.y0 + r.y1) / 2 - totalH / 2, r.y0, Math.max(r.y0, r.y1 - totalH)));
-        L.hand = { x, y, w: pw, h: ph, s, mx, mR, yt: y + yt0, yb: y + yb0 };
+        L.hand = { x, y, w: pw, h: ph, s, mx, mR, yt: y + yt0, yb: y + yb0, dim: !compact };
         pHand.style.width = pw + 'px';
         frHand.style.height = ph + 'px';
         pHand.style.transform = `translate(${Math.round(x)}px, ${y}px)`;
@@ -692,11 +706,13 @@
       /* ---------------------------------------------------------------- SVG overlay (retained, keyed per frame) */
       const pool = new Map();
       let used = new Set();
+      // pooled SVG nodes, keyed by tag + key (two draws may share a key but never an element)
       function node(key, tag, layer) {
-        let n = pool.get(key);
-        if (!n) { n = document.createElementNS(NS, tag); n._a = {}; (layer || gLn).append(n); pool.set(key, n); }
+        const pk = tag + ':' + key;
+        let n = pool.get(pk);
+        if (!n) { n = document.createElementNS(NS, tag); n._a = {}; (layer || gLn).append(n); pool.set(pk, n); }
         if (n._hid) { n.style.display = ''; n._hid = false; }
-        used.add(key);
+        used.add(pk);
         return n;
       }
       function at(n, k, v) { if (n._a[k] !== v) { n._a[k] = v; n.setAttribute(k, v); } }
@@ -1317,8 +1333,8 @@
           T1.az = -58;
           jointsFrame(REDUCED ? 5.1 : t);
         } else if (id === 'dims') {
-          // dims draw on in sequence (see drawDims); phones alternate front and side
-          if (L.m) {
+          // dims draw on in sequence (see drawDims); phones and tablets alternate front and side
+          if (L.dimsAlt) {
             const side = !REDUCED && t > STEPS[S.step].dur * 0.5;
             if (side !== S.dimsSide) { S.dimsSide = side; S.dimsT0 = t; }
             const src = side ? T2 : T1;
@@ -1496,8 +1512,8 @@
           const it = { id: d.id, a, name: d.name, sub: L.m ? '' : d.sub, acc: d.acc, delay: j * 0.06 };
           (d.id === 'pi' || d.id === 'busboard' || d.id === 'buck' ? left : right).push(it);
         });
-        if (L.m) {
-          leaders('bl', left.concat(right), W - L.gut - nameW(BRAIN_LABELS), 'start', k, 20);
+        if (brainCol()) {
+          leaders('bl', left.concat(right), W - L.gut - brainColW(), 'start', k, L.m ? 20 : 34);
           return;
         }
         // column edges: just outside the torso's projected box
@@ -1549,7 +1565,8 @@
         const off = L.m ? 44 : 58;
         dim3('c1', V1, hp, kn, perpBack(hp, kn), off, '127.0', kd, { labelAt: 'side', gap: 34 });
         dim3('c2', V1, kn, an, perpBack(kn, an), off, '127.0', kd, { labelAt: 'side', gap: 34 });
-        dim3('c3', V1, an, sole, perpBack(an, sole), off, '46.4', kd, { labelAt: 'side', gap: 34 });
+        // (phones: the ankle's 46.4 would sit on the ankle label; the headline carries it)
+        if (!L.m) dim3('c3', V1, an, sole, perpBack(an, sole), off, '46.4', kd, { labelAt: 'side', gap: 34 });
       }
       // unit vector perpendicular to AB in the robot's sagittal plane, pointing backward (−X side)
       function perpBack(A, B) {
@@ -1562,11 +1579,11 @@
       function drawDims(t) {
         const pr = i => clamp((t - 0.7 - i * 0.3) / 0.7, 0, 1);
         const views = [];
-        if (L.m) views.push({ V: V1, kind: S.dimsSide ? 'side' : 'front', t0: S.dimsT0 || 0 });
+        if (L.dimsAlt) views.push({ V: V1, kind: S.dimsSide ? 'side' : 'front', t0: S.dimsT0 || 0 });
         else { views.push({ V: V1, kind: 'front', t0: 0 }); if (CU.dual > 0.6) views.push({ V: V2, kind: 'side', t0: 0 }); }
         let n = 0;
         for (const { V, kind, t0 } of views) {
-          const q = i => pr(i) * (L.m ? clamp((t - t0) / 0.6, 0, 1) : 1);
+          const q = i => pr(i) * (L.dimsAlt ? clamp((t - t0) / 0.6, 0, 1) : 1);
           const g0 = proj(V, 0, 0, 0);
           const gx0 = proj(V, kind === 'front' ? 0 : -110, kind === 'front' ? -100 : 0, 0).x;
           const gx1 = proj(V, kind === 'front' ? 0 : 75, kind === 'front' ? 100 : 0, 0).x;
@@ -1659,7 +1676,7 @@
           ln(key, cr(x0), cr(y), cr(lerp(x0, x1, kg)), cr(y), 'g d');
           sq(key + 'q', x1 + 5, cr(y), 3, 'f', sstep((k - 0.7) / 0.3));
         }
-        if (!L.m) dimVraw('hdm', hd.mx - hd.mR - 30, hd.yb, hd.yt, `446.2${NB}mm`, clamp((t - 1.6) / 1.4, 0, 1), 1);
+        if (hd.dim) dimVraw('hdm', hd.mx - hd.mR - 30, hd.yb, hd.yt, `446.2${NB}mm`, clamp((t - 1.6) / 1.4, 0, 1), 1);
         // its caption on the photo caption's baseline
         tx('hcap', hd.mx, hd.y + hd.h + 25, 'CAD MODEL', 'cap', 'middle', sstep((k - 0.3) / 0.7));
       }
@@ -1674,10 +1691,23 @@
         let dir = 1;
         if (x + 26 + w > W - 20) dir = -1;
         const lx = x + dir * 22, ly = y - 22;
-        sq('hq', x, y, 5, 'fa');
-        pl('hl', [[x, y], [lx, ly], [lx + dir * 8, ly]], 'a');
-        tx('ht', lx + dir * 12, ly + 4, name, 'a', dir > 0 ? 'start' : 'end');
-        if (sub) tx('hs', lx + dir * 12, ly + 19, sub, 's', dir > 0 ? 'start' : 'end');
+        const x0 = lx + dir * 12, an = dir > 0 ? 'start' : 'end';
+        // an opaque white card (on top of the leaders) with the name in accent and the size in grey
+        const bg = node('hvbg', 'rect', gHv);
+        at(bg, 'x', rr(dir > 0 ? x0 - 6 : x0 - w - 6)); at(bg, 'y', rr(ly - 11)); at(bg, 'width', rr(w + 12));
+        at(bg, 'height', sub ? '35' : '20'); at(bg, 'class', 'pl');
+        const q = node('hvq', 'rect', gHv);
+        at(q, 'x', rr(x - 2.5)); at(q, 'y', rr(y - 2.5)); at(q, 'width', '5'); at(q, 'height', '5'); at(q, 'class', 'fa');
+        const l = node('hvl', 'polyline', gHv);
+        at(l, 'points', [[x, y], [lx, ly], [lx + dir * 8, ly]].map(p => rr(p[0]) + ',' + rr(p[1])).join(' ')); at(l, 'class', 'a');
+        const t1 = node('hvt', 'text', gHv);
+        if (t1._t !== name) { t1._t = name; t1.textContent = name; }
+        at(t1, 'x', rr(x0)); at(t1, 'y', rr(ly + 4)); at(t1, 'text-anchor', an); at(t1, 'class', 'a');
+        if (sub) {
+          const t2 = node('hvs', 'text', gHv);
+          if (t2._t !== sub) { t2._t = sub; t2.textContent = sub; }
+          at(t2, 'x', rr(x0)); at(t2, 'y', rr(ly + 19)); at(t2, 'text-anchor', an); at(t2, 'class', 's');
+        }
       }
 
       /* ---------------------------------------------------------------- per-frame update + render */
@@ -1864,15 +1894,15 @@
       function updReadouts() {
         if (STILL || !meta) return;
         const id = STEPS[S.step].id;
-        if (id === 'joints' && !L.m) {
+        if (id === 'joints' && L.side) {
           for (const j of ['hip_yaw', 'hip_pitch', 'knee', 'ankle']) {
             setRow(jRows[j], CU.ang[j + '_R']);
             const on = S.jActive === j || (S.jActive === 'squat' && j !== 'hip_yaw');
             if (jRows[j].on !== on) { jRows[j].on = on; jRows[j].r.classList.toggle('is-on', on); }
           }
         }
-        if (id === 'brain' && !L.m) busFrame(S.t);
-        if (id === 'walk' && !L.m) {
+        if (id === 'brain' && L.side) busFrame(S.t);
+        if (id === 'walk' && L.side) {
           const h = CU.ang.hip_pitch_R, k = CU.ang.knee_R, a = CU.ang.ankle_R;
           setRow(wRows.hip_pitch, h); setRow(wRows.knee, k); setRow(wRows.ankle, a);
           const s = `ankle = −(${fmt(h)} ${k >= 0 ? '+' : '−'} ${Math.abs(k).toFixed(1)}) = <b>${fmt(a)}°</b>`;
