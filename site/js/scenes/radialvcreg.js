@@ -185,8 +185,9 @@
   // the point of the step in one plain sentence (≈ 100–110 characters: two lines on laptops and at the
   // 420 px headline of ≈ 900 px windows, the reason and the takeaway included, since short windows and short
   // phones show the title alone), `s` names the parts on screen ($…$ is KaTeX), `m` is a one-line sub for
-  // phones that can spare the line. The copy holds for every shape a viewer can pick (X · ring · student-t
-  // · sunshine), since the headline stays put while the shapes cycle. Typesetting: a formula followed by
+  // phones that can spare the line and for desktop windows too short for `s`. The copy holds for every shape
+  // a viewer can pick (X · ring · student-t · sunshine), since the headline stays put while the shapes cycle.
+  // Typesetting: a formula followed by
   // punctuation takes the mark inside its $…$ (a line never starts with a lone "."), hlText() joins the last
   // words with no-break spaces (no stub of a last line) and makes hyphens in words non-breaking. Each step
   // holds at least as long as its headline takes to read (durOf). Claims and numbers: the brief (§1, §3,
@@ -197,7 +198,7 @@
     { label: 'Raw features', dur: 7.5, settle: 3.5,
       hl: { t: 'Radial-VCReg is a cheap loss that pulls an encoder’s features toward a Gaussian, the maximum-information prior.',
         s: 'We want encoders with a maximum-information prior, and for a given spread that is the Gaussian. On top of whitening, Radial-VCReg minimizes the KL between the lengths of your features and a Gaussian’s. Raw features, below, are correlated, stretched and not Gaussian.',
-        m: 'Below: a 2-D feature cloud and its covariance $\\hat\\Sigma.$' },
+        m: 'It minimizes the KL between feature lengths and a Gaussian’s.' },
       eq: '\\hat\\Sigma = \\frac{1}{N-1}\\sum_i\\,(z_i-\\bar z)(z_i-\\bar z)^{\\top}', live: true, tag: '' },
     { label: 'Whiten (VCReg)', dur: 12.5, settle: 11,
       hl: { t: 'VCReg, the usual remedy, whitens features: variance\u00a01, no correlation. That fixes the spread, not the shape.',
@@ -788,7 +789,7 @@
         return m;
       }
       // fonts arrived: measure the heads and the headlines again
-      const relayout = () => { headMemo.clear(); hlMemo.clear(); ctrWMemo = 0; layout(); };
+      const relayout = () => { headMemo.clear(); hlMemo.clear(); invMemo.clear(); ctrWMemo = 0; layout(); };
 
       // Height the desktop right-column block of step s wants under its formula (see drawReadouts): readout
       // rows (18 px; the Σ̂ matrix row 46), Fig. 1c at a 96 px plot, or Tables 1–3 with every row at 19 px.
@@ -857,6 +858,8 @@
           const hs = pick.m.hs || [], ccg = ccdGeom(L.infoW);
           let need = 0;
           for (let s = 0; s < STEPS.length; s++) need = Math.max(need, (hs[s] ? hs[s] + 20 : 0) + blockNeed(s, ccg));
+          // (the room the column has to spare before it grows: < 0 when some step's readout rows are cut)
+          L.blockSlack = L.ptY - 22 - (L.headY + need);
           const dpWant = Math.min(0.65 * 7 * u, L.oy - 22 - (L.headY + need + SECTION_GAP)) / 0.66;
           if (dpWant > L.dp) { L.dp = dpWant; L.ptY = L.oy - 0.66 * L.dp - 22; grown = true; }
         }
@@ -910,6 +913,23 @@
         const optsLeft = L.cy + 3.5 * u + 12 < 0.7 * hh + 4 ? CR + 8 : 16;
         L.optsMax = 2 * Math.max(0, Math.min(w - 40 - L.cx, L.cx - optsLeft));
       }
+      // height of the shell's sound invite on a phone (one or two lines), measured on a hidden twin of the
+      // shell's hint (the invite's words are the shell's; it may not be showing yet)
+      const invMemo = new Map();
+      function inviteH(w) {
+        if (invMemo.has(w)) return invMemo.get(w);
+        const live = document.getElementById('hint');
+        if (!live || !live.parentNode) return 34;
+        const pr = live.cloneNode(false);
+        pr.removeAttribute('id'); pr.setAttribute('aria-hidden', 'true');
+        pr.style.visibility = 'hidden';
+        pr.innerHTML = '<span class="dot"></span>Click or press any key for sound · 1–5 to explore';
+        live.parentNode.append(pr);
+        const hgt = pr.offsetHeight;
+        pr.remove();
+        if (hgt) invMemo.set(w, hgt);
+        return hgt || 34;
+      }
       // Phones: the step row at the top, the headline under it (top0 = its tallest bottom + 14 px), then one
       // column laid out bottom-up from the slider the shell places above the caption.
       function layoutMobile(w, hh, top0) {
@@ -930,7 +950,21 @@
         const a = AU();
         let extra = hh >= 740 ? 32 : 0;
         L.invite = false;
-        if (!extra && !(a && a.ready) && slimOf(32) === slimOf(0) && (boxB(slimOf(32), 32) - top0) / 7 >= (slimOf(32) ? 21 : 24)) { extra = 32; L.invite = true; }
+        if (!extra && !(a && a.ready)) {
+          // (the invite's room: its one or two lines sit 10 px above the controls; the axis numbers clear it)
+          const ex = Math.max(24, inviteH(w) - 4), s0 = slimOf(0);
+          if (slimOf(ex) === s0 && (boxB(s0, ex) - top0) / 7 >= (s0 ? 21 : 24)) { extra = ex; L.invite = true; }
+          else {
+            // short phones under a three-line headline: a flatter histogram and a cloud down to its floor
+            // make the room, for as long as the invite shows (the full sizes return with the first tap)
+            const dp0 = L.dp;
+            for (let dp = dp0 - 2; dp >= 56 && !L.invite; dp -= 2) {
+              L.dp = dp;
+              if (slimOf(ex) === s0 && (boxB(s0, ex) - top0) / 7 >= (s0 ? 19 : 22)) { extra = ex; L.invite = true; }
+            }
+            if (!L.invite) L.dp = dp0;
+          }
+        }
         L.oy = sliderTop - 34 - extra;
         L.ox = 16; L.pw = w - 34;
         L.ptY = ptYOf(extra);
@@ -978,19 +1012,23 @@
           const live = api.isActive() && v === shownVar && api.headlineBottom ? api.headlineBottom() : 0;
           const b = Math.max(hlReserve(v), live);
           const top0 = L.mobile ? (b ? b + 14 : KICK_Y + KICK_H + 14) : Math.max(76, b ? b + 20 : 0);
+          L.blockSlack = Infinity;
           if (L.mobile) layoutMobile(w, hh, top0); else if (L.portrait) layoutPortrait(w, hh, top0); else layoutSide(w, hh, top0);
-          return { u: L.u, uF: L.uF, uV: L.uV, uMin: L.uMin, b, slim: L.slim };
+          return { u: L.u, uF: L.uF, uV: L.uV, uMin: L.uMin, b, slim: L.slim, rows: L.blockSlack };
         };
         // The headline's sub (desktop: the parts on screen; phones: one line) stays unless it would cost the art
         // more than 12 % of its size (desktop: while the cloud stays at least as large as at 1280 × 720 it may
         // cost more), or a phone its readout row and source note, or it leaves the cloud less height than its
         // smallest size. Sizes are compared before the floor clamps them (two clamped sizes look equal).
-        // Short windows and short phones: the one-sentence point alone is the headline.
-        const vSub = L.mobile ? 2 : 1;
-        const withSub = run(vSub), noSub = run(0);
-        const subOK = (withSub.uF >= 0.88 * noSub.uF || (!L.mobile && withSub.u >= 43)) && withSub.slim === noSub.slim && withSub.uV >= withSub.uMin;
-        L.hlVar = subOK ? vSub : 0;
-        L.hlRes = (subOK ? run(vSub) : noSub).b;
+        // Desktop windows too short for the full sub keep the one-line sub (`m`) when that fits: a shorter sub
+        // before no sub. Short windows and short phones: the one-sentence point alone is the headline.
+        const noSub = run(0);
+        const subOK = r => (r.uF >= 0.88 * noSub.uF || (!L.mobile && r.u >= 43)) && r.slim === noSub.slim && r.uV >= r.uMin
+          && r.rows >= Math.min(0, noSub.rows);   // (nor the right column's readout rows)
+        let pickV = 0, res = noSub;
+        for (const vs of (L.mobile ? [2] : [1, 2])) { res = run(vs); if (subOK(res)) { pickV = vs; break; } }
+        L.hlVar = pickV;
+        L.hlRes = (pickV ? res : run(0)).b;
         showHeadline();
         L.hlShown = true;
         showCaption();
