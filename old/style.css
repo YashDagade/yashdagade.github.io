@@ -395,3 +395,21 @@ nav ul li a:hover {
 .no-select {
     user-select: none;
 }  
+
+/* Archive: a quiet link back to the current site (this folder is a snapshot of the old site). */
+.new-site-link {
+    position: absolute; /* scrolls away with the page, so it never sits on top of text */
+    top: 15px;
+    left: 20px;
+    z-index: 1000;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.new-site-link:hover {
+    color: #000;
+    text-decoration: underline;
+}

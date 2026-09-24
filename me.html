@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>About — Yash Dagade</title>
+  <meta name="description" content="Yash Dagade is a junior at Duke interested in energy and intelligence.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="canonical" href="https://www.yashdagade.com/me">
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="Yash Dagade">
+  <meta property="og:title" content="About — Yash Dagade">
+  <meta property="og:description" content="A junior at Duke interested in energy and intelligence.">
+  <meta property="og:url" content="https://www.yashdagade.com/me">
+  <meta property="og:image" content="https://www.yashdagade.com/site/img/yash.jpg">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="assets/rocket-icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="site/css/site.css?v=r3">
+  <style>
+    /* About (/me): a quiet, mostly-text page for sharing. Page-private: every rule is scoped to .me. */
+    .page.me {
+      max-width: 668px;                 /* 620 px measure + 2 × 24 px gutter */
+      padding: 132px 24px 160px;
+      font-size: 19px;
+      line-height: 1.62;
+      color: var(--ink);
+    }
+    .page.me h1 {
+      font-size: 32px; line-height: 1.15; letter-spacing: -.022em; font-weight: 400;
+      margin: 0 0 30px;
+    }
+    .page.me p { margin: 0 0 1.05em; text-wrap: pretty; }
+
+    .page.me .portrait { width: 132px; height: auto; margin: 8px 0 18px 36px; }
+
+    /* links: a thin underline that turns deep blue */
+    .page.me a {
+      border-bottom: 0;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: .22em;
+      text-decoration-color: var(--g400);
+      transition: color .15s, text-decoration-color .15s;
+    }
+    .page.me a:hover, .page.me a:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
+    .page.me a:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+
+    /* Elsewhere / Friends */
+    .me .foot {
+      clear: both;
+      margin: 64px 0 0; padding: 22px 0 0;
+      border-top: 1px solid var(--g300);
+      display: grid; grid-template-columns: 112px 1fr; column-gap: 16px; row-gap: 10px;
+    }
+    .me .foot dt {
+      font: 400 11px/28px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #555;
+    }
+    .me .foot dd {
+      margin: 0; font-size: 17px; line-height: 28px;
+      display: flex; flex-wrap: wrap; column-gap: 20px;
+    }
+    .page.me .credit {
+      margin: 56px 0 0;
+      font: 400 11px/14px var(--mono); letter-spacing: .02em; color: #666;
+    }
+    .page.me .credit a { color: inherit; text-underline-offset: .25em; }
+
+    /* a calm entrance: blocks fade up one after another */
+    .me > * { animation: yd-fade-in .7s var(--ease) both; }
+    .me > :nth-child(2) { animation-delay: 40ms; }
+    .me > :nth-child(3) { animation-delay: 80ms; }
+    .me > :nth-child(4) { animation-delay: 120ms; }
+    .me > :nth-child(5) { animation-delay: 160ms; }
+    .me > :nth-child(6) { animation-delay: 200ms; }
+    .me > :nth-child(7) { animation-delay: 240ms; }
+    .me > :nth-child(n+8) { animation-delay: 280ms; }
+
+    @media (max-width: 800px) {
+      .page.me { padding: 92px 16px 140px; font-size: 17.5px; line-height: 1.6; }
+      .page.me h1 { font-size: 27px; margin-bottom: 22px; }
+      .page.me .portrait { width: 96px; margin: 4px 0 12px 20px; }
+      .me .foot { grid-template-columns: 84px 1fr; column-gap: 12px; margin-top: 52px; }
+      .me .foot dd { font-size: 16.5px; column-gap: 16px; }
+      .page.me .credit { margin-top: 44px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="chrome-top">
+    <a class="wordmark" href="index.html" aria-label="Yash Dagade, home">Yash Dagade</a>
+    <button class="pill pill--menu" type="button" aria-haspopup="dialog" aria-controls="menu">[M]</button>
+  </header>
+
+  <article class="page me">
+    <img class="portrait" src="site/img/yash.jpg" width="906" height="1200" alt="Portrait of Yash Dagade">
+    <h1>Hey, I’m Yash.</h1>
+
+    <p>I love <a href="index.html#build">building</a>. I’m a junior at Duke interested in energy and intelligence; I think they are the defining problems of our generation. I like to think deeply about the nature of intelligence and to study how we normatively ought to build it. This has inspired my love for energy-based functions and JEPAs. For the past year and a half or so, I have been fortunate to work with <a href="https://scholar.google.com/citations?user=kbxHcKEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Haoran Zhu</a>, <a href="https://yilunkuang.github.io/" target="_blank" rel="noopener">Yilun Kuang</a> and <a href="http://yann.lecun.com/" target="_blank" rel="noopener">Yann LeCun</a>. Our work probes the characteristics of optimal energy functions.</p>
+
+    <p>Intrinsically, I have always loved ambitious problems. I love pursuing dreams that keep me away from sleep. Ultimately, I think meaning in life comes from forming deep, meaningful relationships with the people around us. I have been fortunate to find a very fun way of doing this: working on big, ambitious problems with a small group of people who always seem to redefine what is possible.</p>
+
+    <p>I am quite interested in philosophy, especially Girard, Strauss and Nietzsche. I also love studying people in history who went on to pursue the most enormous, ambitious dreams they could dream of. I feel that, intrinsically, they were all living a very similar life: the life of a lover who was autotelically in love with their art. I hope to pursue this same love in my own way.</p>
+
+    <p>I have a deep love for nature. I find it heartbreaking that by the end of this century we could lose on the order of 10–30% of the species with which we currently share the planet. I believe we have the agency to solve our way out of these problems, but we need ambitious ideas. In high school, this inspired my work on <a href="index.html#skywindfarm">SkyWindFarm</a>, a more first-principles way of harnessing wind energy that is an order of magnitude more efficient than existing wind-based systems.</p>
+
+    <p>I am grateful for humanity, and for being alive right now. I am confident that, as a species, we will do well. This is the best time to be alive, and I am so grateful I get to partake in it.</p>
+
+    <p>I also love running, <a href="books.html">reading</a> and going on walks.</p>
+
+    <p>Please do <a href="mailto:me@yashdagade.com">reach out</a> if any of this resonates with you. I’d love to help :D</p>
+
+    <p>Check out some of my stints <a href="index.html#build">here</a>.</p>
+
+    <dl class="foot">
+      <dt>Elsewhere</dt>
+      <dd>
+        <a href="https://x.com/YashDagad" target="_blank" rel="noopener">X</a>
+        <a href="https://www.linkedin.com/in/yashdagade/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="mailto:me@yashdagade.com">Email</a>
+        <a href="https://github.com/YashDagade" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://scholar.google.com/citations?user=o56NnCkAAAAJ&amp;hl=en" target="_blank" rel="noopener">Scholar</a>
+        <a href="tex/main.pdf" target="_blank" rel="noopener">Resume</a>
+      </dd>
+      <dt>Friends</dt>
+      <dd>
+        <a href="https://marcoschonert.com/" target="_blank" rel="noopener">Marco</a>
+        <a href="https://pranavponnusamy.com/" target="_blank" rel="noopener">Pranav</a>
+        <a href="https://briankmason.com/" target="_blank" rel="noopener">Brian</a>
+        <a href="https://www.maxxiong.dev/" target="_blank" rel="noopener">Max</a>
+      </dd>
+    </dl>
+
+    <p class="credit">Design inspired by <a href="https://www.paradigm.xyz/" target="_blank" rel="noopener">paradigm.xyz</a></p>
+  </article>
+
+  <button class="pill pill--find" type="button" aria-haspopup="dialog" aria-controls="find">Find [F]</button>
+  <button class="sound-toggle" id="sound" type="button" aria-label="Toggle sound [S]">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <path d="M2.5 6h2.5l3.5-3v10l-3.5-3H2.5z" stroke-linejoin="round"/>
+      <path class="wave" d="M10.8 5.6c.9.7 1.4 1.5 1.4 2.4s-.5 1.7-1.4 2.4"/>
+      <path class="wave" d="M12.4 3.9c1.4 1.1 2.1 2.5 2.1 4.1s-.7 3-2.1 4.1"/>
+      <path class="x" d="M11 6l3 3m0-3l-3 3"/>
+    </svg>
+  </button>
+  <div class="hint" id="hint" role="status"></div>
+  <div class="reveal-card" id="reveal" aria-hidden="true"></div>
+
+  <div class="overlay" id="find" role="dialog" aria-modal="true" aria-label="Find" aria-hidden="true">
+    <div class="palette">
+      <label class="palette__input">
+        <span class="prefix">yashdagade/</span><span class="typed"></span><span class="cursor"></span>
+        <input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search pages">
+      </label>
+      <ul class="palette__list" role="listbox"></ul>
+      <div class="palette__foot">
+        <span class="l"><span>[↓] [↑]</span><span>[?] Shortcuts</span></span>
+        <span>[enter] to visit</span>
+      </div>
+    </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
+  <div class="overlay" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+    <nav class="menu-panel"></nav>
+  </div>
+  <div class="overlay" id="shortcuts" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" aria-hidden="true">
+    <div class="palette shortcuts">
+      <h3>Shortcuts</h3>
+      <dl>
+        <dt>[F]</dt><dd>Find anything</dd>
+        <dt>[M]</dt><dd>Menu</dd>
+        <dt>[S]</dt><dd>Sound on / off</dd>
+        <dt>[esc]</dt><dd>Close</dd>
+      </dl>
+    </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
+
+  <script src="site/js/audio.js?v=r3"></script>
+  <script src="site/js/core.js?v=r3"></script>
+  <script>
+    // Scene metadata only (for the palette + menu); scenes themselves are not loaded here.
+    [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['radial-vcreg', 3, 'Radial-VCReg'], ['skywindfarm', 4, 'SkyWindFarm'], ['build', 5, 'Build']]
+      .forEach(function (s) { Site.register({ id: s[0], n: s[1], title: s[2], path: '/' + s[0], create: function () { return {}; } }); });
+    Site.register({ id: 'robot', n: 99, hidden: true, title: 'Robot', path: '/robot', create: function () { return {}; } });
+    document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'me' }); });
+  </script>
+</body>
+</html>
