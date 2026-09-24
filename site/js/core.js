@@ -1023,7 +1023,7 @@
     }, { passive: true });
   }
 
-  /* ------------------------------------------------------------------ wordmark: Yash Dagade → Energy and Intelligence → Models and Robots */
+  /* ------------------------------------------------------------------ wordmark: always "Yash Dagade"; a click types the next phrase */
 
   const WORDMARK = ['Yash Dagade', 'Energy and Intelligence', 'Models and Robots'];
 
@@ -1034,33 +1034,35 @@
     const text = h('span', { class: 'wm-text', text: WORDMARK[0] });
     const caret = h('span', { class: 'wm-caret', 'aria-hidden': 'true' });
     wm.append(text, caret);
-    if (reduced) return;
+    wm.setAttribute('aria-label', 'Yash Dagade');
+    wm.setAttribute('title', '');
     let i = 0;
+    let run = 0; // a newer click cancels a typing run in progress
     const wait = ms => new Promise(r => setTimeout(r, ms));
-    const visible = () => new Promise(r => {
-      if (!document.hidden) return r();
-      const on = () => { if (!document.hidden) { document.removeEventListener('visibilitychange', on); r(); } };
-      document.addEventListener('visibilitychange', on);
-    });
-    (async function cycle() {
-      await wait(4200);
-      for (;;) {
-        await visible();
-        wm.classList.add('is-typing');
-        let s = WORDMARK[i];
-        while (s.length) { s = s.slice(0, -1); text.textContent = s; await wait(34); }
-        i = (i + 1) % WORDMARK.length;
-        const next = WORDMARK[i];
+    async function typeTo(next) {
+      const my = ++run;
+      wm.classList.add('is-typing');
+      if (reduced) { text.textContent = next; }
+      else {
+        let cur = text.textContent;
+        while (cur.length) { if (my !== run) return; cur = cur.slice(0, -1); text.textContent = cur; await wait(26); }
         wm.classList.toggle('is-long', next.length > 14);
-        await wait(260);
+        await wait(160);
         for (let k = 1; k <= next.length; k++) {
+          if (my !== run) return;
           text.textContent = next.slice(0, k);
-          await wait(62 + Math.random() * 46 + (next[k - 1] === ' ' ? 60 : 0));
+          await wait(48 + Math.random() * 34 + (next[k - 1] === ' ' ? 40 : 0));
         }
-        wm.classList.remove('is-typing');
-        await wait(i === 0 ? 6400 : 3600);
       }
-    })();
+      wm.classList.toggle('is-long', next.length > 14);
+      if (my === run) setTimeout(() => { if (my === run) wm.classList.remove('is-typing'); }, 700);
+    }
+    wm.addEventListener('click', e => {
+      e.preventDefault();
+      i = (i + 1) % WORDMARK.length;
+      sfx('tick');
+      typeTo(WORDMARK[i]);
+    });
   }
 
   /* ------------------------------------------------------------------ boot */

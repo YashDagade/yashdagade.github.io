@@ -97,16 +97,20 @@ button {
   pointer-events: auto;
 }
 
+/* the caret only appears while a click is typing the next phrase; it never shifts the centered name */
+.wordmark { cursor: pointer; user-select: none; -webkit-user-select: none; }
 .wordmark .wm-caret {
-  display: inline-block;
+  position: absolute;
+  right: -6px;
+  top: 50%;
   width: 2px;
-  height: .8em;
-  margin-left: 3px;
-  vertical-align: -.04em;
+  height: .78em;
+  transform: translateY(-46%);
   background: var(--accent);
-  animation: yd-blink 1.05s steps(2, jump-none) infinite;
+  opacity: 0;
+  transition: opacity .25s ease;
 }
-.wordmark.is-typing .wm-caret { animation: none; }
+.wordmark.is-typing .wm-caret { opacity: 1; }
 
 .pill {
   display: inline-flex;
