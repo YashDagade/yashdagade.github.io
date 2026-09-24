@@ -32,6 +32,13 @@
    when it shows the dense comparison; the toy's dense model is calibrated to
    reach the goal about 2 times in 3 (the paper: 65.3% vs 84.7%); short phones
    keep the sound invite off the landing step with a compact planner box.
+
+   Round 6: the shell's headline is bigger (title up to 31 px, sub up to 19 px).
+   Step 1 opens on the owner's line (encoder, predictor, planner; acting is
+   search, not generation). Small landscape windows (e.g. 900×620), where the
+   title takes three lines, shrink each step to its own floor (LAYS.mid.minS)
+   rather than run into the bottom chrome; short mid windows set the Sparse-code
+   targets closer, so that step keeps a one-line sub at 1024×640.
    ========================================================================== */
 (function () {
   'use strict';
@@ -257,7 +264,10 @@
         '.scene--lpwm .lpwm-hlprobe{display:block;}' +
         // this scene's headline wraps into even lines (no one-word last line), and its copies wrap the same way
         '.headline-group[data-scene="lpwm"] .hl-title,.scene--lpwm .lpwm-hlprobe .hl-title{text-wrap:balance;}' +
-        '.headline-group[data-scene="lpwm"] .hl-sub,.scene--lpwm .lpwm-hlprobe .hl-sub{text-wrap:pretty;}' +
+        // (desktops: the centred sub balances its lines too, so a long one never ends on a stray word or two; phones,
+        // left-aligned, keep full lines)
+        '.headline-group[data-scene="lpwm"] .hl-sub,.scene--lpwm .lpwm-hlprobe .hl-sub{text-wrap:balance;}' +
+        '@media (max-width:800px){.headline-group[data-scene="lpwm"] .hl-sub,.scene--lpwm .lpwm-hlprobe .hl-sub{text-wrap:pretty;}}' +
         // (words are inline blocks whether or not they animate in — as in the copies — so a sub swapped in place, or
         // reduced motion, wraps exactly as predicted)
         '.headline-group[data-scene="lpwm"] .w{display:inline-block;}';
@@ -936,8 +946,9 @@
       // (HLC: Fig 1b closed-loop, MLP∘LTI(k): 75.33% vs 14.00%; without a transformer, dense ≤ 14.0%).
       const HL = [
         { t: 'A world model brings together an encoder, a predictor and a planner.',
-          s: 'The model understands and predicts the world, so actions become search, not generation: the encoder turns frames into features, the predictor imagines the future from them and the next action, and the planner (CEM) searches for actions.',
-          ss: 'It understands and predicts the world, so actions become search, not generation.' },
+          s: 'The model understands and predicts the world, so actions become search, not generation: the encoder turns frames into features, the predictor imagines what each action leads to, and the planner (CEM) searches for the best plan.',
+          // (one line down to 1024 px wide, so short windows keep it under the title)
+          ss: 'It understands and predicts the world, so acting is search, not generation.' },
         { t: 'The encoder is a Vision Transformer, and we study how to make its features sparse.',
           s: 'The frame is cut into patches that become tokens, 12 attention blocks mix them, and the summary token (CLS) goes through an MLP and a ReLU, which sets negative values to exactly zero: the sparse code.',
           ss: 'Patches become tokens; after an MLP, a ReLU zeroes every negative.' },
@@ -1056,13 +1067,17 @@
       // of them is shown. G.mobile = the stacked (phone) composition, G.phone = the phone chrome, G.mid, G.short.
       const LAYS = {
         wide: { dw: 1060, smax: 1.22, min: 0.82, ext: [[100.8, -44.3, 500.8, 55.7], [127.2, -25.4, 543.5, 5.9], [64.4, -26.7, 553.3, 21.9], [112.8, -21.9, 586.1, 9], [59.2, -29.1, 578.1, 25.5], [43.7, -58.9, 465.9, 105.3], [109.7, -53.9, 458.8, 114.5]] },
-        mid: { dw: 620, smax: 1.15, min: 0.9, ext: [[85.2, -44.8, 374.5, 37.7], [39.1, -27, 254.2, 77.5], [24.5, -21.8, 393, 17.6], [14.4, -21, 354.5, 49.1], [26.3, -28.4, 292.3, 127.4], (w, h) => (h < 700 ? [150, -140, 298.9, 82.4] : [150, -152, 298.9, 106.4]), [68.6, -52.4, 290.2, 113.3]] },
+        mid: { dw: 620, smax: 1.15, min: 0.9, ext: [[85.2, -44.8, 374.5, 37.7], [39.1, -27, 254.2, 77.5], (w, h) => (h < 700 ? [24.5, -21.8, 369, 17.6] : [24.5, -21.8, 393, 17.6]), [14.4, -21, 354.5, 49.1], [26.3, -28.4, 292.3, 127.4], (w, h) => (h < 700 ? [150, -140, 298.9, 82.4] : [150, -152, 298.9, 106.4]), [68.6, -52.4, 290.2, 113.3]] },
         tall: { dw: 358, smax: 1.35, min: 1, ext: [[-30.3, -2, 529.7, 2], [-0.3, -2, 547.1, 2], [0, -2, 534.8, 2], [-0.1, -2, 505.8, 2], [9.6, -2, 406.6, 2], [3.4, -2, 486.4, 2], [48.9, -2, 424.4, 2]] },
         phone: { dw: 358, smax: 1, min: 0.94, ext: [[-0.3, -2, 529.7, 2], [0.2, -2, 560.2, 2], [-0.1, -2, 534.8, 2], [0.3, -2, 507.3, 2], [5.1, -2, 417.1, 2], [1.5, -2, 518.5, 2], [36.4, -2, 448.4, 2]] },
         short: { dw: 358, smax: 1, min: 0.9, ext: [[-2.4, 0.2, 343.7, 108.1], [-2.4, 0.1, 439.1, 9.1], [-3, 0.6, 379.1, 3.7], [10.2, -12.2, 357.9, 11.2], [10.7, -9.1, 212.4, 118.2], [15.4, -15, 263.8, 103.8], [0, 6, 367.5, 82.2]] },
       };
       // the tall (portrait tablet) steps whose art is short may grow a little more (the width still caps them)
       LAYS.tall.smaxS = [1.35, 1.35, 1.35, 1.35, 1.5, 1.5, 1.5];
+      // small landscape windows too short for the mid picture at its floor (e.g. 900×620, where the big headline's
+      // title takes three lines): each step may shrink to its own floor, the lowest scale at which its labels still
+      // clear each other, rather than run into the bottom chrome (checked at 1024×640 and 900×620)
+      LAYS.mid.minS = [0.88, 0.88, 0.86, 0.8, 0.765, 0.765, 0.765];
       // (short phones, sound locked: the landing step with its compact planner box, 50 px instead of 104; see view0)
       LAYS.short.ext0c = [-2.4, 0.2, 343.7, 55];
       const SLIDER_OF = [-1, -1, 0, 1, 1, 2, -1]; // the step's control under the stepper: alpha · H · rung
@@ -1109,7 +1124,7 @@
         // (desktop: the caption, bottom-left, reaches x ≈ 298, so where the art starts at x = 260 it ends above it)
         const ay1 = lay === 'wide' ? h - 92 : lay === 'mid' ? (col < 300 ? h - 108 : h - 96) : h - 108;
         const PB = ph ? phoneBottoms(h, capLines, cp0 ? 0 : reserve) : null, PB0 = cp0 ? phoneBottoms(h, capLines, reserve) : PB;
-        const subs = [], tops = [], bots = [], fit = [], caps = [];
+        const subs = [], tops = [], bots = [], fit = [], caps = [], noSlS = [];
         for (let i = 0; i < 7; i++) {
           caps[i] = Math.min(D.smaxS ? D.smaxS[i] : D.smax, (ax1 - ax0) / D.dw);
           // (cp0 also lends the steps with a slider the invite's band: until the first gesture their slider row is
@@ -1122,6 +1137,10 @@
           // (the art starts 20 px under its headline; on a phone where 20 px would take the art under its floor, 14)
           const gp = t => (ph && fitAt(t + 20) < D.min ? 14 : 20);
           const tS = M.top + M.full[i], tM = M.top + M.short[i], tT = M.top + M.title[i];
+          // (phones: the Capacity step's rung slider repeats the chart's own tappable rungs; where that row would take
+          // the chart under its floor even under the title alone, e.g. 375×667, that step alone gives the row to the
+          // chart, and the other steps keep their sliders and caption)
+          if (ph && SLIDER_OF[i] === 2 && bots[i] !== pb.free && fitAt(tT + 14) < D.min) { bots[i] = pb.free; noSlS[i] = true; }
           // each step keeps its sub where its own art still holds the composition's floor scale; desktops fall back
           // to the one-line sub before the title stands alone
           subs[i] = fitAt(tS + gp(tS)) >= D.min ? 2 : !ph && fitAt(tM + 20) >= D.min ? 1 : 0;
@@ -1131,10 +1150,12 @@
         }
         // each step takes the largest scale its band allows, within 15% of the tightest step (so a step change is
         // a gentle glide, never a jump in size). A window too small for any composition never takes it below its floor
-        // (phones: 85% of it) — the labels are fixed-size and would pile up — the art runs past its band instead.
+        // (phones: 85% of it; small mid windows: each step's own floor, D.minS) — the labels are fixed-size and would
+        // pile up — the art runs past its band instead.
         const sMin = Math.min(...fit), ok = sMin >= D.min - 1e-6;
         const floor = ok ? 0.5 : ph ? D.min * 0.85 : D.min;
-        const sS = fit.map((f, i) => clamp(Math.min(f, Math.max(sMin, floor) * 1.15), floor, Math.max(floor, caps[i])));
+        const flS = fit.map((f, i) => (!ok && D.minS ? D.minS[i] : floor));
+        const sS = fit.map((f, i) => clamp(Math.min(f, Math.max(sMin, floor) * 1.15), flS[i], Math.max(flS[i], caps[i])));
         // each step's art starts a short gap under its headline (desktop: + at most 26 px of its spare room; phones:
         // + 30% of it), and the rest of the room falls below the art, so stepping keeps that gap nearly constant
         const oyS = sS.map((s, i) => {
@@ -1145,7 +1166,7 @@
         // (where each step's art ends: phones keep their own hints off it)
         const artB = sS.map((s, i) => { const e = extAt(D, i, w, h, cp0); return oyS[i] + e[2] * s + e[3]; });
         const nSub = subs.reduce((n, v) => n + (v === 2 ? 1 : v ? 0.5 : 0), 0);
-        return { lay, capLines, reserve, cp0: !!cp0, noSl: !!noSl, subs, nSub, sS, oxS, oyS, tops, bots, artB, sMin, rel: sMin / D.min, ok };
+        return { lay, capLines, reserve, cp0: !!cp0, noSl: !!noSl, noSlS, subs, nSub, sS, oxS, oyS, tops, bots, artB, fit, sMin, rel: sMin / D.min, ok };
       }
       let G = null;
       let cpk = null; // the landing step's compact planner (short phones while sound is locked), 0..1, eased to G.cp0
@@ -1179,12 +1200,13 @@
         const bestRel = Math.max(...fits.map(x => x.rel));
         const f = oks.find(x => x.nSub >= most - (phone ? 0 : 1)) || fits.find(x => x.reserve && x.rel >= bestRel - 0.005) || fits.find(x => x.rel >= bestRel - 1e-9);
         const lay = f.lay === 'short' ? 'phone' : f.lay;
+        Site._lpwmDBG = { M, fits: fits.map(x => ({ lay: x.lay, cap: x.capLines, R: x.reserve, noSl: x.noSl, noSlS: x.noSlS.map(v => v ? 1 : 0).join(""), cp0: x.cp0, ok: x.ok, rel: +x.rel.toFixed(3), nSub: x.nSub, subs: x.subs.join(''), sS: x.sS.map(v => +v.toFixed(3)).join(' '), fit: x.fit.map(v => +v.toFixed(3)).join(' '), tops: x.tops.map(Math.round).join(' '), bots: x.bots.map(Math.round).join(' '), artB: x.artB.map(Math.round).join(' ') })), pick: fits.indexOf(f) };
         const prev = G;
         G = {
           w, h, lay, s: f.sS[S.step], short: f.lay === 'short', mobile: lay === 'phone' || lay === 'tall', phone: lay === 'phone', mid: lay === 'mid',
           // (every desktop composition starts on the content-left line, just right of the control column)
           ox: f.oxS[S.step], oy: f.oyS[S.step], sS: f.sS, oxS: f.oxS, oyS: f.oyS, tops: f.tops, bots: f.bots, artB: f.artB,
-          subs: f.subs, capLines: f.capLines, reserve: f.reserve, cp0: f.cp0, noSlider: f.noSl, glide: null,
+          subs: f.subs, capLines: f.capLines, reserve: f.reserve, cp0: f.cp0, noSlider: f.noSl, noSlS: f.noSlS, glide: null,
           // (a landscape phone, where no composition fits: the room under the headline asks for portrait instead)
           rotate: !f.ok && w > h * 1.15 && (phone || (h < 500 && coarse())),
         };
@@ -2615,7 +2637,9 @@
           if (md) {
             // the lemma card, under o_t and the code, left of the charts
             const lx = X(0), ly = Y(156);
-            caps('LEMMA 4.1 · MODE-FACTORED SPARSE CODE', lx, ly, { p: lemP });
+            // (the long eyebrow stops clear of the zeros stacked left of the spike; small windows: its short form)
+            const lemT = lx + textW('LEMMA 4.1 · MODE-FACTORED SPARSE CODE', F12) + 37 * 0.72 <= X(352) - 30 ? 'LEMMA 4.1 · MODE-FACTORED SPARSE CODE' : 'LEMMA 4.1';
+            caps(lemT, lx, ly, { p: lemP });
             T('one active block names the mode;', lx, ly + 26, { font: F14, p: prog(ta, 0.6, 0.8) });
             T('its values pin down the position.', lx, ly + 46, { font: F14, p: prog(ta, 0.7, 0.8) });
             TX('v2.lem', 'E(x) = J_q\\,\\lambda_q(x), \\quad \\lVert E(x) \\rVert_0 \\le r + 1', lx, ly + 82, { size: 18, math: true, a, p: prog(ta, 0.8, 0.8) });
@@ -2651,7 +2675,8 @@
         } else if (!m) T('hover a unit to hear it', X(0), Y(406) + 4, { color: SEC, p: prog(ta, 1.2, 0.6) });
         // distributions: Rectified Laplace (LpWM, sparse) and isotropic Gaussian (LeWM, dense)
         // (phones: a clear 24 px gap under the lemma; chart titles sit on the 16 px gutter)
-        const L = md ? { x0: 352, x1: 612, sy: 256, dy: 392, hs: 96, hd: 50, l1: 40 }
+        // (short mid windows, < 700 px tall: the two targets sit 24 units closer, so the step keeps a sub or its floor)
+        const L = md ? (G.h < 700 ? { x0: 352, x1: 612, sy: 244, dy: 368, hs: 90, hd: 42, l1: 40 } : { x0: 352, x1: 612, sy: 256, dy: 392, hs: 96, hd: 50, l1: 40 })
           : !m ? { x0: 690, x1: 1056, sy: 262, dy: 506, hs: 150, hd: 104, l1: 50 }
             : G.short ? { x0: 22, x1: 350, sy: 250 + 2 * ex2, dy: 344 + 2 * ex2, hs: 48, hd: 36, l1: 18 } : { x0: 22, x1: 350, sy: 380, dy: 494, hs: 72, hd: 42, l1: 34 };
         // (short phones: each target's parameters sit on its title line)
@@ -2713,8 +2738,10 @@
         const nNZ = vals.reduce((c, v) => c + (Math.abs(v) > 0.001 ? 1 : 0), 0);
         ctx.globalAlpha = a;
         if (md) {
-          T('nonzero ' + String(nNZ).padStart(2, ' ') + ' / 24 = ' + (nNZ / 24).toFixed(2), X(0), Y(332), { font: F13, color: nNZ < 24 ? ACC : INK });
-          T('Table 3: LpWM 28–63% active · LeWM 100%', X(0), Y(332) + 20, { color: SEC });
+          // (a clear line under the lemma card's last line, "toy code", at the smaller scales of short windows)
+          const ny = Math.max(Y(332), Y(156) + 136 + 22);
+          T('nonzero ' + String(nNZ).padStart(2, ' ') + ' / 24 = ' + (nNZ / 24).toFixed(2), X(0), ny, { font: F13, color: nNZ < 24 ? ACC : INK });
+          T('Table 3: LpWM 28–63% active · LeWM 100%', X(0), ny + 20, { color: SEC });
         } else if (!m) {
           const cy = Y(552);
           T('nonzero ' + String(nNZ).padStart(2, ' ') + ' / 24 = ' + (nNZ / 24).toFixed(2), sx0, cy, { font: F13, color: nNZ < 24 ? ACC : INK });
@@ -3537,8 +3564,8 @@
               // (mid: right of the loop's return leg, which enters the panel from below; tall: two lines beside
               // the panel's foot, clear of o_t's connector under it)
               if (G.mobile) { T('illustrative', r.x + r.s + 12, r.y + r.s - 17, { color: SEC }); T('simulation', r.x + r.s + 12, r.y + r.s - 2, { color: SEC }); }
-              else if (G.mid && r.x + Z(48) + textW('illustrative simulation') > X(232) - 10) {
-                // (small mid windows: two lines, so the note stays left of the planner box)
+              else if (G.mid && r.x + Z(48) + textW('illustrative simulation') > Math.min(X(232) - 10, r.x + r.s + 2)) {
+                // (mid windows where one line would reach the planner box or the panel's corner mark: two lines)
                 T('illustrative', r.x + Z(48), r.y + r.s + 20, { color: SEC }); T('simulation', r.x + Z(48), r.y + r.s + 35, { color: SEC });
               } else T('illustrative simulation', r.x + (G.mid ? Z(48) : 0), r.y + r.s + 20, { color: SEC });
             } else if (S.step === 3 && !G.mobile) {
@@ -3841,7 +3868,7 @@
         // caption rather than over the art; desktops keep the slot's height so the stepper never jumps)
         // (core re-stacks the phone chrome, hint included, when the step's caption swaps in)
         // (a landscape phone showing the "turn upright" note has no use for a slider either)
-        const disp = G && (G.rotate || ((which < 0 || G.noSlider || G.cp0) && G.phone)) ? 'none' : '';
+        const disp = G && (G.rotate || ((which < 0 || G.noSlider || G.noSlS[step] || G.cp0) && G.phone)) ? 'none' : '';
         if (slot.style.display !== disp) {
           slot.style.display = disp;
           // (phones: core re-stacks its chrome — the hint line above the controls — whenever the links are set)
@@ -4022,7 +4049,7 @@
         if (innerWidth > 800 && innerWidth <= 1100) return;
         if (G && G.phone && G.artB) {
           const i = S.step, cap = G.capLines;
-          const ctrl = Math.max(104, 58 + 14 * cap + 16), sl = SLIDER_OF[i] >= 0 && !G.noSlider && !G.cp0 ? sliderH() : 0;
+          const ctrl = Math.max(104, 58 + 14 * cap + 16), sl = SLIDER_OF[i] >= 0 && !G.noSlider && !G.noSlS[i] && !G.cp0 ? sliderH() : 0;
           const lines = Math.max(1, Math.ceil((tw(text, F11) + text.length * 0.22 + 14) / (G.w - 32)));
           if (G.h - ctrl - sl - 10 - (6 + 14 * lines) < G.artB[i] + 4) return;
         }
