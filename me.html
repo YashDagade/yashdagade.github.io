@@ -205,9 +205,9 @@
   <script src="site/js/core.js?v=r5"></script>
   <script>
     // Scene metadata only (for the palette + menu); scenes themselves are not loaded here.
-    [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['radial-vcreg', 3, 'Radial-VCReg'], ['skywindfarm', 4, 'SkyWindFarm'], ['build', 5, 'Build']]
+    [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['skywindfarm', 3, 'SkyWindFarm'], ['robot', 4, 'Robot'], ['build', 5, 'Build']]
       .forEach(function (s) { Site.register({ id: s[0], n: s[1], title: s[2], path: '/' + s[0], create: function () { return {}; } }); });
-    Site.register({ id: 'robot', n: 99, hidden: true, title: 'Robot', path: '/robot', create: function () { return {}; } });
+    Site.register({ id: 'radial-vcreg', n: 6, hidden: true, title: 'Radial-VCReg', path: '/radial-vcreg', create: function () { return {}; } });
     document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'me', hint: false }); });
 
     // No timed "Press F" hint on a text page: the Find [F] pill already says it. Site.boot's hint:false asks

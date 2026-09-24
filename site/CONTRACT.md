@@ -337,3 +337,11 @@ Keep the round-2/3 rules (no flute, registers, small-speaker body).
 **Build soundtrack:** "Bits & Atoms" (`build-score.js`) is the chosen score. Earlier versions (round-1
 microsound bed, round-3 first composed score) and a comparison page were archived in commit 2c59e57
 and then removed from the tree.
+
+## Round 5
+
+**Scene order (latest):** 1 `lpwm` · 2 `lpjepa` · 3 `skywindfarm` · 4 `robot` · 5 `build`. `radial-vcreg` is a
+hidden page (n: 6, hidden: true): reachable from the [M] menu, Find and `#radial-vcreg`, not from keys 1–5.
+Page-mode pages (me, books, press) register the same list for the menu/Find.
+**Wordmark:** always "Yash Dagade"; each click types the next phrase (Energy and Intelligence → Models and
+Robots → Yash Dagade).

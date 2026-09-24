@@ -511,7 +511,7 @@
 
   Site.register({
     id: 'skywindfarm',
-    n: 4,
+    n: 3,
     title: 'SkyWindFarm',
     path: '/skywindfarm',
     caption: 'Wind power grows with the cube of its\nspeed, and wind grows with height.\nSkyWindFarm tethers turbines at 3 km.',

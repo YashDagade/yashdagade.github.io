@@ -308,7 +308,7 @@
 
   Site.register({
     id: 'radial-vcreg',
-    n: 3,
+    n: 6, hidden: true, // menu / Find only (not on keys 1–5)
     title: 'Radial-VCReg',
     path: '/radial-vcreg',
     caption: CAPS[0],
