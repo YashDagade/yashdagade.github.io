@@ -25,6 +25,13 @@
    "illustrative" qualifier when its sub is dropped. The bottom-left caption
    gives the source and how to interact. Phones keep core's sound invite clear
    of the art until the first tap; one failing view never stops the scene.
+
+   Round 5: autoplay dwells 16–18 s a step (time to read the headline); desktops
+   fall back to a one-line sub before dropping it; the Capacity headline and
+   caption follow the open / closed-loop toggle; the Sparse-code picture says
+   when it shows the dense comparison; the toy's dense model is calibrated to
+   reach the goal about 2 times in 3 (the paper: 65.3% vs 84.7%); short phones
+   keep the sound invite off the landing step with a compact planner box.
    ========================================================================== */
 (function () {
   'use strict';
@@ -33,7 +40,8 @@
 
   const STEPS = ['World model', 'ViT encoder', 'Sparse code', 'Predictor', 'Plan (MPC)', 'Capacity', 'Horizon'];
   const BAR = (60 / 118) * 4;
-  const STEP_BARS = [5, 5, 6, 6, 11, 6, 6];
+  // autoplay dwell per step, in whole bars (≈ 2 s each): long enough to read the headline and its sub, then the art
+  const STEP_BARS = [9, 8, 8, 8, 11, 8, 8];
   // Bottom-left captions (≤ 38 characters a line). The headline says the point of each step; the caption gives the
   // source and how to interact. CAPS_T: touch wording; CAPS1: one line, for phones too short for three.
   const CAPS = [
@@ -51,6 +59,9 @@
     5: 'Fig 1b · PushT, open-loop, D = 4096.\nTap a rung for its predictor, or\n“closed-loop” for those results.',
     6: 'Fig 2c · Piecewise 2×2, closed-loop\nMPC (R = 1), 3 seeds, mean ± std.\nTap a horizon for its values.',
   };
+  // (Capacity, after the toggle: the closed-loop panel of Fig 1b)
+  const CAPS_C = 'Fig 1b · PushT, closed-loop, D = 4096.\nClick a rung for its predictor;\npress C for open-loop.';
+  const CAPS_TC = 'Fig 1b · PushT, closed-loop, D = 4096.\nTap a rung for its predictor, or\n“open-loop” for those results.';
   const CAPS1 = [
     'Paper: LpWM · sparse world models',
     'ViT · 12 layers · tap a token',
@@ -109,10 +120,12 @@
   const BV = [[BIAS, 0], [0, BIAS], [-BIAS, 0], [0, -BIAS]];
   const zoneOf = (x, y) => (y >= 0.5 ? 2 : 0) + (x >= 0.5 ? 1 : 0);
   // Illustrative predictors. Sparse: mode-exact (support names the zone) with a tiny ε.
-  // Dense: smooths the piecewise drift across boundaries and mis-scales the action response.
+  // Dense: smooths the piecewise drift across boundaries and mis-scales the action response. (Calibrated offline so
+  // that, in the Plan (MPC) step's paired episodes, dense reaches the goal about 2 times in 3 — the paper measures
+  // 65.3% dense vs 84.7% sparse on this world — rather than overstating the gap.)
   const MODELS = [
     { rot: 0.05, gain: 0.985, soft: 0, pull: 0 },
-    { rot: 0.5, gain: 0.8, soft: 0.12, pull: 0.045 },
+    { rot: 0.4, gain: 0.85, soft: 0.12, pull: 0.03 },
   ].map(m => Object.assign({ c: Math.cos(m.rot), s: Math.sin(m.rot) }, m));
 
   function stepTrue(x, y, ax, ay, o) {
@@ -244,7 +257,10 @@
         '.scene--lpwm .lpwm-hlprobe{display:block;}' +
         // this scene's headline wraps into even lines (no one-word last line), and its copies wrap the same way
         '.headline-group[data-scene="lpwm"] .hl-title,.scene--lpwm .lpwm-hlprobe .hl-title{text-wrap:balance;}' +
-        '.headline-group[data-scene="lpwm"] .hl-sub,.scene--lpwm .lpwm-hlprobe .hl-sub{text-wrap:pretty;}';
+        '.headline-group[data-scene="lpwm"] .hl-sub,.scene--lpwm .lpwm-hlprobe .hl-sub{text-wrap:pretty;}' +
+        // (words are inline blocks whether or not they animate in — as in the copies — so a sub swapped in place, or
+        // reduced motion, wraps exactly as predicted)
+        '.headline-group[data-scene="lpwm"] .w{display:inline-block;}';
       el.append(style);
 
       const cv = api.canvas();
@@ -915,28 +931,52 @@
       // Every step opens with one plain sentence that says what the picture shows (core's big centred headline)
       // and a sub that names the parts. Numbers are the brief's: Fig 1b (PushT, one-layer MLP∘LTI(k), open-loop,
       // D = 4096: 62.67% vs 5.33%) and Fig 2c (Piecewise 2×2, true MPC R = 1, 3 seeds: H = 10, 59.33% vs 36.00%).
+      // t: title · s: sub · ss: a one-line sub for windows where the full sub does not fit (desktops) · tt: the title
+      // when it stands alone · tp: the title alone on phones. Step 6 (Capacity) follows the open / closed-loop toggle
+      // (HLC: Fig 1b closed-loop, MLP∘LTI(k): 75.33% vs 14.00%; without a transformer, dense ≤ 14.0%).
       const HL = [
         { t: 'A world model understands and predicts the world, so acting becomes search, not generation.',
-          s: 'That helps it plan in situations it has never seen. The encoder turns observations into features, the predictor imagines the future from the past and the next action, and the planner (CEM) searches for actions.' },
+          s: 'That helps it plan in situations it has never seen. Here, in a toy world of four zones, the encoder turns frames into features, the predictor imagines the future from them and the next action, and the planner (CEM) searches for actions.',
+          ss: 'The encoder sees, the predictor imagines, the planner (CEM) searches.' },
         { t: 'The encoder is a Vision Transformer, and we study how to make its features sparse.',
-          s: 'The frame is cut into patches that become tokens, 12 attention blocks mix them, and the summary token (CLS) passes through an MLP and a ReLU, which sets every negative value to exactly zero.' },
+          s: 'The frame is cut into patches that become tokens, 12 attention blocks mix them, and the summary token (CLS) goes through an MLP and a ReLU, which sets negative values to exactly zero: the sparse code.',
+          ss: 'Patches become tokens; after an MLP, a ReLU zeroes every negative.' },
+        // (tt: the title shown when the sub is dropped: it names the dense contrast the picture also shows)
         { t: 'Sparse codes should make the future easier to predict: about half of each code is exactly zero.',
-          s: 'Which units fire names the zone the agent is in; how strongly they fire gives its position. LpWM matches a Rectified Laplace target; dense LeWM matches a Gaussian, so every unit is active.' },
+          tt: 'Sparse codes should make the future easier to predict: about half of each is exactly zero, unlike dense codes.',
+          // (phones keep the two-line title; the picture's own tag says when it shows the dense code)
+          tp: 'Sparse codes should make the future easier to predict: about half of each code is exactly zero.',
+          s: 'Which units fire names the zone the agent is in; how strongly they fire gives its position. Our LpWM is trained toward a target that is exactly zero half the time; dense LeWM toward a Gaussian, so every unit is active.',
+          ss: 'Which units fire names the zone. Dense codes keep every unit on.' },
         { t: 'The predictor takes the sparse code and the next action, and predicts the next code.',
-          s: 'The action scales and shifts every block. Fed its own predictions, it imagines $H$ steps ahead; it is trained to match the encoder’s code of the real next frame.' },
-        // (tt: the title shown when the sub is dropped, so the "illustrative" qualifier is never lost)
+          s: 'The action scales and shifts every layer. Fed its own predictions, it imagines $H$ steps ahead (right: sparse vs dense, same actions, toy). It is trained to match the encoder’s code of the real next frame.',
+          ss: 'It imagines $H$ steps ahead. Right: sparse vs dense, same actions.' },
+        // (the "illustrative" qualifier is never lost: the title carries it when the sub is dropped; the measured
+        // numbers are Table 4 / Fig 2c, Piecewise 2×2, random goals, H = 5, R = 1: 84.67% vs 65.33%)
         { t: 'During planning, sparsity helps the model plan faster and better.',
           tt: 'During planning, sparsity helps the model plan faster and better (here, an illustrative toy).',
-          s: 'An illustrative toy: the planner (CEM) imagines 300 action sequences, keeps the best 30, runs 5 steps, then replans. Sparse LpWM usually needs fewer replans than dense LeWM. Measured results follow.' },
-        { t: 'Sparse models do far better with small predictors: a one-layer MLP succeeds 62.7% on PushT, dense 5.3%.',
-          // (tp: short phones, where the sub is dropped: the rung is named right under it, in the formula block)
-          tp: 'Sparse models do far better with small predictors: 62.7% success on PushT, dense 5.3%.',
-          s: 'Left to right, the predictor shrinks from a 6-layer transformer to a single linear map. Both codes plan well with a transformer; without one, dense drops below 6% while sparse keeps planning, until both fail.' },
+          s: 'An illustrative toy: the planner (CEM) imagines 300 action plans, keeps the best 30, runs 5 steps, replans. Measured on this world, replanning every step: sparse reaches the goal 84.7% of the time, dense 65.3%.',
+          ss: 'Illustrative toy. Measured on this world: sparse 84.7%, dense 65.3%.' },
+        { t: 'Sparse models plan well with far smaller predictors: 62.7% vs 5.3% success on PushT with a one-layer MLP.',
+          // (tp: phones, where the sub is dropped)
+          tp: 'Sparse models plan with far smaller predictors: a one-layer MLP, 62.7% vs 5.3% on PushT.',
+          s: 'PushT: push a T-shaped block into place. Left to right, the predictor shrinks from a 6-layer transformer to one linear map. Both do well with a transformer; without one, dense falls below 6% while sparse keeps planning.',
+          ss: 'PushT: push a T-block into place. Predictors shrink left to right.' },
         { t: 'At every planning horizon tested, sparse models beat dense ones, by up to 23 points at 10 steps ahead.',
-          s: 'In a 2D world of four zones that each push the agent a different way, sparse codes succeed 59.3% of the time at 10 steps vs 36.0% for dense. Planning further ahead is harder for both.' },
+          s: 'In a 2D world of four zones that each push the agent a different way, sparse codes succeed 59.3% of the time at 10 steps vs 36.0% for dense. Planning further ahead is harder for both.',
+          ss: 'A 2D world of four zones: 59.3% vs 36.0% success at 10 steps ahead.' },
       ];
+      const HLC = {
+        t: 'Sparse models plan well with far smaller predictors: 75.3% vs 14.0% success on PushT with a one-layer MLP.',
+        tp: 'Sparse models plan with far smaller predictors: a one-layer MLP, 75.3% vs 14.0% on PushT.',
+        s: 'PushT: push a T-shaped block into place. Left to right, the predictor shrinks from a 6-layer transformer to one linear map. Both do well with a transformer; without one, dense falls to 14% or less, sparse keeps planning.',
+        ss: HL[5].ss,
+      };
+      const hl = i => (i === 5 && S.loopClosed ? HLC : HL[i]);
       let hlPhone = null;  // headline placement last handed to core (phones: under the step nav)
-      const hlTitle = (i, sub) => (sub ? HL[i].t : (hlPhone && HL[i].tp) || HL[i].tt || HL[i].t);
+      // sub: 2 = the full sub, 1 = the one-line sub, 0 = the title alone
+      const hlTitle = (i, sub) => (sub ? hl(i).t : (hlPhone && hl(i).tp) || hl(i).tt || hl(i).t);
+      const hlSub = (i, sub) => (sub === 2 ? hl(i).s : sub === 1 ? hl(i).ss : null);
       // Phones: the step nav (‹ 01 / 07 · World model ›) is the headline's eyebrow; the headline sits under it, at the
       // same top as the other scenes with a step nav (94 px)
       const PH_NAV = 71, PH_TOP = 94;
@@ -965,9 +1005,16 @@
         hlBox.append(g);
         return g;
       };
-      const hlM = HL.map(hl => ({ full: probe('<p class="hl-title">' + hlHTML(hl.t) + '</p><p class="hl-sub">' + hlHTML(hl.s) + '</p>'), title: probe('') }));
-      // (the title-alone copies follow the chrome: phones have their own short titles)
-      function setTitleProbes() { hlM.forEach((g, i) => { g.title.innerHTML = '<p class="hl-title">' + hlHTML(hlTitle(i, false)) + '</p>'; }); }
+      const hlM = HL.map(() => ({ full: probe(''), short: probe(''), title: probe('') }));
+      // (the step's copies follow its text: the title-alone copies follow the chrome — phones have their own short
+      // titles — and step 6's follow the open / closed-loop toggle)
+      function setProbes(i) {
+        const g = hlM[i], h = hl(i), two = s => '<p class="hl-title">' + hlHTML(h.t) + '</p><p class="hl-sub">' + hlHTML(s) + '</p>';
+        g.full.innerHTML = two(h.s);
+        g.short.innerHTML = two(h.ss);
+        g.title.innerHTML = '<p class="hl-title">' + hlHTML(hlTitle(i, 0)) + '</p>';
+      }
+      function setTitleProbes() { for (let i = 0; i < HL.length; i++) setProbes(i); }
       setTitleProbes();
       // measured − predicted headline bottom, per step and variant (normally 0: see onHeadline)
       const hlAdj = {};
@@ -976,17 +1023,18 @@
         return {
           top,
           full: hlM.map((g, i) => g.full.offsetHeight + (hlAdj[i + 's'] || 0)),
+          short: hlM.map((g, i) => g.short.offsetHeight + (hlAdj[i + 'm'] || 0)),
           title: hlM.map((g, i) => g.title.offsetHeight + (hlAdj[i + 't'] || 0)),
         };
       }
       let hlShown = '';    // the key last handed to core
-      const hlSubOn = i => !G || !G.subs || !!G.subs[i];
+      const hlSubOn = i => (!G || !G.subs ? 2 : G.subs[i]);
       function syncHeadline(force, animate) {
         const i = S.step, sub = hlSubOn(i);
-        const key = 'lpwm' + i + (sub ? 's' : 't') + (!sub && hlPhone && HL[i].tp ? 'p' : '');
+        const key = 'lpwm' + i + (sub === 2 ? 's' : sub === 1 ? 'm' : 't') + (!sub && hlPhone && hl(i).tp ? 'p' : '') + (i === 5 && S.loopClosed ? 'c' : '');
         if (key === hlShown && !force) return;
         hlShown = key;
-        api.headline(hlTitle(i, sub), sub ? HL[i].s : null, { key, force: !!force, animate: animate !== false });
+        api.headline(hlTitle(i, sub), hlSub(i, sub), { key, force: !!force, animate: animate !== false });
       }
 
       /* ---------------------------------------------------------------- layout */
@@ -997,7 +1045,8 @@
       //   tall   358 wide  the phone composition on a portrait tablet (834×1112), with the desktop chrome
       //   phone  358 wide  phones (≤ 800 px, core's mobile chrome); 'short' = the compact phone compositions
       // Every step's art lies under ITS context headline: it starts a short, nearly fixed gap below the headline
-      // (20–46 px; phones 14 px + a little of the spare room) and ends above the bottom chrome; spare room falls below
+      // (20–46 px; phones 20 px, or 14 where 20 would take the art under its floor, + a little of the spare room) and
+      // ends above the bottom chrome (and, desktops, the one-line sub stands in for a sub that does not fit); spare room falls below
       // the art. The art of step i spans [tu·s + tp, bu·s + bp] px from its origin (LAYS[·].ext[i], measured at several
       // scales: design units plus fixed-size labels). Each step takes the largest scale its room allows, within 15% of
       // the tightest step, and a step change glides both the offset and the scale with the crossfade. A composition is
@@ -1014,6 +1063,8 @@
       };
       // the tall (portrait tablet) steps whose art is short may grow a little more (the width still caps them)
       LAYS.tall.smaxS = [1.35, 1.35, 1.35, 1.35, 1.5, 1.5, 1.5];
+      // (short phones, sound locked: the landing step with its compact planner box, 50 px instead of 104; see view0)
+      LAYS.short.ext0c = [-2.4, 0.2, 343.7, 55];
       const SLIDER_OF = [-1, -1, 0, 1, 1, 2, -1]; // the step's control under the stepper: alpha · H · rung
       const extOf = (D, i, w, h) => (typeof D.ext[i] === 'function' ? D.ext[i](w, h) : D.ext[i]);
       // short mid windows (< 700 px tall): the Capacity step's formula block sits closer to the chart and the
@@ -1048,25 +1099,34 @@
         if (reserve) { slider = Math.min(slider, h - ctrl - sh - 10 - reserve - 8); free = Math.min(free, h - ctrl - 10 - reserve - 8); }
         return { slider, free };
       }
-      function fitLayout(lay, capLines, reserve, M, w, h, noSl) {
+      // (cp0: short phones while sound is locked, where no composition keeps the invite's band clear on every step:
+      // the landing step alone keeps it clear, with a compact planner box — its title row and one stats line)
+      const extAt = (D, i, w, h, cp0) => (cp0 && i === 0 && D.ext0c ? D.ext0c : extOf(D, i, w, h));
+      function fitLayout(lay, capLines, reserve, M, w, h, noSl, cp0) {
         const D = LAYS[lay], ph = lay === 'phone' || lay === 'short';
         const col = w < 1100 ? 260 : 300; // clear of the left control column (stepper + slider)
         const ax0 = lay === 'wide' ? 300 : ph ? 16 : col, ax1 = lay === 'wide' ? w - 56 : ph ? w - 16 : w - 40;
         // (desktop: the caption, bottom-left, reaches x ≈ 298, so where the art starts at x = 260 it ends above it)
         const ay1 = lay === 'wide' ? h - 92 : lay === 'mid' ? (col < 300 ? h - 108 : h - 96) : h - 108;
-        const PB = ph ? phoneBottoms(h, capLines, reserve) : null;
-        const gap = ph ? 14 : 20;
+        const PB = ph ? phoneBottoms(h, capLines, cp0 ? 0 : reserve) : null, PB0 = cp0 ? phoneBottoms(h, capLines, reserve) : PB;
         const subs = [], tops = [], bots = [], fit = [], caps = [];
         for (let i = 0; i < 7; i++) {
           caps[i] = Math.min(D.smaxS ? D.smaxS[i] : D.smax, (ax1 - ax0) / D.dw);
-          bots[i] = ph ? (SLIDER_OF[i] < 0 || noSl ? PB.free : PB.slider) : ay1;
+          // (cp0 also lends the steps with a slider the invite's band: until the first gesture their slider row is
+          // hidden, the invite sits right above the caption, and the art keeps clear of it — with more room, not less)
+          const pb = cp0 && (i === 0 || SLIDER_OF[i] >= 0) ? PB0 : PB;
+          bots[i] = ph ? (SLIDER_OF[i] < 0 || noSl || cp0 ? pb.free : pb.slider) : ay1;
           // the art spans [tu·s + tp, bu·s + bp] px from the origin: design units plus fixed-size labels
-          const e = extOf(D, i, w, h);
+          const e = extAt(D, i, w, h, cp0);
           const fitAt = top => Math.min(caps[i], (bots[i] - top - (e[3] - e[1])) / (e[2] - e[0]));
-          const tS = M.top + M.full[i] + gap, tT = M.top + M.title[i] + gap;
-          // each step keeps its sub where its own art still holds the composition's floor scale
-          subs[i] = fitAt(tS) >= D.min;
-          tops[i] = subs[i] ? tS : tT;
+          // (the art starts 20 px under its headline; on a phone where 20 px would take the art under its floor, 14)
+          const gp = t => (ph && fitAt(t + 20) < D.min ? 14 : 20);
+          const tS = M.top + M.full[i], tM = M.top + M.short[i], tT = M.top + M.title[i];
+          // each step keeps its sub where its own art still holds the composition's floor scale; desktops fall back
+          // to the one-line sub before the title stands alone
+          subs[i] = fitAt(tS + gp(tS)) >= D.min ? 2 : !ph && fitAt(tM + 20) >= D.min ? 1 : 0;
+          const tb = subs[i] === 2 ? tS : subs[i] ? tM : tT;
+          tops[i] = tb + gp(tb);
           fit[i] = fitAt(tops[i]);
         }
         // each step takes the largest scale its band allows, within 15% of the tightest step (so a step change is
@@ -1078,14 +1138,18 @@
         // each step's art starts a short gap under its headline (desktop: + at most 26 px of its spare room; phones:
         // + 30% of it), and the rest of the room falls below the art, so stepping keeps that gap nearly constant
         const oyS = sS.map((s, i) => {
-          const e = extOf(D, i, w, h), room = Math.max(0, bots[i] - tops[i] - ((e[2] - e[0]) * s + e[3] - e[1]));
+          const e = extAt(D, i, w, h, cp0), room = Math.max(0, bots[i] - tops[i] - ((e[2] - e[0]) * s + e[3] - e[1]));
           return tops[i] - (e[0] * s + e[1]) + (ph ? room * 0.3 : Math.min(room * 0.5, 26));
         });
         const oxS = sS.map(s => (ph ? ax0 + (ax1 - ax0 - D.dw * s) / 2 : ax0));
-        return { lay, capLines, reserve, noSl: !!noSl, subs, nSub: subs.filter(Boolean).length, sS, oxS, oyS, tops, bots, sMin, rel: sMin / D.min, ok };
+        // (where each step's art ends: phones keep their own hints off it)
+        const artB = sS.map((s, i) => { const e = extAt(D, i, w, h, cp0); return oyS[i] + e[2] * s + e[3]; });
+        const nSub = subs.reduce((n, v) => n + (v === 2 ? 1 : v ? 0.5 : 0), 0);
+        return { lay, capLines, reserve, cp0: !!cp0, noSl: !!noSl, subs, nSub, sS, oxS, oyS, tops, bots, artB, sMin, rel: sMin / D.min, ok };
       }
       let G = null;
-      function relayout(glide) {
+      let cpk = null; // the landing step's compact planner (short phones while sound is locked), 0..1, eased to G.cp0
+      function relayout(glide, hlAnim) {
         const w = cv.w, h = cv.h, phone = w <= 800;
         if (hlPhone !== phone) {
           hlPhone = phone; api.headlineTop(phone ? PH_TOP : null);
@@ -1096,48 +1160,57 @@
         // one-line caption (the controls row starts at 104 px either way, so one line costs the art nothing).
         const R = phone && locked() ? inviteH(w) : 0;
         const cands = phone
-          ? (R ? [['phone', 3, R], ['short', 3, R], ['short', 1, R]] : []).concat([['phone', 3, 0], ['short', 3, 0], ['short', 1, 0]])
+          ? (R ? [['phone', 3, R], ['short', 3, R], ['short', 1, R], ['short', 3, R, 0, 1], ['short', 1, R, 0, 1]] : []).concat([['phone', 3, 0], ['short', 3, 0], ['short', 1, 0]])
           : h > w * 1.1 ? [['tall', 3, 0]] : [['wide', 3, 0], ['mid', 3, 0]];
-        const fits = cands.map(c => fitLayout(c[0], c[1], c[2], M, w, h));
+        const fits = cands.map(c => fitLayout(c[0], c[1], c[2], M, w, h, c[3], c[4]));
         // (a phone too short for every composition, e.g. 375×553 with Safari's bars: its sliders give their row to the
-        // art — the canvas stays interactive — and what still does not fit runs past the band at 85% of the floor)
+        // art — the canvas stays interactive — then its caption too, so text never sits on text; what still does not
+        // fit runs past the band at 85% of the floor)
         // (only where even the best layout falls well under its floor: 375×667 keeps its sliders)
-        if (phone && !fits.some(x => x.rel >= 0.9)) fits.push(fitLayout('short', 1, 0, M, w, h, true));
+        if (phone && !fits.some(x => x.rel >= 0.9)) fits.push(fitLayout('short', 1, 0, M, w, h, true), fitLayout('short', 0, 0, M, w, h, true));
         // the first candidate (at or above its floor) that keeps the most subs — on desktops the wide composition may
         // give up one sub rather than fall back to the smaller mid picture — else (a window too small for all of
         // them) the one closest to its floor
         // (phones, while sound is locked: keeping the invite's band clear comes first — the first tap re-fits, and the
-        // subs that needed that band come back)
+        // subs that needed that band come back; where nothing fits, one that keeps it clear at least on the landing
+        // step, and is as close to its floor as the best, wins)
         const okR = fits.filter(x => x.ok && x.reserve), oks = okR.length ? okR : fits.filter(x => x.ok);
         const most = oks.length ? Math.max(...oks.map(x => x.nSub)) : 0;
-        const f = oks.find(x => x.nSub >= most - (phone ? 0 : 1)) || fits.reduce((b, x) => (x.rel > b.rel ? x : b));
+        const bestRel = Math.max(...fits.map(x => x.rel));
+        const f = oks.find(x => x.nSub >= most - (phone ? 0 : 1)) || fits.find(x => x.reserve && x.rel >= bestRel - 0.005) || fits.find(x => x.rel >= bestRel - 1e-9);
         const lay = f.lay === 'short' ? 'phone' : f.lay;
         const prev = G;
         G = {
           w, h, lay, s: f.sS[S.step], short: f.lay === 'short', mobile: lay === 'phone' || lay === 'tall', phone: lay === 'phone', mid: lay === 'mid',
           // (every desktop composition starts on the content-left line, just right of the control column)
-          ox: f.oxS[S.step], oy: f.oyS[S.step], sS: f.sS, oxS: f.oxS, oyS: f.oyS, tops: f.tops, bots: f.bots,
-          subs: f.subs, capLines: f.capLines, reserve: f.reserve, noSlider: f.noSl, glide: null,
+          ox: f.oxS[S.step], oy: f.oyS[S.step], sS: f.sS, oxS: f.oxS, oyS: f.oyS, tops: f.tops, bots: f.bots, artB: f.artB,
+          subs: f.subs, capLines: f.capLines, reserve: f.reserve, cp0: f.cp0, noSlider: f.noSl, glide: null,
           // (a landscape phone, where no composition fits: the room under the headline asks for portrait instead)
           rotate: !f.ok && w > h * 1.15 && (phone || (h < 500 && coarse())),
         };
         if (prev) {
           const i = S.step, moved = Math.abs(prev.sS[i] - G.sS[i]) > 0.002 || Math.abs(prev.oyS[i] - G.oyS[i]) > 0.5 || Math.abs(prev.oxS[i] - G.oxS[i]) > 0.5;
-          // (the art glides into its new room when the room changed under it: sound unlocked, the headline changed)
-          if (glide && moved && prev.w === w && prev.h === h && !reduced) G.glide = { s: prev.s, ox: prev.ox, oy: prev.oy, t0: rt };
+          // (the art glides into its new room when the room changed under it: sound unlocked, the headline changed;
+          // only while the scene is showing — a relayout of a hidden scene just takes its new place)
+          if (glide && moved && prev.w === w && prev.h === h && !reduced && api.isActive()) G.glide = { s: prev.s, ox: prev.ox, oy: prev.oy, t0: rt };
           else if (!moved && prev.glide) G.glide = prev.glide;
           G.s = prev.s; G.ox = prev.ox; G.oy = prev.oy;
         }
-        // (a sub that comes or goes with the window is swapped in place: the headline does not replay its entrance)
-        if (hlShown) syncHeadline(false, false);
-        if (!prev || prev.capLines !== f.capLines) showCaption();
+        // (a sub that comes or goes with the window is swapped in place: the headline does not replay its entrance;
+        // the capacity step's open / closed-loop toggle does replay it)
+        if (hlShown) syncHeadline(false, !!hlAnim);
+        if (!prev || prev.capLines !== f.capLines || prev.h !== h || prev.lay !== G.lay) showCaption();
         // the H slider's label is shortened where the control column is narrow (x < 250 below 1100 px)
         try { sliders.H.set(S.H); showSlider(S.step); } catch (e) { /* (not built yet) */ }
       }
       // Bottom-left caption: the source and how to interact (the headline carries the point). Tight phones: one line.
+      // (the capacity step's caption follows the open / closed-loop toggle; short mid windows give the Predictor step's
+      // rollout read-outs the caption's upper lines)
       function showCaption() {
-        const i = S.step;
-        api.caption(G && G.capLines === 1 ? CAPS1[i] : coarse() && CAPS_T[i] ? CAPS_T[i] : CAPS[i]);
+        const i = S.step, cl = i === 5 && S.loopClosed;
+        api.caption(G && G.capLines === 0 ? ''
+          : G && (G.capLines === 1 || (i === 3 && G.mid && G.h < 660)) ? CAPS1[i]
+            : coarse() && CAPS_T[i] ? (cl ? CAPS_TC : CAPS_T[i]) : cl ? CAPS_C : CAPS[i]);
       }
       const X = u => G.ox + u * G.s, Y = v => G.oy + v * G.s, Z = d => d * G.s;
       api.onResize(() => relayout());
@@ -1148,10 +1221,10 @@
       api.onHeadline(() => {
         if (!G) return;
         const b = api.headlineBottom();
-        const m = /^lpwm(\d)([st])p?$/.exec(hlShown);
+        const m = /^lpwm(\d)([smt])p?c?$/.exec(hlShown);
         if (b > 0 && m && api.isActive()) {
           const i = +m[1], v = m[2], M = measureHL(G.phone);
-          const d = b - (M.top + (v === 's' ? M.full[i] : M.title[i]));
+          const d = b - (M.top + (v === 's' ? M.full[i] : v === 'm' ? M.short[i] : M.title[i]));
           if (Math.abs(d) > 2) {
             hlAdj[i + v] = (hlAdj[i + v] || 0) + d;
             if (!hlWarned) { hlWarned = true; console.warn('[lpwm] headline measured ' + Math.round(d) + ' px off its prediction (step ' + (i + 1) + '): using the real bottom'); }
@@ -2086,6 +2159,11 @@
         const cols = Math.min(H, 20), rp = Math.min(m || md ? 4.8 : 8, L.rmax / cols);
         const rcx = L.rast[0] + (cols * rp) / 2;
         L.loop[4] = [rcx, L.rast[1] + 24 * L.pitch + 6, rcx, L.plan[1]];
+        // short phones while sound is locked (G.cp0): a compact planner box — its title row and one stats line, the
+        // cost formula and the sparkline dropped (the Plan step shows both) — so the landing view keeps the sound
+        // invite's band clear; the first gesture grows it back (cpk glides 1 → 0)
+        const k = G.short ? cpk || 0 : 0;
+        if (k > 0) { const lp5 = L.loop[5]; lp5[1] = lp5[3] = lerp(lp5[1], L.plan[1] + 26, k); }
         ctx.save();
         // (the step's context line is core's headline above the art: HL[0])
         // loop connectors
@@ -2166,25 +2244,27 @@
         const phot = hot(4) || hot(5);
         const bxp = prog(ta, 0.6, 0.7);
         // text is in px, so the box is sized in px too (never smaller than its four rows)
-        const bw0 = Math.round(Z(qw)), bh0 = Math.round(Math.max(Z(qh), m ? 104 : 108)), by0 = Y(qy);
+        const bw0 = Math.round(Z(qw)), bh0 = Math.round(lerp(Math.max(Z(qh), m ? 104 : 108), 50, k)), by0 = Y(qy);
         ctx.globalAlpha = a; ctx.strokeStyle = phot ? ACC : G4; dash([2, 3]);
         rectP(P(X(qx)), P(by0), bw0, bh0, bxp); dash(false);
         const st = pl && pl.st;
-        const tx = X(qx) + 14;
+        const tx = X(qx) + 14, fa = a * (1 - k);
         caps('PLANNER', tx, by0 + 20, { color: phot ? ACC : SEC, p: prog(ta, 0.8, 0.5) });
         T('CEM · model-predictive control', tx + (m ? 66 : 72), by0 + 20, { font: m ? F12 : F13, p: prog(ta, 0.85, 0.7) });
-        TX('v0.cost', '\\min_{a}\\;\\lVert \\hat z_H - z_g \\rVert^2', tx, by0 + (m ? 45 : 48), { size: m ? 16 : 18, math: true, a, p: prog(ta, 0.9, 0.8) });
-        T('300 → top 30 · iter ' + String(st ? st.it : 0).padStart(2, '0') + '/30', tx, by0 + (m ? 74 : 78), { color: SEC, p: prog(ta, 1.1, 0.8) });
-        TX('v0.rep', 'replan ' + String(AG[0].replans).padStart(2, '0') + '/10 · $H = ' + H + '$', tx, by0 + (m ? 89 : 93), { size: 12, color: SEC, a, p: prog(ta, 1.2, 0.8) });
+        const rep = 'replan ' + String(AG[0].replans).padStart(2, '0') + '/10';
+        if (k > 0) TX('v0.cmp', '300 → top 30 · ' + rep + ' · $H = ' + H + '$', tx, by0 + 36, { size: 12, color: SEC, a: a * k, p: prog(ta, 1.1, 0.8) });
+        TX('v0.cost', '\\min_{a}\\;\\lVert \\hat z_H - z_g \\rVert^2', tx, by0 + (m ? 45 : 48), { size: m ? 16 : 18, math: true, a: fa, p: prog(ta, 0.9, 0.8) });
+        T('300 → top 30 · iter ' + String(st ? st.it : 0).padStart(2, '0') + '/30', tx, by0 + (m ? 74 : 78), { color: SEC, a: fa, p: prog(ta, 1.1, 0.8) });
+        TX('v0.rep', rep + ' · $H = ' + H + '$', tx, by0 + (m ? 89 : 93), { size: 12, color: SEC, a: fa, p: prog(ta, 1.2, 0.8) });
         // sparkline of the elite cost per CEM iteration (live)
-        if (st && st.eliteCost.length > 1) {
+        if (st && st.eliteCost.length > 1 && k < 0.99) {
           const sx1 = X(qx) + bw0 - 14, sx0 = sx1 - Math.min(m ? 96 : 118, bw0 * 0.3), sy0 = by0 + 34, sy1 = by0 + bh0 - 30;
           const ec = st.eliteCost.map(v => Math.log(v + 1e-4)), mx = Math.max(...ec), mn = Math.min(...ec);
           const pts = [];
           for (let i = 0; i < ec.length; i++) pts.push(lerp(sx0, sx1, i / (CEM_IT - 1)), lerp(sy1, sy0, mx > mn ? (ec[i] - mn) / (mx - mn) : 0));
-          ctx.globalAlpha = a; ctx.strokeStyle = G3; ln(sx0, P(sy1), sx1, P(sy1));
+          ctx.globalAlpha = fa; ctx.strokeStyle = G3; ln(sx0, P(sy1), sx1, P(sy1));
           ctx.strokeStyle = ACC; ctx.lineWidth = 1; polyP(pts, 1);
-          T(m || bw0 < 400 ? 'elite cost' : 'elite cost · 30 iters', sx1, sy1 + 16, { font: F12, color: SEC, align: 'right' });
+          T(m || bw0 < 400 ? 'elite cost' : 'elite cost · 30 iters', sx1, sy1 + 16, { font: F12, color: SEC, align: 'right', a: fa });
         }
         ctx.restore();
       }
@@ -2472,6 +2552,8 @@
         const vals = new Float32Array(24);
         for (let i = 0; i < 24; i++) vals[i] = Math.max(pre[i], al * pre[i]);
         const md = G.mid;
+        // (short phones: up to 12 design units of air around the lemma line, from the room left under the step's art)
+        const ex2 = G.short && G.artB ? Math.min(12, (Math.max(0, G.bots[2] - G.artB[2]) * 0.35) / G.s) : 0;
         // (mid: the code is a row across the top, beside o_t; the lemma below it on the left, the two target
         // distributions on the right)
         const zo = md
@@ -2495,11 +2577,16 @@
         const [bx, by] = cellPos(0, zo), [ex, ey] = cellPos(11, zo), [hx, hy] = cellPos(12, zo), [kx, ky] = cellPos(23, zo);
         ctx.strokeStyle = G5; ctx.globalAlpha = a;
         const lemP = prog(ta, 0.5, 0.8);
+        // while the output link is (mostly) the identity, the picture says so beside the code: it now shows the dense
+        // comparison, not the sparse code of the headline (it takes the place of the hover hint on smaller layouts)
+        const denseA = a * clamp((al - 0.35) / 0.3, 0, 1), hintA = a - denseA;
+        const denseTag = G.phone ? 'now: dense code (LeWM)' : 'now: dense code (LeWM), for comparison';
         if (zo.orient === 'v') {
           const bxr = bx + zo.cs + 10;
           ln(P(bxr), by, P(bxr), ey + zo.cs); ln(bxr - 4, P(by), bxr, P(by)); ln(bxr - 4, P(ey + zo.cs), bxr, P(ey + zo.cs));
           ln(P(bxr), hy, P(bxr), ky + zo.cs); ln(bxr - 4, P(hy), bxr, P(hy)); ln(bxr - 4, P(ky + zo.cs), bxr, P(ky + zo.cs));
           TX('v2.z', '$z_t$', zo.x + zo.cs / 2, zo.y - 20, { size: 16, align: 'center', a });
+          if (denseA > 0.01) T(denseTag, X(304), zo.y - 15, { font: F13, a: denseA });
           // Lemma 4.1 card, beside the zone blocks
           const lx = X(304), ly = Y(92);
           caps('LEMMA 4.1 · MODE-FACTORED SPARSE CODE', lx, ly, { p: lemP });
@@ -2516,7 +2603,8 @@
             TX('v2.z', '$z_t$', X(128), Y(22), { size: 16, a });
           } else {
             TX('v2.z', '$z_t$ of the live frame $o_t$', X(98), Y(12), { size: 13, a });
-            T('tap a unit to hear it', X(98), Y(34), { color: SEC });
+            if (hintA > 0.01) T('tap a unit to hear it', X(98), Y(34), { color: SEC, a: hintA });
+            if (denseA > 0.01) T(denseTag, X(98), Y(34), { a: denseA });
             if (hotCell < 0 && !G.short) T('toy 24-unit view', X(98), Y(52) + 4, { color: SEC });
           }
           const byr = by + zo.cs + 8;
@@ -2540,9 +2628,10 @@
             T('active block = mode · values = position', X(0), Y(209), { p: prog(ta, 0.6, 0.8) });
             TX('v2.lem', 'E(x) = J_q\\,\\lambda_q(x),\\;\\; \\lVert E(x) \\rVert_0 \\le r + 1', X(0), Y(234), { size: 15, math: true, a, p: prog(ta, 0.8, 0.8) });
           } else {
-            // short phones: the lemma is one line (its name, then its formula) under the code
-            caps('LEMMA 4.1', X(0), Y(160), { p: lemP });
-            TX('v2.lem', 'E(x) = J_q\\,\\lambda_q(x),\\;\\; \\lVert E(x) \\rVert_0 \\le r + 1', X(0) + 82, Y(160) - 4, { size: 15, math: true, a, p: prog(ta, 0.8, 0.8) });
+            // short phones: the lemma is one line (its name, then its formula) under the code, with some of the
+            // step's spare room (ex2) above and below it, so the labels, the lemma and the charts read as three groups
+            caps('LEMMA 4.1', X(0), Y(160 + ex2), { p: lemP });
+            TX('v2.lem', 'E(x) = J_q\\,\\lambda_q(x),\\;\\; \\lVert E(x) \\rVert_0 \\le r + 1', X(0) + 82, Y(160 + ex2) - 4, { size: 15, math: true, a, p: prog(ta, 0.8, 0.8) });
           }
         }
         // hovered unit value: a fixed read-out slot under the o_t panel (it can never cover the lemma); the
@@ -2556,13 +2645,15 @@
           if (md) TX('v2.hv', src, X(162), Y(22), { size: 13, color: v > 0 ? ACC : INK, a });
           else if (!m) TX('v2.hv', src, X(0), Y(406), { size: 13, color: v > 0 ? ACC : INK, a });
           else TX('v2.hv', src, X(98), Y(52), { size: 13, color: v > 0 ? ACC : INK, a });
-        } else if (md) T('hover a unit to hear it', X(162), Y(22) + 4, { color: SEC, p: prog(ta, 1.2, 0.6) });
-        else if (!m) T('hover a unit to hear it', X(0), Y(406) + 4, { color: SEC, p: prog(ta, 1.2, 0.6) });
+        } else if (md) {
+          if (hintA > 0.01) T('hover a unit to hear it', X(162), Y(22) + 4, { color: SEC, a: hintA, p: prog(ta, 1.2, 0.6) });
+          if (denseA > 0.01) T(denseTag, X(162), Y(22) + 4, { font: F13, a: denseA });
+        } else if (!m) T('hover a unit to hear it', X(0), Y(406) + 4, { color: SEC, p: prog(ta, 1.2, 0.6) });
         // distributions: Rectified Laplace (LpWM, sparse) and isotropic Gaussian (LeWM, dense)
         // (phones: a clear 24 px gap under the lemma; chart titles sit on the 16 px gutter)
         const L = md ? { x0: 352, x1: 612, sy: 256, dy: 392, hs: 96, hd: 50, l1: 40 }
           : !m ? { x0: 690, x1: 1056, sy: 262, dy: 506, hs: 150, hd: 104, l1: 50 }
-            : G.short ? { x0: 22, x1: 350, sy: 250, dy: 344, hs: 48, hd: 36, l1: 18 } : { x0: 22, x1: 350, sy: 380, dy: 494, hs: 72, hd: 42, l1: 34 };
+            : G.short ? { x0: 22, x1: 350, sy: 250 + 2 * ex2, dy: 344 + 2 * ex2, hs: 48, hd: 36, l1: 18 } : { x0: 22, x1: 350, sy: 380, dy: 494, hs: 72, hd: 42, l1: 34 };
         // (short phones: each target's parameters sit on its title line)
         const inl = G.short;
         const tX = m ? X(0) : X(L.x0);
@@ -2630,7 +2721,7 @@
           T('Table 3: LpWM 28–63% active · LeWM 100%', sx0, cy + 20, { color: SEC });
         } else {
           // (≥ 16 px above the phone's slider label, so the read-out never reads as part of the control)
-          T('nonzero ' + nNZ + '/24 = ' + (nNZ / 24).toFixed(2) + ' · paper 28–63%', X(0), Y(G.short ? 380 : 534), { color: nNZ < 24 ? ACC : INK });
+          T('nonzero ' + nNZ + '/24 = ' + (nNZ / 24).toFixed(2) + ' · paper 28–63%', X(0), Y(G.short ? 380 + 2 * ex2 : 534), { color: nNZ < 24 ? ACC : INK });
         }
         ctx.restore();
       }
@@ -3036,7 +3127,9 @@
         // legend (mid: the "illustrative simulation" note joins the legend's flow)
         const md = G.mid;
         // (phones: never closer than 22 px under the raster captions, whatever the scale)
-        const ly = m ? Math.max(Y(G.short ? 286 : 376), capBottom + 22) : md ? Math.max(Y(380), capBottom + 20) : Y(578);
+        // (the portrait tablet, drawn at up to 1.5×: the legend follows the raster captions at a fixed gap, rather than
+        // floating ~90 px below them)
+        const ly = m ? (G.phone ? Math.max(Y(G.short ? 286 : 376), capBottom + 22) : capBottom + 34) : md ? Math.max(Y(380), capBottom + 20) : Y(578);
         const lx = m ? X(0) : md ? X(40) : X(160);
         ctx.globalAlpha = a;
         const items = [
@@ -3083,8 +3176,10 @@
         const L = md ? { x0: 40, x1: 610, y0: 150, y1: 300, gl: [212, 0] }
           : !m ? { x0: 120, x1: 950, y0: short ? 190 : 150, y1: 466, gl: [380, 8] }
             : G.short ? { x0: 34, x1: 352, y0: 142, y1: 262, gl: [0, 8] } : { x0: 34, x1: 352, y0: 150, y1: 392, gl: [0, 8] };
-        // (phones: the chart title keeps ≥ 20 px under the rung's formula block at any scale)
-        const x0 = X(L.x0), x1 = X(L.x1), y0 = m ? Math.max(Y(L.y0), Y(L.gl[1]) + 124) : Y(L.y0), y1 = Y(L.y1);
+        // (phones: the chart title keeps ≥ 20 px under the rung's formula block at any scale; the portrait tablet, drawn
+        // at up to 1.5×, never lets that gap grow past ~50 px: the plot grows taller instead)
+        const x0 = X(L.x0), x1 = X(L.x1), y1 = Y(L.y1);
+        const y0 = m ? Math.max(G.phone ? Y(L.y0) : Math.min(Y(L.y0), Y(L.gl[1]) + 150), Y(L.gl[1]) + 124) : Y(L.y0);
         const yv = v => lerp(y1, y0, v / 100);
         const n = 6, xc = i => lerp(x0, x1, (i + 0.5) / n);
         const lm = eio(S.loopMix);
@@ -3178,8 +3273,9 @@
         }
         ctx.globalAlpha = a;
         TX('v5.foot', m ? 'params at $D = 4096$ · LpWM active fraction' : 'params at $D = 4096$ (Table 2) · LpWM active fraction $\\lVert z \\rVert_0 / D$ (Table 3)', x0, y1 + (m ? 80 : 78), { size: 12, color: SEC, a, p: prog(ta, 1.2, 1) });
-        // (short phones: the axis-direction line gives way to the legend)
-        if (!G.short && !tight5()) {
+        // (short phones: the axis-direction line gives way to the legend; desktops drop it wherever it would sit in the
+        // caption's band at the bottom — the slider's "deep transformer ↔ linear" already says it)
+        if (!G.short && !tight5() && (G.phone || y1 + 102 <= cv.h - 137)) {
           T('← more complex predictor', x0, y1 + 102, { color: SEC, p: prog(ta, 1.3, 1) });
           T('simpler →', x1, y1 + 102, { color: SEC, align: 'right', p: prog(ta, 1.3, 1) });
         }
@@ -3383,7 +3479,15 @@
         }
         ctx.globalAlpha = a;
         T('sparse wins at every horizon', x0, y1 + (m ? 86 : 90), { color: ACC, font: F14, p: prog(ta, 3.8, 1.2) });
-        if (!m) T('gap labels: LpWM − LeWM, in points · Fig 2c', x0, y1 + 110, { color: SEC, p: prog(ta, 4.2, 1) });
+        // (the third series is named here: TJ = the paper's optional Temporal-Jaccard loss, which penalises changes in
+        // the set of active units from one step to the next)
+        if (!m) {
+          const room = cv.w - 40 - x0;
+          const note = ['gap labels: LpWM − LeWM, in points · LpWM + TJ adds a loss that keeps the active units stable over time',
+            'gaps: LpWM − LeWM, in points · LpWM + TJ keeps the active units stable over time',
+            'LpWM + TJ adds a loss that keeps the active units stable over time'].find(s => textW(s, F12) <= room) || 'LpWM + TJ keeps the active units stable';
+          T(note, x0, y1 + 110, { color: SEC, p: prog(ta, 4.2, 1) });
+        }
         // hover column → values
         horHit = [];
         for (let i = 0; i < 4; i++) horHit.push({ x: xv(i) - (x1 - x0) / 8, y: y0, w: (x1 - x0) / 4, h: y1 - y0, i });
@@ -3601,18 +3705,20 @@
           return;
         }
         if (S.step === 2 && !S.alphaUser) {
-          // sparse → dense → sparse (bars 0–1.5 sparse, ramp, hold, ramp back)
+          // sparse → dense → sparse: the sparse code the headline describes holds for the first 3 bars (while the
+          // headline is read), then the dense comparison (ramp, hold, ramp back), then sparse again
           const b = t / BAR;
-          const v = b < 1.6 ? 0 : b < 2.4 ? eio((b - 1.6) / 0.8) : b < 3.6 ? 1 : b < 4.4 ? 1 - eio((b - 3.6) / 0.8) : 0;
-          S.alpha = v; sliders.alpha.set(v);
+          const v = b < 3 ? 0 : b < 3.8 ? eio((b - 3) / 0.8) : b < 5.2 ? 1 : b < 6 ? 1 - eio((b - 5.2) / 0.8) : 0;
+          // (the slider re-renders on every set: only when the value moves)
+          if (Math.abs(v - S.alpha) > 1e-3 || (v !== S.alpha && (v === 0 || v === 1))) { S.alpha = v; sliders.alpha.set(v); }
         }
         if (S.step === 5) {
           if (!S.rungUser) {
-            // the guide opens on the headline's rung, MLP∘LTI(k) (the +57 pt gap), then walks the ladder
-            // (deep → linear) and settles back on it
+            // the guide opens on the headline's rung, MLP∘LTI(k) (the +57 pt gap) while the headline is read, then
+            // walks the ladder (deep → linear) and settles back on it
             const b = t / BAR;
             let target = 3;
-            if (b >= 1.6 && b < 1.6 + 6 * 0.42) target = clamp(Math.floor((b - 1.6) / 0.42), 0, 5);
+            if (b >= 2.6 && b < 2.6 + 6 * 0.42) target = clamp(Math.floor((b - 2.6) / 0.42), 0, 5);
             if (target !== S.rung) { S.rung = target; sliders.rung.set(target); rungSound(target); }
           }
           S.rungView += (S.rung - S.rungView) * Math.min(1, dt * 9);
@@ -3652,10 +3758,17 @@
         if (i >= 5) snd.data(t, { dur: 0.35, density: 22, spread: 0.9, g: 0.25 });
       }
       // open ↔ closed loop: the same soft, quantised cue from a click or the C key, then the rung's notes
+      // (the headline and the caption follow the toggle: the closed-loop panel has its own numbers)
       function toggleLoop() {
         S.loopClosed = !S.loopClosed;
         snd.click(qT(1), { g: 0.35, freq: 2600, q: 3 });
         rungSound(S.rung);
+        loopText();
+      }
+      function loopText() {
+        setProbes(5);
+        relayout(true, true);
+        showCaption();
       }
       function rungSound(r) {
         const lt = qT(1);
@@ -3728,12 +3841,18 @@
         // caption rather than over the art; desktops keep the slot's height so the stepper never jumps)
         // (core re-stacks the phone chrome, hint included, when the step's caption swaps in)
         // (a landscape phone showing the "turn upright" note has no use for a slider either)
-        slot.style.display = G && (G.rotate || ((which < 0 || G.noSlider) && G.phone)) ? 'none' : '';
+        const disp = G && (G.rotate || ((which < 0 || G.noSlider || G.cp0) && G.phone)) ? 'none' : '';
+        if (slot.style.display !== disp) {
+          slot.style.display = disp;
+          // (phones: core re-stacks its chrome — the hint line above the controls — whenever the links are set)
+          if (G && G.phone && api.isActive()) api.links(LINKS);
+        }
       }
-      api.links([
+      const LINKS = [
         { label: 'paper', href: 'https://arxiv.org/abs/2608.22764' },
         { label: 'RDMReg (LpJEPA)', href: 'https://arxiv.org/abs/2602.01456' },
-      ]);
+      ];
+      api.links(LINKS);
 
       /* ---------------------------------------------------------------- pointer interaction */
       let drag = null; // {type:'goal'|'agent', k, pid, lastReplan}
@@ -3897,8 +4016,16 @@
       const coarse = () => { try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } };
       // (801–1100 px wide, core puts hints under the wordmark, right on top of the headline: there the scene says
       // nothing — the caption carries how to interact, the step header the play state)
+      // (phones: core puts hints 10 px above the controls; where that line would cover the step's art, the scene says
+      // nothing — the one-line caption already says how to interact)
       function myHint(text, ms) {
         if (innerWidth > 800 && innerWidth <= 1100) return;
+        if (G && G.phone && G.artB) {
+          const i = S.step, cap = G.capLines;
+          const ctrl = Math.max(104, 58 + 14 * cap + 16), sl = SLIDER_OF[i] >= 0 && !G.noSlider && !G.cp0 ? sliderH() : 0;
+          const lines = Math.max(1, Math.ceil((tw(text, F11) + text.length * 0.22 + 14) / (G.w - 32)));
+          if (G.h - ctrl - sl - 10 - (6 + 14 * lines) < G.artB[i] + 4) return;
+        }
         api.hint(text, ms); myHintUntil = performance.now() + ms;
       }
       // the longest wording that stays on one line: core's hint (11 px mono, .02em tracking) wraps at 100vw − 680 px
@@ -3921,6 +4048,7 @@
       api.loop((t, dt) => {
         rt += dt;
         if (!G || G.w !== cv.w || G.h !== cv.h) relayout();
+        { const k1 = G.cp0 ? 1 : 0; cpk = cpk == null || reduced ? k1 : Math.abs(k1 - cpk) < 0.002 ? k1 : cpk + (k1 - cpk) * Math.min(1, dt * 6); }
         syncAudio();
         if (S.playing) {
           S.stepT += dt;
@@ -3968,7 +4096,10 @@
         S.playing = true; S.autoplay = true; S.userTouched = false; S.apBeforePause = null;
         S.alphaUser = false; S.rungUser = false; S.alpha = 0;
         // a re-entered scene replays from its defaults (H = 5, open-loop, the MLP∘LTI(k) rung)
-        S.H = 5; S.loopClosed = false; S.loopMix = 0; S.rung = 3; S.rungView = 3;
+        if (S.loopClosed) { S.loopClosed = false; setProbes(5); }
+        S.H = 5; S.loopMix = 0; S.rung = 3; S.rungView = 3;
+        // (no glide carried over from a relayout while the scene was hidden: rt restarts at 0)
+        if (G) G.glide = null;
         stepper.set(0); showCaption(); showSlider(0);
         syncHeadline(true); // (the context line replays its entrance with the scene)
         sliders.alpha.set(0); sliders.H.set(5); sliders.rung.set(3);
@@ -3989,14 +4120,13 @@
       }
       relayout();
       reset();
-      window.__lpwmDbg = () => ({ G, S, gestured, rt, hlShown, M: measureHL(G.phone), go: i => setStep(i, false), toggleLoop }); // TEMP DEBUG
 
       return {
         enter() {
           reset();
           relayout();
           if (reduced) S.tSwitch = -10;
-          setTimeout(() => { if (api.isActive() && S.step === 0 && A && A.ready) myHint(fitHint(coarse() ? ['Drag the goal ⊕ · swipe or ‹ › for steps', 'Drag the goal ⊕ · ‹ › for steps', 'Drag the goal ⊕'] : ['Drag the goal ⊕ or nudge the agent · ↑↓ steps', 'Drag the goal ⊕ · ↑↓ steps', 'Drag the goal ⊕']), 4200); }, 1600);
+          setTimeout(() => { if (api.isActive() && S.step === 0 && A && A.ready) myHint(fitHint(coarse() ? ['Drag the goal ⊕ · ‹ › for steps', 'Drag the goal ⊕'] : ['Drag the goal ⊕ or nudge the agent · ↑↓ steps', 'Drag the goal ⊕ · ↑↓ steps', 'Drag the goal ⊕']), 4200); }, 1600);
         },
         exit() {
           stopBed();
