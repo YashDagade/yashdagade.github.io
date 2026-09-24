@@ -62,13 +62,6 @@
       display: block; margin-top: 5px;
       font-family: var(--mono); font-size: 12px; line-height: 1.45; letter-spacing: .01em; color: #555;
     }
-    /* the latest read carries a tiny, quiet mark */
-    .book .latest {
-      display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
-      font: 400 11px/14px var(--mono); letter-spacing: .02em; color: #555;
-    }
-    .book .latest::before { content: ''; width: 4px; height: 4px; background: var(--accent); }
-
     .books .note { margin: 96px 0 0; font: 12px/15px var(--mono); letter-spacing: .02em; color: #555; }
     .books .sr {
       position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
@@ -84,6 +77,23 @@
     }
     .books-veil.is-on { opacity: 1; }
 
+    /* Core hints (e.g. "Sound on") never land on the running text of a page: a small opaque label in
+       the bottom chrome band beside the sound toggle (bottom-left on narrow windows). Touch screens get none:
+       there is no keyboard, and the sound icon shows its own state. */
+    body.page-mode .hint {
+      top: auto; left: auto; right: calc(var(--gutter) + 34px); bottom: 27px;
+      width: auto; max-width: none; margin: 0; padding: 2px 8px;
+      white-space: nowrap; text-align: left; background: #fff;
+      transform: translateY(4px);
+    }
+    body.page-mode .hint.is-visible { transform: none; }
+    @media (max-width: 800px) {
+      body.page-mode .hint { right: auto; left: 8px; bottom: 23px; }
+    }
+    @media (hover: none), (pointer: coarse) {
+      body.page-mode .hint { display: none; }
+    }
+
     /* ---- motion: covers fade up, then title and author type on behind a thin caret ---- */
     .books-anim .book .cover img { opacity: 0; transform: translateY(10px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
     .books-anim .book.is-in.is-loaded .cover img { opacity: 1; transform: none; }
@@ -97,8 +107,6 @@
     }
     .books .ty.is-typing .caret::after { opacity: 1; }
     .books .ty.is-resting .caret::after { animation: yd-blink .5s steps(2, jump-none) 2; }
-    .books-anim .book .latest { opacity: 0; transition: opacity .6s var(--ease); }
-    .books-anim .book.is-typed .latest { opacity: 1; }
 
     /* wide screens: the shelf grows with the window, so a big screen never shows smaller covers than a laptop */
     @media (min-width: 1401px) {
@@ -110,7 +118,7 @@
     @media (max-width: 900px) {
       .books .shelf { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
-    /* short laptop / tablet-landscape windows: lift the first row so the latest read and its label sit above the fold */
+    /* short laptop / tablet-landscape windows: lift the first row so its titles and authors sit above the fold */
     @media (max-height: 720px) and (min-width: 801px) {
       .books .shelf { margin-top: 36px; }
     }
@@ -146,11 +154,10 @@
     </header>
 
     <ul class="shelf" aria-label="Books I’ve read, in no particular order">
-      <li class="book is-latest">
+      <li class="book">
         <div class="cover"><img src="site/img/books/lee-kuan-yew.jpg" srcset="site/img/books/hd/lee-kuan-yew.jpg 2x" width="241" height="360" alt="" loading="lazy" decoding="async"></div>
         <cite class="t" title="Lee Kuan Yew: The Grand Master’s Insights on China, the United States, and the World">Lee Kuan Yew</cite>
         <span class="a">Graham&nbsp;Allison &amp;&nbsp;Robert&nbsp;D.&nbsp;Blackwill, with&nbsp;Ali&nbsp;Wyne</span>
-        <span class="latest">Latest</span>
       </li>
       <li class="book">
         <div class="cover"><img src="site/img/books/thank-you-for-arguing.jpg" srcset="site/img/books/hd/thank-you-for-arguing.jpg 2x" width="238" height="360" alt="" loading="lazy" decoding="async"></div>
@@ -386,7 +393,17 @@
     [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['radial-vcreg', 3, 'Radial-VCReg'], ['skywindfarm', 4, 'SkyWindFarm'], ['build', 5, 'Build']]
       .forEach(function (s) { Site.register({ id: s[0], n: s[1], title: s[2], path: '/' + s[0], create: function () { return {}; } }); });
     Site.register({ id: 'robot', n: 99, hidden: true, title: 'Robot', path: '/robot', create: function () { return {}; } });
-    document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'books' }); });
+    document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'books', hint: false }); });
+
+    // No timed "Press F" hint on a text page: the Find [F] pill already says it. Site.boot's hint:false asks
+    // core for this; the observer covers a core that does not know the option. Other hints (Sound on/off) stay.
+    (function () {
+      var el = document.getElementById('hint');
+      if (!el || !window.MutationObserver) return;
+      new MutationObserver(function () {
+        if (el.classList.contains('is-visible') && /^Press F\b/.test(el.textContent)) el.classList.remove('is-visible');
+      }).observe(el, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    })();
 
     // Context headline: words fade in one by one (the scenes' yd-hl-in entrance, same 22 ms stagger).
     // The taller top veil switches on once the page has scrolled.

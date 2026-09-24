@@ -80,6 +80,32 @@
     .me > :nth-child(7) { animation-delay: 240ms; }
     .me > :nth-child(n+8) { animation-delay: 280ms; }
 
+    /* Once the page scrolls, a taller top veil keeps the text from showing through under the wordmark
+       (the page chrome's own gradient is 64 px). Off at the top. Below .chrome-top (40) and the hint (35). */
+    .me-veil {
+      position: fixed; inset: 0 0 auto 0; height: 84px; z-index: 30; pointer-events: none;
+      background: linear-gradient(#fff 62%, rgba(255, 255, 255, 0));
+      opacity: 0; transition: opacity .25s ease;
+    }
+    .me-veil.is-on { opacity: 1; }
+
+    /* Core hints (e.g. "Sound on") never land on the running text of a page: a small opaque label in
+       the bottom chrome band beside the sound toggle (bottom-left on narrow windows). Touch screens get none:
+       there is no keyboard, and the sound icon shows its own state. */
+    body.page-mode .hint {
+      top: auto; left: auto; right: calc(var(--gutter) + 34px); bottom: 27px;
+      width: auto; max-width: none; margin: 0; padding: 2px 8px;
+      white-space: nowrap; text-align: left; background: #fff;
+      transform: translateY(4px);
+    }
+    body.page-mode .hint.is-visible { transform: none; }
+    @media (max-width: 800px) {
+      body.page-mode .hint { right: auto; left: 8px; bottom: 23px; }
+    }
+    @media (hover: none), (pointer: coarse) {
+      body.page-mode .hint { display: none; }
+    }
+
     @media (max-width: 800px) {
       .page.me { padding: 92px 16px 140px; font-size: 17.5px; line-height: 1.6; }
       .page.me h1 { font-size: 27px; margin-bottom: 22px; }
@@ -87,6 +113,7 @@
       .me .foot { grid-template-columns: 84px 1fr; column-gap: 12px; margin-top: 52px; }
       .me .foot dd { font-size: 16.5px; column-gap: 16px; }
       .page.me .credit { margin-top: 44px; }
+      .me-veil { height: 76px; }
     }
   </style>
 </head>
@@ -95,6 +122,7 @@
     <a class="wordmark" href="index.html" aria-label="Yash Dagade, home">Yash Dagade</a>
     <button class="pill pill--menu" type="button" aria-haspopup="dialog" aria-controls="menu">[M]</button>
   </header>
+  <div class="me-veil" aria-hidden="true"></div>
 
   <article class="page me">
     <img class="portrait" src="site/img/yash.jpg" width="906" height="1200" alt="Portrait of Yash Dagade">
@@ -187,7 +215,31 @@
     [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['radial-vcreg', 3, 'Radial-VCReg'], ['skywindfarm', 4, 'SkyWindFarm'], ['build', 5, 'Build']]
       .forEach(function (s) { Site.register({ id: s[0], n: s[1], title: s[2], path: '/' + s[0], create: function () { return {}; } }); });
     Site.register({ id: 'robot', n: 99, hidden: true, title: 'Robot', path: '/robot', create: function () { return {}; } });
-    document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'me' }); });
+    document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'me', hint: false }); });
+
+    // No timed "Press F" hint on a text page: the Find [F] pill already says it. Site.boot's hint:false asks
+    // core for this; the observer covers a core that does not know the option. Other hints (Sound on/off) stay.
+    (function () {
+      var el = document.getElementById('hint');
+      if (!el || !window.MutationObserver) return;
+      new MutationObserver(function () {
+        if (el.classList.contains('is-visible') && /^Press F\b/.test(el.textContent)) el.classList.remove('is-visible');
+      }).observe(el, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    })();
+
+    // The taller top veil switches on once the page has scrolled.
+    (function () {
+      'use strict';
+      var veil = document.querySelector('.me-veil'), on = false, ticking = false;
+      if (!veil) return;
+      function sync() {
+        ticking = false;
+        var want = (window.scrollY || document.documentElement.scrollTop || 0) > 24;
+        if (want !== on) { on = want; veil.classList.toggle('is-on', on); }
+      }
+      window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(sync); } }, { passive: true });
+      sync();
+    })();
   </script>
 </body>
 </html>

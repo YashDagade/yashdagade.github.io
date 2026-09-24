@@ -92,6 +92,7 @@ nav ul li a:hover {
     justify-content: center;
     padding: 60px 20px 20px 20px;
     width: 100%;
+    box-sizing: border-box; /* the 20 px side padding stays inside the viewport (no sideways pan on phones) */
 }
 
 .intro-content {
