@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Yash Dagade — archived build (round 3)</title>
+  <meta name="description" content="Yash Dagade builds at the intersection of energy and intelligence: sparse world models, self-supervised learning, and high-altitude wind.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/rocket-icon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="site/legacy/r3/css/site.css">
+</head>
+<body>
+  <header class="chrome-top">
+    <a class="wordmark" href="#lpwm" aria-label="Yash Dagade, home">Yash Dagade</a>
+    <button class="pill pill--menu" type="button" aria-haspopup="dialog" aria-controls="menu">[M]</button>
+  </header>
+
+  <main id="stage"></main>
+
+  <div class="chrome-left" id="controls"></div>
+  <div class="chrome-caption" id="caption" aria-live="polite"></div>
+  <nav class="chrome-index" id="index" aria-label="Projects"></nav>
+  <div class="chrome-links" id="links"></div>
+  <button class="pill pill--find" type="button" aria-haspopup="dialog" aria-controls="find">Find [F]</button>
+  <button class="sound-toggle" id="sound" type="button" aria-label="Toggle sound [S]">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+      <path d="M2.5 6h2.5l3.5-3v10l-3.5-3H2.5z" stroke-linejoin="round"/>
+      <path class="wave" d="M10.8 5.6c.9.7 1.4 1.5 1.4 2.4s-.5 1.7-1.4 2.4"/>
+      <path class="wave" d="M12.4 3.9c1.4 1.1 2.1 2.5 2.1 4.1s-.7 3-2.1 4.1"/>
+      <path class="x" d="M11 6l3 3m0-3l-3 3"/>
+    </svg>
+  </button>
+  <div class="hint" id="hint" role="status"></div>
+  <div class="reveal-card" id="reveal" aria-hidden="true"></div>
+
+  <div class="overlay" id="find" role="dialog" aria-modal="true" aria-label="Find" aria-hidden="true">
+    <div class="palette">
+      <label class="palette__input">
+        <span class="prefix">yashdagade/</span><span class="typed"></span><span class="cursor"></span>
+        <input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search pages">
+      </label>
+      <ul class="palette__list" role="listbox"></ul>
+      <div class="palette__foot">
+        <span class="l"><span>[↓] [↑]</span><span>[?] Shortcuts</span></span>
+        <span>[enter] to visit</span>
+      </div>
+    </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
+
+  <div class="overlay" id="menu" role="dialog" aria-modal="true" aria-label="Menu" aria-hidden="true">
+    <nav class="menu-panel"></nav>
+  </div>
+
+  <div class="overlay" id="shortcuts" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" aria-hidden="true">
+    <div class="palette shortcuts">
+      <h3>Shortcuts</h3>
+      <dl>
+        <dt>[1]–[5]</dt><dd>Jump to a project</dd>
+        <dt>[←] [→]</dt><dd>Previous / next project</dd>
+        <dt>[↑] [↓]</dt><dd>Previous / next step</dd>
+        <dt>[space]</dt><dd>Pause / play the animation</dd>
+        <dt>[F]</dt><dd>Find anything</dd>
+        <dt>[M]</dt><dd>Menu</dd>
+        <dt>[S]</dt><dd>Sound on / off</dd>
+        <dt>[esc]</dt><dd>Close</dd>
+      </dl>
+    </div>
+    <button class="pill overlay__close" type="button" data-close>Close [esc]</button>
+  </div>
+
+  <script src="site/legacy/r3/js/audio.js"></script>
+  <script src="site/legacy/r3/js/core.js"></script>
+  <script src="site/legacy/r3/js/scenes/lpwm.js"></script>
+  <script src="site/legacy/r3/js/scenes/lpjepa.js"></script>
+  <script src="site/legacy/r3/js/scenes/radialvcreg.js"></script>
+  <script src="site/legacy/r3/js/scenes/skywindfarm.js"></script>
+  <script src="site/legacy/r3/js/scenes/build-score.js"></script>
+  <script src="site/legacy/r3/js/scenes/build.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () { window.Site && Site.boot(); });
+  </script>
+</body>
+</html>
