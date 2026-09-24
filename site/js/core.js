@@ -42,10 +42,10 @@
 
   // Everything that is not a scene, for the Find palette and the menu.
   const DESTINATIONS = [
-    { group: 'Pages', title: 'About', path: '/about', href: 'about.html' },
+    { group: 'Pages', title: 'About', path: '/me', href: 'me.html' },
     { group: 'Pages', title: 'Books read', path: '/books', href: 'books.html' },
     { group: 'Pages', title: 'Press', path: '/press', href: 'press.html' },
-    { group: 'Pages', title: 'Build (manifesto)', path: '/build', href: 'build.html' },
+    { group: 'Pages', title: 'Old website', path: '/old', href: 'old/index.html' },
     { group: 'Writing', title: 'Dear Modern Education', path: '/dearmorderneducation', href: 'dearmorderneducation.html' },
     { group: 'Writing', title: 'From Subsistence Towards Exploration', path: '/fromsubtoexp', href: 'fromsubtoexp.html' },
     { group: 'Elsewhere', title: 'Resume', path: '/resume.pdf', href: LINKS.resume, ext: true },
@@ -129,6 +129,7 @@
     if (booted && !pageMode) renderIndex();
   };
   Site.scenes = () => defs.slice();
+  const numbered = () => defs.filter(d => !d.hidden);
 
   /* ------------------------------------------------------------------ chrome refs */
 
@@ -156,7 +157,7 @@
   function renderIndex() {
     if (!ui.index) return;
     ui.index.textContent = '';
-    for (const d of defs) {
+    for (const d of numbered()) {
       const a = h('a', { href: '#' + d.id, 'aria-label': `${d.n}. ${d.title}`, title: d.title },
         '[', h('span', { class: 'n', text: String(d.n) }), ']');
       if (d.id === activeId) a.setAttribute('aria-current', 'page');
@@ -668,10 +669,11 @@
   Site.active = () => activeId;
 
   function step(delta) {
-    if (!defs.length) return;
-    const i = defs.findIndex(d => d.id === activeId);
-    const j = (i + delta + defs.length) % defs.length;
-    go(defs[j].id, true);
+    const list = numbered();
+    if (!list.length) return;
+    const i = list.findIndex(d => d.id === activeId);
+    const j = i < 0 ? (delta > 0 ? 0 : list.length - 1) : (i + delta + list.length) % list.length;
+    go(list[j].id, true);
   }
 
   /* ------------------------------------------------------------------ main loop */
@@ -770,7 +772,7 @@
 
   function paletteEntries() {
     const scenes = defs.map(d => ({
-      group: 'Work', title: d.title, path: d.path || '/' + d.id, key: String(d.n),
+      group: d.hidden ? 'Pages' : 'Work', title: d.title, path: d.path || '/' + d.id, key: d.hidden ? null : String(d.n),
       run: () => { if (pageMode) location.href = 'index.html#' + d.id; else go(d.id, true); },
     }));
     const rest = DESTINATIONS.map(d => ({
@@ -878,7 +880,7 @@
       return a;
     };
     panel.append(link('Work', pageMode ? 'index.html' : '#' + (defs[0] ? defs[0].id : '')));
-    for (const d of defs) {
+    for (const d of numbered()) {
       const a = h('a', { href: (pageMode ? 'index.html' : '') + '#' + d.id, class: 'indent' },
         h('span', { class: 'k', text: `[${d.n}]` }), d.title);
       a.addEventListener('pointerenter', () => sfx('hover'));
@@ -887,8 +889,14 @@
       });
       panel.append(a);
     }
-    panel.append(link('About', 'about.html'));
+    for (const d of defs.filter(x => x.hidden)) {
+      const a = link(d.title, (pageMode ? 'index.html' : '') + '#' + d.id);
+      a.addEventListener('click', e => { if (!pageMode) { e.preventDefault(); close(true); go(d.id, true); } });
+      panel.append(a);
+    }
+    panel.append(link('About', 'me.html'));
     panel.append(link('Books', 'books.html', 'quiet'));
+    panel.append(link('Old website', 'old/index.html', 'quiet'));
     panel.append(h('div', { class: 'sep' }));
     const small = h('div', { class: 'small' },
       link('X', LINKS.x, null, true), link('LinkedIn', LINKS.linkedin, null, true),
@@ -964,7 +972,7 @@
     if (isTyping(e)) return;
     const k = e.key;
     if (!pageMode && /^[1-9]$/.test(k)) {
-      const d = defs.find(x => String(x.n) === k);
+      const d = numbered().find(x => String(x.n) === k);
       if (d) { go(d.id, true); e.preventDefault(); return; }
     }
     if (!pageMode && k === 'ArrowRight') { step(1); e.preventDefault(); return; }
