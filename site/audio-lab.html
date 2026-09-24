@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sound lab</title>
+<meta name="description" content="Audition every sound in Site.audio: the Bits &amp; Atoms micro-foley, UI cues, microsound, granular clouds, the IDM kit, glassy tones, continuous beds and the groove.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff; --ink: #000000;
+    --g100: #f6f6f6; --g200: #eeeeee; --g300: #dddddd; --g400: #cccccc; --g500: #999999; --g600: #666666;
+    --accent: #1432F5; --accent-soft: rgba(20, 50, 245, .12);
+    --ink-2: #4a4a4a;
+    --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body { font: 400 12px/15px var(--mono); letter-spacing: .02em; -webkit-font-smoothing: antialiased; }
+  header { text-align: center; padding: 28px 16px 14px; }
+  .wordmark { font: 400 38px/1 var(--serif); letter-spacing: -0.03em; margin: 0; }
+  .lede { font-size: 12px; line-height: 16px; color: var(--ink-2); margin: 10px auto 0; max-width: 600px; }
+
+  .deck { position: sticky; top: 0; z-index: 5; background: rgba(255, 255, 255, .96); border-bottom: 1px solid var(--g200); }
+  .deck-in { max-width: 1120px; margin: 0 auto; padding: 10px 16px 10px; display: grid; grid-template-columns: 1fr auto; gap: 8px 16px; align-items: center; }
+  #scope { display: block; width: 100%; height: 64px; grid-column: 1 / -1; }
+  .status { font-size: 12px; line-height: 15px; color: var(--ink-2); min-height: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .status b { font-weight: 400; color: var(--ink); }
+  .status .acc { color: var(--accent); }
+  .deck .pills { justify-content: flex-end; }
+
+  main { max-width: 1120px; margin: 0 auto; padding: 4px 16px 96px; }
+  section { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 12px 24px; padding: 22px 0 24px; border-top: 1px solid var(--g300); }
+  section:first-child { border-top: 0; }
+  h2 { font: 400 12px/15px var(--mono); margin: 0; }
+  h2 .n { color: var(--g500); margin-right: 6px; }
+  .desc { font-size: 12px; line-height: 16px; color: var(--ink-2); margin: 8px 0 0; max-width: 220px; }
+  .body { display: grid; gap: 14px; min-width: 0; }
+  .group-label { font-size: 12px; line-height: 15px; color: var(--ink-2); margin: 0 0 6px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill {
+    font: 400 12px/15px var(--mono); letter-spacing: .02em; color: var(--ink);
+    background: var(--g200); border: 0; border-radius: 14px; padding: 6px 12px; cursor: pointer;
+    transition: background-color .12s ease, color .12s ease;
+  }
+  .pill:hover { background: var(--g300); }
+  .pill:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+  .pill.flash { background: var(--accent); color: #fff; transition: none; }
+  .pill[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .pill.big { font-size: 12px; padding: 10px 20px; border-radius: 20px; }
+  .pill.ghost { background: transparent; box-shadow: inset 0 0 0 1px var(--g300); }
+  .pill.ghost:hover { background: var(--g100); }
+
+  .ctrls { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px 22px; align-items: end; }
+  .ctrl { display: grid; gap: 6px; }
+  .ctrl .top { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; line-height: 15px; color: var(--ink-2); }
+  .ctrl .top b { font-weight: 400; color: var(--ink); }
+  input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 15px; background: transparent; margin: 0; cursor: pointer; }
+  input[type=range]::-webkit-slider-runnable-track { height: 1px; background: var(--ink); }
+  input[type=range]::-moz-range-track { height: 1px; background: var(--ink); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 9px; height: 9px; margin-top: -4px; background: var(--accent); border: 0; border-radius: 0; }
+  input[type=range]::-moz-range-thumb { width: 9px; height: 9px; background: var(--accent); border: 0; border-radius: 0; }
+  input[type=range]:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+
+  .strip { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; max-width: 520px; }
+  .strip span { height: 22px; background: var(--g100); border: 1px solid var(--g200); }
+  .strip span:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+  .seq { display: grid; grid-template-columns: repeat(16, 1fr); gap: 4px; max-width: 520px; }
+  .seq i { height: 8px; border: 1px solid var(--g300); background: #fff; }
+  .seq i.beat { border-color: var(--g500); }
+  .seq i.on { background: var(--accent); border-color: var(--accent); }
+  .bars { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; line-height: 15px; color: #555; margin-top: 8px; }
+  .bars span.on { color: var(--accent); }
+  .groove-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .badge { display: inline-block; margin-left: 8px; padding: 1px 6px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 12px; line-height: 15px; }
+  .phrase { display: grid; gap: 10px; max-width: 640px; }
+  .track { position: relative; height: 9px; }
+  .track::before { content: ''; position: absolute; left: 0; right: 0; top: 4px; height: 1px; background: var(--ink); }
+  .track .fill { position: absolute; left: 0; top: 3px; height: 3px; width: 0; background: var(--accent); }
+  .track .tick { position: absolute; top: 0; width: 1px; height: 9px; background: var(--ink); }
+  .phases { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; line-height: 15px; color: #555; margin: 0; padding: 0; list-style: none; }
+  .phases li.on { color: var(--accent); }
+  .phases li b { font-weight: 400; color: var(--g500); margin-right: 5px; }
+  .phases li.on b { color: var(--accent); }
+
+  footer { max-width: 1120px; margin: 0 auto; padding: 0 16px 40px; font-size: 12px; line-height: 16px; color: var(--ink-2); }
+
+  @media (max-width: 760px) {
+    section { grid-template-columns: 1fr; }
+    .desc { max-width: none; }
+    .deck-in { grid-template-columns: 1fr; }
+    .deck .pills { justify-content: flex-start; }
+    .strip, .seq { max-width: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1 class="wordmark">Sound lab</h1>
+  <p class="lede">Every voice in Site.audio, in the key of D (major pentatonic) at 118 BPM, through the site's master chain. New in round 4: Bits &amp; Atoms, tactile micro-foley for the Build page (mechanical keys, terminal chimes, servos, pneumatics, relays). Tonal material stays at or below A5 (about 880 Hz) and sustained tones at or below A4. Click anything to start audio.</p>
+</header>
+
+<div class="deck">
+  <div class="deck-in">
+    <canvas id="scope" aria-hidden="true"></canvas>
+    <div class="status" id="status">Audio locked. Click any pill to start.</div>
+    <div class="pills">
+      <button class="pill ghost" id="mute" type="button" aria-pressed="false">Sound on</button>
+      <button class="pill ghost" id="panic" type="button">Stop all</button>
+    </div>
+  </div>
+</div>
+
+<main id="main"></main>
+<footer>Levels are those the site uses (scene beds ≈ −18 dBFS, UI ≈ −34…−29 dBFS). Offline measurements: <a href="audio-check.html" style="color:inherit">audio-check.html</a> (Bits &amp; Atoms only: <a href="audio-check.html?only=foley" style="color:inherit">?only=foley</a>).</footer>
+
+<script src="js/audio.js"></script>
+<script>
+(function () {
+  'use strict';
+  var A = Site.audio, D = A.degree;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function h(tag, attrs, kids) {
+    var el = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === 'class') el.className = attrs[k];
+      else if (k === 'text') el.textContent = attrs[k];
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), attrs[k]);
+      else el.setAttribute(k, attrs[k]);
+    }
+    (kids || []).forEach(function (c) { if (c != null) el.append(c); });
+    return el;
+  }
+
+  /* ---------------------------------------------------------------- audio start */
+  var statusEl = $('#status'), lastMsg = '';
+  function ensure() {
+    var p = A.unlock();
+    if (!A.enabled) A.setEnabled(true);
+    return Promise.resolve(p).then(function () { return A.ready; });
+  }
+  document.addEventListener('pointerdown', function () { ensure(); }, { capture: true });
+  document.addEventListener('keydown', function () { ensure(); }, { capture: true });
+  function say(label, hint) { lastMsg = '<b>' + label + '</b>' + (hint ? ' — ' + hint : ''); }
+  function flash(btn) { if (!btn) return; btn.classList.add('flash'); setTimeout(function () { btn.classList.remove('flash'); }, 140); }
+  function run(fn, btn, label, hint) {
+    flash(btn); say(label, hint);
+    ensure().then(function (ok) {
+      if (!ok) { statusEl.textContent = 'Audio could not start in this browser.'; return; }
+      try { fn(A.now() + 0.04, A.clock.stepDur); } catch (e) { console.error(e); }
+    });
+  }
+  function pill(label, hint, fn, cls) {
+    var b = h('button', { class: 'pill' + (cls ? ' ' + cls : ''), type: 'button', title: hint || '' , text: label });
+    b.addEventListener('click', function () { run(fn, b, label, hint); });
+    return b;
+  }
+  function toggle(label, onFn, offFn, hint) {
+    var b = h('button', { class: 'pill', type: 'button', 'aria-pressed': 'false', title: hint || '', text: label });
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      say(label + (on ? ' on' : ' off'), hint);
+      ensure().then(function (ok) { if (!ok) return; try { (on ? onFn : offFn)(); } catch (e) { console.error(e); } });
+    });
+    b.setOff = function () { b.setAttribute('aria-pressed', 'false'); };
+    return b;
+  }
+  function slider(label, min, max, step, value, fmt, onInput) {
+    var val = h('b', { text: fmt(value) });
+    var inp = h('input', { type: 'range', min: min, max: max, step: step, value: value, 'aria-label': label });
+    inp.addEventListener('input', function () { var v = parseFloat(inp.value); val.textContent = fmt(v); onInput(v); });
+    return h('label', { class: 'ctrl' }, [h('span', { class: 'top' }, [h('span', { text: label }), val]), inp]);
+  }
+  function group(label, kids) { return h('div', {}, [label ? h('p', { class: 'group-label', text: label }) : null, h('div', { class: 'pills' }, kids)]); }
+  function section(n, title, desc, bodyKids) {
+    return h('section', { id: 's' + n }, [
+      h('div', {}, [h('h2', {}, [h('span', { class: 'n', text: '[' + n + ']' }), title]), h('p', { class: 'desc', text: desc })]),
+      h('div', { class: 'body' }, bodyKids)
+    ]);
+  }
+  var pentaHi = [0, 1, 2, 3, 4, 5, 6, 7].map(function (i) { return D(i, 2); }); // D6 … D7 … (ticks fold above A6)
+
+  /* ---------------------------------------------------------------- [1] Bits & Atoms (round 4) */
+  // Key pills read these three sliders; everything else plays with the engine's defaults (re-rolled per hit).
+  var kp = { vel: 0.8, tone: 0.35, up: 0.3 };
+  function key(t, o) { var x = { when: t, vel: kp.vel, tone: kp.tone, up: kp.up }; for (var k in o || {}) x[k] = o[k]; A.play.key(x); }
+  var fb = null; // the lab's foley bus (like a scene bus: light reverb / delay sends)
+  function fbus() { if (!fb) fb = A.bus('lab-foley', { reverb: 0.08, delay: 0.03 }); return fb; }
+  // the demo phrase (Site.audio.assemblyPhrase), scheduled 150 ms ahead on a 25 ms timer
+  var phr = null;
+  var PH = A.assemblyPhrase();
+  var phasesEl = h('ol', { class: 'phases' }), phaseLis = PH.marks.map(function (m, i) {
+    var li = h('li', {}, [h('b', { text: String(i + 1) }), m.label]); phasesEl.append(li); return li;
+  });
+  var trackEl = h('div', { class: 'track', 'aria-hidden': 'true' }), fillEl = h('i', { class: 'fill' });
+  trackEl.append(fillEl);
+  PH.marks.forEach(function (m) { if (m.t > 0) { var tk = h('i', { class: 'tick' }); tk.style.left = (100 * m.t / PH.duration).toFixed(2) + '%'; trackEl.append(tk); } });
+  var demoBtn = h('button', { class: 'pill big', type: 'button', text: 'Play the assembly' });
+  var demoStop = h('button', { class: 'pill big ghost', type: 'button', text: 'Stop' });
+  function stopPhrase(fade) {
+    if (!phr) return;
+    clearInterval(phr.timer);
+    PH.release(phr.st, fade == null ? 0.3 : fade);
+    A.stopAll(phr.bus, 0.08);
+    phr = null;
+    demoBtn.setAttribute('aria-pressed', 'false');
+  }
+  demoBtn.addEventListener('click', function () {
+    flash(demoBtn); say('assembly', 'one keystroke and one servo → a prompt typed by hand → quantized, layered, accelerating → compile success → chill bed');
+    ensure().then(function (ok) {
+      if (!ok) return;
+      stopPhrase(0.1);
+      var bus = fbus(), st = {}, idx = 0, t0 = A.now() + 0.12;
+      function pump() {
+        if (!phr) return;
+        var now = A.now(), horizon = now + 0.15 - t0;
+        while (idx < PH.events.length && PH.events[idx][0] <= horizon) {
+          var e = PH.events[idx++];
+          try { e[1](A, t0 + e[0], bus, st); } catch (err) { console.error(err); }
+        }
+        if (now - t0 > PH.duration + 0.4) stopPhrase(0.3);
+      }
+      phr = { t0: t0, st: st, bus: bus, timer: setInterval(pump, 25) };
+      demoBtn.setAttribute('aria-pressed', 'true');
+      pump();
+    });
+  });
+  demoStop.addEventListener('click', function () { flash(demoStop); say('assembly stopped'); stopPhrase(0.3); });
+
+  var cnc = null, cp = { rate: 0.7, load: 0.3 };
+  var cncBtn = toggle('CNC hum', function () { cnc = A.cnc({ rate: cp.rate, load: cp.load, dest: fbus() }); }, function () { if (cnc) cnc.stop(1); cnc = null; }, 'spindle tone + harmonic, spindle air, and cutting noise with load');
+  var fan = null, fs = 0.6;
+  var fanBtn = toggle('Server fan', function () { fan = A.fan({ speed: fs, dest: fbus() }); }, function () { if (fan) fan.stop(1.5); fan = null; }, 'two fans a little apart: air and blade-pass whir');
+
+  var sec0 = section(1, 'Bits & Atoms', 'Round 4 micro-foley for the Build page: tactile software and hardware sounds in place of a drum kit. Every hit re-rolls its partials, timing and level, so no two sound the same. The demo goes from one keystroke and one servo in silence to a layered, accelerating "assembly engine", then resolves.', [
+    h('div', { class: 'phrase' }, [
+      h('div', { class: 'groove-row' }, [demoBtn, demoStop]),
+      trackEl,
+      phasesEl
+    ]),
+    group('Bits (software)', [
+      pill('key', 'mechanical switch: press click, bottom-out thock, case, then the upstroke', function (t) { key(t); }),
+      pill('space', 'bigger, lower clack; stabilizer rattle; the two ends land a few ms apart', function (t) { key(t, { kind: 'space' }); }),
+      pill('backspace', 'a wide key on stabilizers, hit decisively', function (t) { key(t, { kind: 'backspace' }); key(t + 0.19, { kind: 'backspace', vel: Math.max(0, kp.vel - 0.1) }); }),
+      pill('enter', 'the widest press: firm, low, a longer hold', function (t) { key(t, { kind: 'enter' }); }),
+      pill('type a line', 'a person typing: irregular gaps, a space between words', function (t) {
+        var x = t, w = 0;
+        for (var i = 0; i < 18; i++) {
+          if (w >= 3 + (i % 3)) { key(x, { kind: 'space', vel: kp.vel * 0.9 }); w = 0; x += 0.2 + Math.random() * 0.12; continue; }
+          key(x, { vel: kp.vel * (0.7 + Math.random() * 0.35) }); w++; x += 0.09 + Math.random() * 0.13;
+        }
+        key(x + 0.1, { kind: 'enter' });
+      }),
+      pill('keys as a beat', 'the same keys quantized: 16ths with accents, space on the backbeat', function (t, sd) {
+        for (var i = 0; i < 32; i++) {
+          var b = i % 16, back = b === 4 || b === 12;
+          if (back) key(t + i * sd, { kind: 'space', vel: 0.9, up: 0.2 });
+          else if (b % 2 === 0 || Math.random() < 0.6) key(t + i * sd, { vel: b % 4 === 0 ? 0.85 : 0.45 + Math.random() * 0.15, up: 0.15, hold: sd * 0.5 });
+          if (b === 15) key(t + i * sd, { kind: 'enter', vel: 0.8, up: 0 });
+        }
+      }),
+      pill('chime', 'terminal chime: clean, short, a glassy onset', function (t) { A.play.chime(74, { when: t }); }),
+      pill('compile success', 'A4 · D5 · F♯5 · A5, the resolution', function (t) { [[69, 0, 0.6], [74, 0.075, 0.62], [78, 0.15, 0.66], [81, 0.3, 0.75]].forEach(function (c) { A.play.chime(c[0], { when: t + c[1], vel: c[2], gain: 0.7, dur: c[0] === 81 ? 1.2 : 1 }); }); }),
+      pill('compile tick', 'a tiny progress tick', function (t) { A.play.compile({ when: t }); }),
+      pill('compile run', 'a quick run of ticks, climbing', function (t) { A.play.compile({ when: t, count: 8, gap: 0.04, progress: 0.1 }); }),
+      pill('ping', 'UI feedback: a round sine that settles up onto its pitch', function (t) { A.play.ping(74, { when: t }); }),
+      pill('ping, answered', 'two pings a fourth apart', function (t) { A.play.ping(74, { when: t, two: 5 }); })
+    ]),
+    h('div', { class: 'ctrls' }, [
+      slider('key velocity', 0, 1, 0.01, kp.vel, function (v) { return v.toFixed(2); }, function (v) { kp.vel = v; }),
+      slider('key tone', 0, 1, 0.01, kp.tone, function (v) { return (v < 0.5 ? 'thock ' : 'clack ') + v.toFixed(2); }, function (v) { kp.tone = v; }),
+      slider('key upstroke', 0, 1, 0.01, kp.up, function (v) { return v.toFixed(2); }, function (v) { kp.up = v; })
+    ]),
+    group('Atoms (hardware)', [
+      pill('servo', 'micro-servo: buzzy whine through a gearbox, gear chatter, a stop tick', function (t) { A.play.servo({ when: t }); }),
+      pill('servo, loaded', 'straining: lower, rougher, louder, then hunting', function (t) { A.play.servo({ when: t, from: 60, to: 55, dur: 0.42, load: 0.85, settle: 1 }); }),
+      pill('servo, quick', 'a fast small move', function (t) { A.play.servo({ when: t, from: 59, to: 69, dur: 0.14, load: 0 }); }),
+      pill('pneumatic', 'valve tick, then the air release', function (t) { A.play.pneumatic({ when: t }); }),
+      pill('puff', 'a short burst of air', function (t) { A.play.pneumatic({ when: t, kind: 'puff' }); }),
+      pill('hiss', 'a soft swell of air, no valve', function (t) { A.play.pneumatic({ when: t, kind: 'hiss', dur: 0.9 }); }),
+      pill('arm glide', 'precision robot arm: an S-curve move with a stepper texture and a soft brake', function (t) { A.play.arm({ when: t, dur: 1.4 }); }),
+      pill('arm, short', 'a quick reposition', function (t) { A.play.arm({ when: t, dur: 0.5, from: 50, to: 62 }); }),
+      pill('snap-fit', 'metallic latch: an inharmonic click with a tiny ring, then it seats', function (t) { A.play.snap({ when: t }); }),
+      pill('big latch', 'larger, more metal', function (t) { A.play.snap({ when: t, size: 0.9, metal: 0.9 }); }),
+      pill('relay on', 'armature slam with contact bounce', function (t) { A.play.relay({ when: t }); }),
+      pill('relay off', 'the release: lighter', function (t) { A.play.relay({ when: t, kind: 'off' }); }),
+      pill('relay chatter', 'a bank of relays switching', function (t, sd) { for (var i = 0; i < 6; i++) A.play.relay({ when: t + i * sd * 0.5 + Math.random() * 0.01, kind: i % 2 ? 'off' : 'on', size: Math.random() }); })
+    ]),
+    group('Bits meet atoms', [
+      pill('key → servo', 'the opening gesture: one keystroke, one actuation', function (t) { key(t); A.play.servo({ when: t + 0.55, settle: 1 }); }),
+      pill('enter → relay → arm', 'a command lands, a relay closes, the arm moves', function (t) { key(t, { kind: 'enter' }); A.play.relay({ when: t + 0.14 }); A.play.compile({ when: t + 0.2, count: 5, gap: 0.045, progress: 0.05 }); A.play.arm({ when: t + 0.3, dur: 1.1, from: 48, to: 57 }); }),
+      pill('latch closes', 'relay + snap-fit + compile success', function (t) { A.play.relay({ when: t, size: 0.5 }); A.play.snap({ when: t + 0.004, size: 0.5, metal: 0.4 }); A.play.chime(74, { when: t + 0.06, vel: 0.6 }); A.play.chime(81, { when: t + 0.2, vel: 0.7 }); })
+    ]),
+    group('Machine beds (continuous)', [cncBtn, fanBtn]),
+    h('div', { class: 'ctrls' }, [
+      slider('cnc spindle rate', 0, 1, 0.01, cp.rate, function (v) { return v.toFixed(2); }, function (v) { cp.rate = v; if (cnc) cnc.set({ rate: v }, 0.6); }),
+      slider('cnc load (cutting)', 0, 1, 0.01, cp.load, function (v) { return v.toFixed(2); }, function (v) { cp.load = v; if (cnc) cnc.set({ load: v }, 0.4); }),
+      slider('fan speed', 0, 1, 0.01, fs, function (v) { return v.toFixed(2); }, function (v) { fs = v; if (fan) fan.set({ speed: v }, 1); })
+    ])
+  ]);
+  sec0.querySelector('h2').append(h('span', { class: 'badge', text: 'new' }));
+
+  /* ---------------------------------------------------------------- [2] UI */
+  var strip = h('div', { class: 'strip', title: 'Move across the squares' });
+  for (var si = 0; si < 16; si++) strip.append(h('span', { onpointerenter: function () { if (A.ready) { A.ui.hover(); say('hover', 'one tiny click, 3–5.6 kHz, randomized every time'); } } }));
+  var sec1 = section(2, 'UI', 'Microsound interface cues. Short, clinical and very quiet: peaks around −34 to −29 dBFS so they never compete with a scene.', [
+    group('Cues', [
+      pill('hover', 'one tiny click, 3–5.6 kHz, randomized every time', function (t) { A.ui.hover({ when: t }); }),
+      pill('tick', 'crisp detent: a 1–2 ms click pair', function (t) { A.ui.tick({ when: t }); }),
+      pill('select', 'two quick digital bits, upward', function (t) { A.ui.select({ when: t }); }),
+      pill('open', 'short upward spray of grains', function (t) { A.ui.open({ when: t }); }),
+      pill('close', 'short downward spray', function (t) { A.ui.close({ when: t }); }),
+      pill('type ×8', 'mechanical micro-click + faint bit per keystroke', function (t) { var x = t; for (var i = 0; i < 8; i++) { A.ui.type({ when: x }); x += 0.065 + Math.random() * 0.06; } }),
+      pill('error', 'two low bitcrushed bleeps', function (t) { A.ui.error({ when: t }); })
+    ]),
+    group('Scene transitions (swish + grain spray + soft sub, voiced per scene)', [1, 2, 3, 4, 5].map(function (n) {
+      var names = { 1: 'D', 2: 'Bm', 3: 'G', 4: 'A', 5: 'D open' };
+      return pill('→ ' + n, 'transition to scene ' + n + ' (' + names[n] + ')', function (t) { A.ui.transition(n, { when: t }); });
+    })),
+    h('div', {}, [h('p', { class: 'group-label', text: 'Hover strip: sweep the pointer across (hover never repeats exactly)' }), strip])
+  ]);
+
+  /* ---------------------------------------------------------------- [3] Microsound */
+  var sec2 = section(3, 'Microsound', 'Clicks, tuned ticks and bit-reduced "data" as texture, not melody. Sparse means a few crisp events with silence between them; dense means a smeared scatter.', [
+    group('Clicks and ticks', [
+      pill('click ×8', 'impulse through a band-pass, 1.8–5.6 kHz, random (the typing sound)', function (t) { for (var i = 0; i < 8; i++) A.play.click({ when: t + i * 0.09 + Math.random() * 0.03, pan: Math.random() * 1.6 - 0.8 }); }),
+      pill('tick run', 'tuned resonant pings from D6, 16ths (above A6 they fold down an octave)', function (t, sd) { pentaHi.slice(0, 6).forEach(function (m, i) { A.play.tick(m, { when: t + i * sd, pan: (i - 2.5) / 4 }); }); }),
+      pill('tick sparse', 'sparse activations: a few ticks, lots of space', function (t, sd) { [[0, 5], [3, 7], [7, 6], [8, 9], [14, 10]].forEach(function (e) { A.play.tick(D(e[1], 1), { when: t + e[0] * sd, pan: Math.random() * 1.2 - 0.6 }); }); })
+    ]),
+    group('Bits and data', [
+      pill('bit run', 'sample-and-hold step waves: 8-step, 4-step, 16-step, pulse', function (t, sd) { [0, 2, 4, 1, 3, 5].forEach(function (d, i) { A.play.bit(D(d, 2), { when: t + i * sd, steps: [8, 4, 16, 'pulse'][i % 4], pan: (i % 2 ? 0.3 : -0.3) }); }); }),
+      pill('bit glide', 'a bit chirping between two notes', function (t, sd) { A.play.bit(86, { when: t, dur: 0.05, to: 93 }); A.play.bit(93, { when: t + sd * 2, dur: 0.05, to: 86 }); }),
+      pill('crushed bit', '3-bit staircase quantizer on top', function (t) { A.play.bit(81, { when: t, dur: 0.04, crush: true, steps: 16 }); }),
+      pill('data', 'default scatter: 0.25 s, 40 events/s', function (t) { A.play.data({ when: t }); }),
+      pill('data sparse', '1.5 s at 10 events/s', function (t) { A.play.data({ when: t, dur: 1.5, density: 10, spread: 1 }); }),
+      pill('data dense', '1.2 s at 90 events/s, smeared', function (t) { A.play.data({ when: t, dur: 1.2, density: 90 }); })
+    ]),
+    group('Grains, glitches, pulses', [
+      pill('grain run', 'windowed glassy grains, brightness rising', function (t, sd) { [0, 2, 4, 5, 7, 9].forEach(function (d, i) { A.play.grain(D(d, 1), { when: t + i * sd, bright: i / 5, dur: 0.05 + 0.012 * i, pan: (i - 2.5) / 4 }); }); }),
+      pill('glitch', 'buffer-repeat stutter, slices shrinking', function (t) { A.play.glitch({ when: t }); }),
+      pill('glitch pitched', 'stutter of a D6 bit tone', function (t) { A.play.glitch({ when: t, midi: 86, repeats: 7 }); }),
+      pill('glitch grow', 'decelerating, bit-crushed', function (t) { A.play.glitch({ when: t, shape: 'grow', repeats: 6, len: 0.02, crush: true }); }),
+      pill('ratchet', 'micro-hat roll inside one 16th', function (t) { A.play.ratchet({ when: t }); }),
+      pill('sub run', 'clean sine sub pulses: D – D – A – G', function (t, sd) { [38, 38, 45, 43].forEach(function (m, i) { A.play.sub(m, { when: t + i * sd * 2, dur: sd * 1.5 }); }); })
+    ])
+  ]);
+
+  /* ---------------------------------------------------------------- [4] Granular */
+  var POOLS = { D: [69, 74, 76, 78, 81], Bm: [66, 71, 74, 78, 81], G: [66, 69, 71, 74, 78], A: [64, 69, 71, 76, 81], 'high → folds': [86, 88, 90, 93, 98, 100], low: [62, 66, 69, 74] };
+  var gp = { density: 18, dur: 0.07, spread: 0.7, bright: 0.5, gain: 1, pitch: POOLS.D };
+  var cloud = null;
+  var cloudBtn = toggle('Cloud', function () {
+    cloud = A.granular({ density: gp.density, dur: gp.dur, spread: gp.spread, bright: gp.bright, gain: gp.gain, pitch: gp.pitch, attack: 0.8 });
+  }, function () { if (cloud) cloud.stop(1.2); cloud = null; }, 'continuous grain cloud: granular(o)');
+  function cset(k, v, r) { gp[k] = v; if (cloud) { var p = {}; p[k] = v; cloud.set(p, r == null ? 0.25 : r); } }
+  var poolBtns = Object.keys(POOLS).map(function (k) {
+    var b = h('button', { class: 'pill', type: 'button', 'aria-pressed': k === 'D' ? 'true' : 'false', text: k });
+    b.addEventListener('click', function () {
+      poolBtns.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      say('pitch set ' + k, 'the cloud morphs to the new notes over 1.2 s');
+      ensure(); cset('pitch', POOLS[k], 1.2);
+    });
+    return b;
+  });
+  // the beds scenes leave running while paused / settled, with the exact parameters they pass
+  var BEDS = {
+    'build settled': { density: 5, pitch: [74, 76, 78, 83, 88], dur: 0.11, spread: 0.9, bright: 0.35, gain: 0.12 },
+    'lpwm': { density: 4.5, pitch: [86, 90, 95, 100, 105], dur: 0.09, spread: 0.95, bright: 0.38, jitter: 0.8, detune: 6, gain: 0.55, attack: 1.2 },
+    'radial-vcreg': { pitch: [72.4, 78.9, 84.2, 88.7, 91.3, 95.6], density: 6, detune: 35, jitter: 0.6, spread: 0.55, bright: 0.45, gain: 0.55, dur: 0.07, attack: 1.2, highpass: 300 }
+  };
+  var bedOn = {};
+  var bedBtns = Object.keys(BEDS).map(function (k) {
+    return toggle(k, function () { bedOn[k] = A.granular(BEDS[k]); }, function () { if (bedOn[k]) bedOn[k].stop(1); bedOn[k] = null; },
+      'the ' + k + ' bed as the scene calls it (its high pitches now fold to A5 or below)');
+  });
+  var sec3 = section(4, 'Granular', 'An evolving cloud of tiny windowed grains read from pre-rendered glassy FM tones, pitched to the scale. The "neuron" sound: connections and activations. Pitches above A5 fold down an octave, so a cloud never whistles.', [
+    group('Cloud', [cloudBtn]),
+    h('div', { class: 'ctrls' }, [
+      slider('density', 1, 90, 1, gp.density, function (v) { return v + ' grains/s'; }, function (v) { cset('density', v); }),
+      slider('grain length', 15, 300, 1, gp.dur * 1000, function (v) { return v + ' ms'; }, function (v) { cset('dur', v / 1000); }),
+      slider('stereo spread', 0, 1, 0.01, gp.spread, function (v) { return v.toFixed(2); }, function (v) { cset('spread', v); }),
+      slider('brightness', 0, 1, 0.01, gp.bright, function (v) { return v.toFixed(2); }, function (v) { cset('bright', v); }),
+      slider('gain', 0, 2, 0.01, gp.gain, function (v) { return v.toFixed(2); }, function (v) { cset('gain', v); })
+    ]),
+    group('Pitch set (morphs)', poolBtns),
+    group('Scene beds while paused (the old "flute" check)', bedBtns)
+  ]);
+
+  /* ---------------------------------------------------------------- [5] Drums */
+  var sec4 = section(5, 'Drums', 'A minimal techno / IDM kit: tight clicky kick, 5–35 ms micro-hats with random colour and pan, a tuned rim that is sometimes bit-crushed, a tight multi-burst clap.', [
+    group('Hits', [
+      pill('kick', 'short sine drop + 1–2 ms click', function (t) { A.play.kick({ when: t }); }),
+      pill('hat', 'micro hat, 10–20 ms', function (t) { A.play.hat({ when: t }); }),
+      pill('hat open', 'longer, 55–80 ms', function (t) { A.play.hat({ when: t, open: true }); }),
+      pill('rim', 'clicky rim: short noise + tuned tock', function (t) { A.play.snare({ when: t, crush: false }); }),
+      pill('rim crushed', 'the same, bit-crushed', function (t) { A.play.snare({ when: t, crush: true }); }),
+      pill('clap', 'four tight bursts + short tail', function (t) { A.play.clap({ when: t }); }),
+      pill('shaker', 'subtle band-passed swell', function (t) { A.play.shaker({ when: t }); }),
+      pill('ratchet ×6', 'six hats inside two 16ths', function (t, sd) { A.play.ratchet({ when: t, count: 6, span: sd * 2 }); })
+    ]),
+    group('One bar', [
+      pill('kick ×4', 'four on the floor', function (t, sd) { for (var i = 0; i < 4; i++) A.play.kick({ when: t + i * 4 * sd }); }),
+      pill('hats 16ths', 'offbeat hats + probabilistic ghosts', function (t, sd) { for (var i = 0; i < 16; i++) { if (i % 4 === 2) A.play.hat({ when: t + i * sd, decay: 0.035 }); else if (i % 2 && Math.random() < 0.6) A.play.hat({ when: t + i * sd, gain: 0.45 }); } }),
+      pill('kit bar', 'kick, hats, euclidean rim, backbeat clap', function (t, sd) {
+        var rim = A.euclid(5, 16, 3);
+        for (var i = 0; i < 16; i++) {
+          var tt = t + i * sd;
+          if (i % 4 === 0) A.play.kick({ when: tt, gain: 0.8 });
+          if (i % 4 === 2) A.play.hat({ when: tt, decay: 0.035 }); else if (i % 2 && Math.random() < 0.6) A.play.hat({ when: tt, gain: 0.45 });
+          if (rim[i] && i % 4) A.play.snare({ when: tt, gain: 0.6, midi: i === 11 ? 81 : 76, pan: 0.2 });
+          if (i === 4 || i === 12) A.play.clap({ when: tt, gain: 0.8 });
+        }
+      })
+    ])
+  ]);
+
+  /* ---------------------------------------------------------------- [6] Tonal */
+  var sec5 = section(6, 'Tonal', 'Warm but restrained glassy tones, used sparingly: sine and triangle with gentle FM, soft attacks, lowpassed tails. No piano, no electric piano, no saw walls.', [
+    group('Phrases in D', [
+      pill('keys', 'IDM keys: warm muted sine FM, D chord then a motif', function (t, sd) { [62, 66, 69].forEach(function (m) { A.play.keys(m, { when: t, dur: 1.2, vel: 0.6 }); }); [78, 76, 74, 81].forEach(function (m, i) { A.play.keys(m, { when: t + sd * (3 + i * 3), dur: sd * 3, vel: 0.6, delay: 0.2 }); }); }),
+      pill('pluck', 'soft glassy pluck with a tiny FM tink', function (t, sd) { [66, 69, 74, 78, 81, 78, 74, 71].forEach(function (m, i) { A.play.pluck(m, { when: t + i * sd * 1.5, pan: i % 2 ? 0.2 : -0.2 }); }); }),
+      pill('bell', 'soft crystalline ping, low-index FM', function (t, sd) { [81, 78, 74, 69].forEach(function (m, i) { A.play.bell(m, { when: t + i * sd * 3 }); }); }),
+      pill('pad', 'airy pad D → Bm, with grain shimmer', function (t) { A.play.pad([50, 57, 62, 64, 69], { when: t, dur: 2, attack: 0.6, release: 1 }); A.play.pad([47, 54, 57, 62, 66], { when: t + 2.1, dur: 2, attack: 0.6, release: 1.4 }); }),
+      pill('lead', 'sine/triangle with gentle FM and portamento', function (t, sd) { A.play.lead(74, { when: t, dur: sd * 4, from: 69 }); A.play.lead(78, { when: t + sd * 5, dur: sd * 3 }); A.play.lead(76, { when: t + sd * 9, dur: sd * 6, from: 78 }); }),
+      pill('bass', 'clean sine sub with a hint of 2nd harmonic', function (t, sd) { [[38, 0], [38, 3], [50, 6], [45, 8], [43, 12]].forEach(function (e) { A.play.bass(e[0], { when: t + e[1] * sd, dur: sd * 1.6 }); }); }),
+      pill('blip', 'tiny sine blips with a small pitch drop', function (t) { [69, 74, 78, 81].forEach(function (m, i) { A.play.blip(m, { when: t + i * 0.09 }); }); })
+    ]),
+    group('Effects', [
+      pill('noise', 'filtered noise burst', function (t) { A.play.noise({ when: t, dur: 0.5, filter: 'bandpass', freq: 1400, q: 1 }); }),
+      pill('riser', 'noise sweep + accelerating tuned ticks', function (t) { A.play.riser({ when: t, dur: 2 }); }),
+      pill('impact', 'sub thump + click + downward grain spray', function (t) { A.play.impact({ when: t }); })
+    ])
+  ]);
+
+  /* ---------------------------------------------------------------- [7] Continuous */
+  var drone = null, dp = { midis: [50, 57, 62, 66], cutoff: 900, grains: 5 };
+  var CH = { D: [50, 57, 62, 66], Bm: [47, 54, 59, 62], G: [43, 50, 59, 62], A: [45, 52, 57, 64] };
+  var droneBtn = toggle('Drone', function () { drone = A.drone(dp.midis, { cutoff: dp.cutoff, grains: dp.grains, attack: 2 }); }, function () { if (drone) drone.stop(2.5); drone = null; }, 'quiet evolving drone with a sparse grain shimmer');
+  var chordBtns = Object.keys(CH).map(function (k) {
+    var b = h('button', { class: 'pill', type: 'button', 'aria-pressed': k === 'D' ? 'true' : 'false', text: k });
+    b.addEventListener('click', function () {
+      chordBtns.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      dp.midis = CH[k]; say('drone chord ' + k, 'voices glide over 1.5 s');
+      ensure(); if (drone) drone.set({ midis: CH[k] }, 1.5);
+    });
+    return b;
+  });
+  var wind = null, wi = 0.5;
+  var windBtn = toggle('Wind', function () { wind = A.wind({ intensity: wi }); }, function () { if (wind) wind.stop(2); wind = null; }, 'pink-noise wind with slow gusts');
+  var hum = null, hr = 1.2;
+  var humBtn = toggle('Hum', function () { hum = A.hum(38, { rate: hr }); }, function () { if (hum) hum.stop(1.5); hum = null; }, 'mechanical hum / turbine whirr');
+  var sec6 = section(7, 'Continuous', 'Beds that scenes run underneath their visuals. Each returns a handle with set(params, ramp) and stop(release).', [
+    group('Drone', [droneBtn].concat(chordBtns)),
+    h('div', { class: 'ctrls' }, [
+      slider('drone cutoff', 200, 4000, 10, dp.cutoff, function (v) { return v + ' Hz'; }, function (v) { dp.cutoff = v; if (drone) drone.set({ cutoff: v }, 0.3); }),
+      slider('drone grains', 0, 20, 1, dp.grains, function (v) { return v + ' /s'; }, function (v) { dp.grains = v; if (drone) drone.set({ grains: v }, 0.5); })
+    ]),
+    group('Wind and hum', [windBtn, humBtn]),
+    h('div', { class: 'ctrls' }, [
+      slider('wind intensity', 0, 1, 0.01, wi, function (v) { return v.toFixed(2); }, function (v) { wi = v; if (wind) wind.set({ intensity: v }, 0.8); }),
+      slider('hum rate', 0.2, 8, 0.1, hr, function (v) { return v.toFixed(1) + ' Hz'; }, function (v) { hr = v; if (hum) hum.set({ rate: v }, 0.5); })
+    ])
+  ]);
+
+  /* ---------------------------------------------------------------- [8] Groove */
+  var groove = null, gGain = 1;
+  var PARTS = ['kick', 'hats', 'perc', 'sub', 'bed', 'keys', 'micro'];
+  var partOn = {}; PARTS.forEach(function (p) { partOn[p] = true; });
+  function partsObj() { var o = {}; PARTS.forEach(function (p) { o[p] = partOn[p] ? 1 : 0; }); return o; }
+  var playBtn = h('button', { class: 'pill big', type: 'button', text: 'Play groove' });
+  var stopBtn = h('button', { class: 'pill big ghost', type: 'button', text: 'Stop' });
+  playBtn.addEventListener('click', function () {
+    flash(playBtn); say('groove', '8 bars: micro-sounds evolve into a steady clean beat (D – Bm – G – A)');
+    ensure().then(function (ok) {
+      if (!ok || groove) return;
+      groove = A.demoGroove(null, { gain: gGain, parts: partsObj() });
+      playBtn.setAttribute('aria-pressed', 'true');
+    });
+  });
+  function stopGroove() { if (groove) groove.stop(0.4); groove = null; playBtn.setAttribute('aria-pressed', 'false'); }
+  stopBtn.addEventListener('click', function () { flash(stopBtn); say('groove stopped'); stopGroove(); });
+  var partBtns = PARTS.map(function (p) {
+    var b = h('button', { class: 'pill', type: 'button', 'aria-pressed': 'true', text: p });
+    b.addEventListener('click', function () {
+      partOn[p] = !partOn[p];
+      b.setAttribute('aria-pressed', partOn[p] ? 'true' : 'false');
+      say(p + (partOn[p] ? ' in' : ' out'), 'parts can be muted live');
+      var g = groove && groove.groove;
+      if (g && g.setPart) g.setPart(p, partOn[p] ? 1 : 0);
+    });
+    return b;
+  });
+  var seq = h('div', { class: 'seq' }), cells = [];
+  for (var q = 0; q < 16; q++) { var c = h('i', { class: q % 4 === 0 ? 'beat' : '' }); cells.push(c); seq.append(c); }
+  var barsEl = h('div', { class: 'bars' }), barCells = [];
+  ['D', 'D', 'Bm', 'Bm', 'G', 'G', 'A', 'A'].forEach(function (c, i) { var s = h('span', { text: (i + 1) + ' ' + c }); barCells.push(s); barsEl.append(s); });
+  var sec7 = section(8, 'Groove', 'Minimal techno / IDM at 118 BPM. First pass: two bars of ticks, clicks and a data burst over the grain bed, then the clicky kick, micro-hats and sub pulses lock in. Later passes keep the beat.', [
+    h('div', { class: 'groove-row' }, [playBtn, stopBtn]),
+    h('div', {}, [seq, barsEl]),
+    group('Parts (toggle live)', partBtns),
+    h('div', { class: 'ctrls' }, [
+      slider('groove gain', 0, 1.5, 0.01, gGain, function (v) { return v.toFixed(2); }, function (v) { gGain = v; var g = groove && groove.groove; if (g && A.ctx) { g.out.gain.setTargetAtTime(v * 1.3, A.now(), 0.05); } })
+    ])
+  ]);
+
+  var main = $('#main');
+  [sec0, sec1, sec2, sec3, sec4, sec5, sec6, sec7].forEach(function (s) { main.append(s); });
+
+  /* ---------------------------------------------------------------- deck: mute, panic, scope */
+  var muteBtn = $('#mute');
+  function renderMute() { muteBtn.textContent = A.enabled ? 'Sound on' : 'Sound off'; muteBtn.setAttribute('aria-pressed', A.enabled ? 'false' : 'true'); }
+  muteBtn.addEventListener('click', function () { A.unlock(); A.toggle(); renderMute(); });
+  A.onChange(renderMute); renderMute();
+  $('#panic').addEventListener('click', function () {
+    stopGroove();
+    stopPhrase(0.1);
+    if (cnc) { cnc.stop(0.3); cnc = null; cncBtn.setOff(); }
+    if (fan) { fan.stop(0.3); fan = null; fanBtn.setOff(); }
+    if (cloud) { cloud.stop(0.3); cloud = null; cloudBtn.setOff(); }
+    if (drone) { drone.stop(0.5); drone = null; droneBtn.setOff(); }
+    if (wind) { wind.stop(0.5); wind = null; windBtn.setOff(); }
+    if (hum) { hum.stop(0.5); hum = null; humBtn.setOff(); }
+    Object.keys(bedOn).forEach(function (k) { if (bedOn[k]) bedOn[k].stop(0.3); bedOn[k] = null; });
+    bedBtns.forEach(function (b) { b.setOff(); });
+    A.stopAll(null, 0.05);
+    say('all stopped');
+  });
+
+  var cv = $('#scope'), g2 = cv.getContext('2d'), td = null, fd = null, peakHold = -Infinity;
+  function draw() {
+    var dpr = Math.min(2, window.devicePixelRatio || 1), W = cv.clientWidth, H = cv.clientHeight;
+    if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    g2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g2.clearRect(0, 0, W, H);
+    g2.fillStyle = '#eeeeee'; g2.fillRect(0, Math.round(H / 2), W, 1);
+    var an = A.analyser;
+    if (A.ready && an) {
+      var N = an.fftSize;
+      if (!td || td.length !== N) { td = new Float32Array(N); fd = new Float32Array(an.frequencyBinCount); }
+      an.getFloatTimeDomainData(td); an.getFloatFrequencyData(fd);
+      // spectrum: log-frequency hairline, 40 Hz – 20 kHz, −100…−20 dB
+      var sr = A.ctx.sampleRate, bins = fd.length;
+      g2.beginPath(); g2.strokeStyle = '#cccccc'; g2.lineWidth = 1;
+      for (var x = 0; x <= W; x += 2) {
+        var f = 40 * Math.pow(500, x / W), k = Math.min(bins - 1, Math.round(f / (sr / 2) * bins));
+        var d = Math.max(0, Math.min(1, (fd[k] + 100) / 80)), y = H - d * H;
+        if (x === 0) g2.moveTo(x, y); else g2.lineTo(x, y);
+      }
+      g2.stroke();
+      // waveform
+      var pk = 0;
+      g2.beginPath(); g2.strokeStyle = '#1432F5'; g2.lineWidth = 1;
+      for (var i = 0; i < N; i++) {
+        var v = td[i]; if (Math.abs(v) > pk) pk = Math.abs(v);
+        var xx = i / (N - 1) * W, yy = H / 2 - v * H / 2;
+        if (i === 0) g2.moveTo(xx, yy); else g2.lineTo(xx, yy);
+      }
+      g2.stroke();
+      var pdb = pk > 0 ? 20 * Math.log10(pk) : -Infinity;
+      peakHold = Math.max(pdb, peakHold - 0.25);
+      statusEl.innerHTML = (lastMsg ? lastMsg + ' · ' : '') + '<span class="acc">' + (isFinite(peakHold) ? peakHold.toFixed(1) : '−∞') + ' dBFS</span> peak · ' +
+        A.voiceCount() + ' voices · ' + Math.round(sr / 1000) + ' kHz' + (A.enabled ? '' : ' · muted');
+      if (phr) {
+        var pp = Math.max(0, A.now() - phr.t0), act = 0;
+        PH.marks.forEach(function (m, j) { if (pp >= m.t) act = j; });
+        fillEl.style.width = Math.min(100, 100 * pp / PH.duration).toFixed(2) + '%';
+        phaseLis.forEach(function (li, j) { li.classList.toggle('on', j === act); });
+      } else if (fillEl.style.width !== '0px' && fillEl.style.width !== '') {
+        fillEl.style.width = '0px';
+        phaseLis.forEach(function (li) { li.classList.remove('on'); });
+      }
+      if (groove && groove.step >= 0) {
+        var s = groove.step, i16 = s % 16, bar = Math.floor(s / 16) % 8;
+        cells.forEach(function (c, j) { c.classList.toggle('on', j === i16); });
+        barCells.forEach(function (c, j) { c.classList.toggle('on', j === bar); });
+      } else {
+        cells.forEach(function (c) { c.classList.remove('on'); });
+        barCells.forEach(function (c) { c.classList.remove('on'); });
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+</body>
+</html>
