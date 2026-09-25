@@ -1025,7 +1025,7 @@
 
   /* ------------------------------------------------------------------ wordmark: always "Yash Dagade"; a click types the next phrase */
 
-  const WORDMARK = ['Yash Dagade', 'Energy and Intelligence', 'Models and Robots'];
+  const WORDMARK = ['Yash Dagade', 'Energy and Intelligence', 'Models and Robots', 'Bits and Atoms', 'Dream and Build'];
 
   function startWordmark() {
     const wm = $('.wordmark');

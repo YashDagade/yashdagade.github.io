@@ -37,7 +37,7 @@
                           then a part seats on every keystroke (a space-bar clack under each shell)
      43–44  Resolve       "system active / compile success" on the bar-43 downbeat: the engine stops, a rising
                           chime (A4·D5 → F#5 → A5) over a D(add9) pad that blossoms, a plagal G/D sigh, D6/9 home;
-                          a soft low chime as the frame settles (bar 44 beat 4), then the fan spins down and the
+                          a chime rising a fourth as the frame settles (bar 44 beat 4), then the fan spins down and the
                           last grains thin out on the chill bed's pitches while build.js brings that bed in
                           (1.2 s after the settle): the crossfade
 
@@ -633,8 +633,11 @@
     add(44, 0, 'pad', CH.D69.pad, { gain: 0.46, dur: 2.4, attack: 0.25, release: 2.6, cutoff: 1000, grains: 0, highpass: 70, reverb: 0.12, width: 1.3 }, 'bed', 2.4);
     add(44, 0, 'sub', 38, { gain: 0.42, dur: 2.6 }, 'low', 2.2);
     [50, 57, 64, 66].forEach(function (m, k) { add(44, k * 0.06, 'keys', m, { gain: 0.28, dur: 2.2, vel: 0.42, pan: (k - 1.5) * 0.3, delay: 0.2, reverb: 0.1, click: k === 0 }, 'keys', 2.2); });
-    add(44, 12, 'chime', 62, { dur: 1.2, vel: 0.5, bright: 0.15, gain: 0.36, pan: -0.15, reverb: 0.14, delay: 0.1 }, 'keys', 0, 'chime');
-    add(44, 12.1, 'chime', 69, { dur: 1.2, vel: 0.45, bright: 0.15, gain: 0.28, pan: 0.2, reverb: 0.14, delay: 0.1 }, 'keys', 0, 'chime');
+    // (the settle is the "done" the eye sees, so its chime is heard: +3 dB over round 4, and it rises a fourth, A4 → D5,
+    // a 16th later, against the dissolve's falling grains)
+    add(44, 12, 'chime', 62, { dur: 1.2, vel: 0.56, bright: 0.18, gain: 0.5, pan: -0.15, reverb: 0.14, delay: 0.1 }, 'keys', 0, 'chime');
+    add(44, 12.1, 'chime', 69, { dur: 1.2, vel: 0.5, bright: 0.18, gain: 0.4, pan: 0.2, reverb: 0.14, delay: 0.1 }, 'keys', 0, 'chime');
+    add(44, 13, 'chime', 74, { dur: 1.3, vel: 0.52, bright: 0.2, gain: 0.34, pan: 0.05, reverb: 0.16, delay: 0.12 }, 'keys', 0, 'chime');
     [69, 66, 62, 57, 50].forEach(function (m, k) { add(44, 12 + k * 0.28, 'grain', m, { gain: 0.32, dur: 0.12, bright: 0.05, pan: (k % 2 ? 1 : -1) * 0.4, reverb: 0.12 }, 'bed', 0, 'dissolve'); });
     var BEDP = [50, 54, 55, 57, 62];
     for (var gk = 0; gk < 24; gk++) {

@@ -1,9 +1,9 @@
 /* Scene 5 — Build: "Here's to the builders".
  *
  * Film mode: a 44-bar, 118 BPM music video of Yash's build poem. Lines type on with a block cursor on
- * the 16th-note grid, emphasized phrases ink to deep blue, and hairline vignettes of scenes 1–4
- * ([1] LpWM sparse latent rollout, [2] Rectified LpJEPA histogram, [3] Radial-VCReg burst, [4] SkyWindFarm
- * turbines in the sky: the scene numbers come from SN), Paradigm-film hex dumps / node grids and project photos
+ * the 16th-note grid, emphasized phrases ink to deep blue, and hairline vignettes of the work (LpWM sparse latent
+ * rollout, Rectified LpJEPA histogram, Radial-VCReg burst, SkyWindFarm turbines in the sky, the robot's CAD render;
+ * every "[n]" chip reads the live scene order: SN / readSN), Paradigm-film hex dumps / node grids and project photos
  * cut in on the beat.
  * The film's grammar (block cursor on 16ths, hex dumps, node grids) nods to Paradigm's Fourth Fund film;
  * it is credited at the end of the film and under the poem.
@@ -16,10 +16,12 @@
  * The projects-by-year grouping of the index is called "Stints" (the owner's word).
  * Music is on by default: arriving by any gesture (key 5, arrows, index, menu, Find, a swipe) the film and the score
  * start together at 0:00; a direct link (no gesture yet) plays the film silently under a "Play with sound" pill.
- * The biped (the hidden #robot page) appears as ONE photo (the owner's pick) closing the cold-open montage, its Stints
- * row (thumbnail + a "[robot]" chip → #robot) and, with the CAD line-art render, on "And they yearn to build".
+ * The biped (the #robot page) appears as ONE photo (the owner's pick) closing the cold-open montage, as its CAD
+ * line-art render (site/img/robot/renders/, exported by the robot page; guarded while missing) in the finale's panel
+ * of the four scenes, in its Stints row (thumbnail + its scene chip → #robot) and, photo + render, on
+ * "And they yearn to build".
  * Settled mode: the full poem in serif with hoverable phrases (project images + curated personal photos),
- * an index of every project with thumbnails (hover → image, click → link), socials, friends' sites and
+ * an index of every project with thumbnails (hover → image, click → link), socials, other pages, friends' sites and
  * the attribution lines. SkyWindFarm units and tethers are drawn with Site.art.swfUnit / swfTether
  * (exported by skywindfarm.js, so both scenes share one glyph); a local fallback draws them if it's missing.
  *
@@ -66,8 +68,17 @@
     { name: 'Change things', bar: 41, ref: 'stanzas 18–19 · closing' },
   ];
   SECTIONS.forEach((s, i) => { s.t0 = (s.bar - 1) * BAR; s.t1 = i + 1 < SECTIONS.length ? (SECTIONS[i + 1].bar - 1) * BAR : DUR; });
-  // The site's scene numbers (keys 1–4, round 4 order). Every "[n]" chip in the film and the index reads them here.
-  const SN = { lpwm: 1, lpjepa: 2, radial: 3, swf: 4 };
+  // The site's scene numbers. Every "[n]" chip in the film and the index reads them here. They are read from the
+  // live registry when the scene is created (readSN), so a reorder in the scene files never leaves a stale chip:
+  // a hidden page (menu / Find only) has no number (null), and its chips drop the "[n]" (or name the page instead).
+  const SID = { lpwm: 'lpwm', lpjepa: 'lpjepa', radial: 'radial-vcreg', swf: 'skywindfarm', robot: 'robot' };
+  const SN = { lpwm: 1, lpjepa: 2, radial: null, swf: 3, robot: 4 }; // (round 5 order, until readSN runs)
+  function readSN() {
+    let defs = [];
+    try { defs = (window.Site && typeof Site.scenes === 'function' && Site.scenes()) || []; } catch (e) {}
+    if (!defs.length) return;
+    Object.keys(SID).forEach(k => { const d = defs.find(x => x.id === SID[k]); SN[k] = d && !d.hidden && d.n >= 1 && d.n <= 4 ? d.n : null; });
+  }
   const STEPS = [
     { label: 'Builders', bar: 1 }, { label: 'Question', bar: 9 }, { label: 'First principles', bar: 17 },
     { label: 'Will power', bar: 21 }, { label: 'Yearn to build', bar: 33 }, { label: 'Change things', bar: 37 },
@@ -233,7 +244,7 @@
     { id: 'arbor', name: 'Arbor', year: '2026', y0: 2026, field: 'Tools', one: 'Research workspace: syncs W&B, GitHub and Notion into a research tree that knows what I’m working on and keeps me on track', idx: 'W&B, GitHub and Notion → a research tree that keeps me on track', href: ARBOR, img: IMG.arbor, meta: 'Live · private login', film: true },
     { id: 'hermes', name: 'Hermes', year: '2026', y0: 2026, field: 'Tools', one: 'Chrome extension that reads articles aloud with live word highlighting, 0.75–4×', idx: 'Chrome extension: reads articles aloud, word-synced, 0.75–4×', href: 'https://github.com/YashDagade/browser-reader', img: IMG.hermes, meta: 'Chrome extension · GitHub', film: true },
     { id: 'option-glass', name: 'Option Glass', year: '2026', y0: 2026, field: 'Tools', one: 'macOS screen assistant: double-tap Option to ask about whatever is on screen', idx: 'macOS assistant: double-tap Option, ask about the screen', href: null, img: IMG.optionGlass, meta: 'macOS · Swift', film: true },
-    { id: 'biped', name: 'Biped', year: '2026', y0: 2026, field: 'Experiments', one: 'Bipedal robot on HiWonder LX-16A bus servos; build log in progress', idx: 'Bipedal robot on LX-16A bus servos; build log in progress', href: 'biped/', img: IMG.robot, thumb: IMG.robotSq, meta: 'Build log · Notion', film: true },
+    { id: 'biped', name: 'Biped', year: '2026', y0: 2026, field: 'Experiments', one: 'Bipedal robot on HiWonder LX-16A bus servos; build log in progress', idx: 'Bipedal robot on LX-16A bus servos; build log in progress', href: 'biped/', img: IMG.robot, thumb: IMG.robotSq, tcrop: [128, 172, 380, 264], meta: 'Build log · Notion', film: true },
     { id: 'central-america-drift', name: 'Central America Drift', year: '2026', y0: 2026, field: 'Experiments', one: 'JS rigid-body sim of Central America rifting apart into islands', idx: 'Rigid-body JS sim of Central America rifting into islands', href: 'https://github.com/YashDagade/central_america_drift', img: IMG.drift, meta: 'Simulation · GitHub', film: true },
     { id: 'simpl', name: 'Simpl', year: '2025–26', y0: 2025, y1: 2026, field: 'Products', one: 'iOS daily coach: turns quick food, sleep and exercise logs into what to do next', idx: 'iOS coach: food, sleep and exercise logs → what to do next', href: null, img: IMG.simpl, meta: 'iOS app · Expo', film: true },
     { id: 'connectu', name: 'ConnectU', year: '2025–26', y0: 2025, y1: 2026, field: 'Products', one: 'Mentor–mentee matching: LLM bios, embeddings and Hungarian-algorithm pairing', idx: 'Mentor matching: LLM bios, embeddings, Hungarian pairing', href: 'https://connectu-frontend.vercel.app/', img: IMG.connectu, meta: 'Matching platform', film: true },
@@ -341,10 +352,11 @@
     // (a text card carries its own words: its caption is only the title, never a repeat of the card)
     // (the biped: its one photo and its CAD render open the robot's own page, #robot; the render is optional: a card
     // whose image failed to load is left out, see phraseCfg)
+    // (the two tall cards share the top row, so the short text card never leaves a hole under it in the 2 × 2 grid)
     'And they yearn to build': { mode: 'jump', proj: ['lpwm', 'biped'], cards: [
-      { gen: 'text', head: 'Now building', title: 'Biped build log', meta: null, lines: ['World models for robots', 'NYU CILVR · Pantheon', 'Biped build log'], href: 'biped/' },
       { src: IMG.robot, title: 'My biped, in hand', meta: '45 cm · eight servos', href: '#robot' },
       { src: IMG.robotCad, title: 'The biped, from its CAD', meta: 'Open the robot page', href: '#robot', optional: true },
+      { gen: 'text', head: 'Now building', title: 'Biped build log', meta: null, lines: ['World models for robots', 'NYU CILVR · Pantheon', 'Biped build log'], href: 'biped/' },
       { src: ph('laser'), title: 'At the laser cutter', meta: 'SkyWindFarm, 2023' }] },
     'the same life': { mode: 'friends', title: 'Fellow builders', meta: 'Marco · Pranav · Brian · Max' },
     'race unrelentingly toward creating value': { mode: 'jump', proj: ['skywindfarm', 'rectified-lpjepa'], cards: [
@@ -694,24 +706,30 @@
   .scene--build .bd-row .th { width: 52px; height: 36px; }
 }
 /* "Play with sound": browsers only start audio after a gesture, so a film that opens without one (a direct link to
-   #build) plays silently under a light veil with this pill; any click, tap or key starts it from 0:00 with the music */
+   #build) plays silently under a light veil with this pill; any click, tap or key starts it from 0:00 with the music.
+   It sits in clear space (placePill: under the terminal, on the text column's left edge), a white halo keeps every
+   hairline off it, and one glyph (the accent ▶, at cap height) says what it does. (left/top: its top-left corner) */
 .scene--build .bd-veil { position: absolute; inset: 0; z-index: 6; background: rgba(255, 255, 255, .64); cursor: pointer;
   opacity: 0; visibility: hidden; transition: opacity .45s ease, visibility 0s linear .45s; }
 .scene--build .bd-go { position: absolute; left: 50%; top: 50%; z-index: 7; display: inline-flex; align-items: center; gap: 12px;
-  padding: 14px 24px 14px 19px; border-radius: 26px; background: var(--g200); color: var(--ink); cursor: pointer; white-space: nowrap;
+  padding: 13px 22px 13px 18px; border: 1px solid var(--ink); border-radius: 26px; background: var(--bg); color: var(--ink);
+  box-shadow: 0 0 0 10px var(--bg); cursor: pointer; white-space: nowrap;
   font-family: var(--mono); font-size: 14px; line-height: 18px; letter-spacing: .02em;
-  opacity: 0; visibility: hidden; transform: translate(-50%, -50%) translateY(6px);
-  transition: opacity .35s ease, transform .35s var(--ease), visibility 0s linear .35s, background-color .15s ease; }
+  opacity: 0; visibility: hidden; transform: translateY(6px);
+  transition: opacity .35s ease, transform .35s var(--ease), visibility 0s linear .35s, background-color .15s ease, color .15s ease, border-color .15s ease; }
 .scene--build.is-waiting .bd-veil { opacity: 1; visibility: visible; transition: opacity .6s ease, visibility 0s; }
-.scene--build.is-waiting .bd-go { opacity: 1; visibility: visible; transform: translate(-50%, -50%);
-  transition: opacity .5s ease .1s, transform .5s var(--ease) .1s, visibility 0s, background-color .15s ease; }
-.scene--build .bd-go:hover, .scene--build .bd-go:focus-visible { background: var(--g300); outline: none; }
-.scene--build .bd-go .dot { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-.scene--build .bd-go .dot::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid var(--accent); opacity: 0; animation: bd-ping 1.8s ease-out infinite; }
-@keyframes bd-ping { 0% { transform: scale(.45); opacity: .8; } 70%, 100% { transform: scale(1.35); opacity: 0; } }
-.scene--build .bd-go .pl { font-size: 11px; margin-right: 3px; }
-.scene--build .bd-go .k { color: var(--g600); margin-left: 2px; }
-@media (prefers-reduced-motion: reduce) { .scene--build .bd-cur, .scene--build .bd-jl .ld.is-energy, .scene--build .bd-go .dot::after { animation: none; } }
+.scene--build.is-waiting .bd-go { opacity: 1; visibility: visible; transform: none;
+  transition: opacity .5s ease .1s, transform .5s var(--ease) .1s, visibility 0s, background-color .15s ease, color .15s ease, border-color .15s ease; }
+.scene--build .bd-go:hover, .scene--build .bd-go:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
+.scene--build .bd-go .pl { flex: none; width: 0; height: 0; border-style: solid; border-width: 5.5px 0 5.5px 9.5px;
+  border-color: transparent transparent transparent var(--accent); margin: 0 1px 1px 0; animation: bd-breathe 2.4s ease-in-out infinite; }
+@keyframes bd-breathe { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+.scene--build .bd-go .k { color: var(--g600); margin-left: -2px; }
+.scene--build .bd-go.is-compact .k { display: none; }
+@media (max-width: 799px) { .scene--build .bd-go { padding: 11px 18px 11px 15px; gap: 10px; font-size: 13px; box-shadow: 0 0 0 8px var(--bg); } }
+/* while the pill is up it is the one call to action: core's "Click or press any key for sound" line steps aside */
+body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !important; opacity: 0 !important; }
+@media (prefers-reduced-motion: reduce) { .scene--build .bd-cur, .scene--build .bd-jl .ld.is-energy, .scene--build .bd-go .pl { animation: none; } }
 `;
 
   /* ================================================================== scene */
@@ -720,6 +738,7 @@
     caption: CAP_FILM,
     create(el, api) {
       const C = api.colors, FN = api.fonts, H = Site.h;
+      readSN(); // (every scene file has registered by now: create runs after boot)
       const AU = () => api.audio || (window.Site && window.Site.audio) || null;
       el.append(H('style', { text: CSS }));
       // a touch device (no hover): the copy says "Tap", and the buttons carry no keyboard hints
@@ -783,9 +802,12 @@
           let j = i, gw = 0;
           while (j < toks.length && !toks[j].sp) { gw += tw(toks[j]); j++; }
           // an emphasized phrase wraps as one unit ("will power." never splits into "will / power."), unless the
-          // phrase alone is wider than the column: then it breaks between its words like any other text
-          let j2 = j, gw2 = gw;
-          while (j2 < toks.length && toks[j2].sp && toks[j2].span >= 0 && toks[j2 - 1].span === toks[j2].span) {
+          // phrase alone is wider than the column: then it breaks between its words like any other text (and its
+          // tail is not regrouped: that left the first word alone on a line, "they / build / before they search.")
+          let j2 = j, gw2 = gw, pw = i - 1;
+          while (pw >= 0 && toks[pw].sp) pw--;
+          const mid = t.span >= 0 && pw >= 0 && toks[pw].span === t.span;
+          while (!mid && j2 < toks.length && toks[j2].sp && toks[j2].span >= 0 && toks[j2 - 1].span === toks[j2].span) {
             gw2 += tw(toks[j2]); j2++;
             while (j2 < toks.length && !toks[j2].sp) { gw2 += tw(toks[j2]); j2++; }
           }
@@ -1006,7 +1028,8 @@
         for (const [s, col] of parts) { label(s, xx, y, Object.assign({}, o, { color: col, align: 'left', bg: false })); xx += mw(f, s); }
       }
       const mixW = (parts, sz) => parts.reduce((q, p) => q + mw(monoF(sz || 12), p[0]), 0);
-      const sceneRef = (pre, n, post) => [[pre, T2], [`[${n}]`, C.accent], [post, T2]];
+      // (a hidden page has no number: the chip goes and the name stands alone)
+      const sceneRef = (pre, n, post) => (n ? [[pre, T2], [`[${n}]`, C.accent], [post, T2]] : [[pre, T2], [post.replace(/^ /, ''), T2]]);
       function seg(x1, y1, x2, y2, col, dash, lw) {
         ctx.strokeStyle = col || C.ink; ctx.lineWidth = lw || 1;
         if (dash) ctx.setLineDash(dash);
@@ -1330,6 +1353,41 @@
         }
       }
 
+      // V4 — Robot: the biped's CAD, as the #robot page exports it (a toon-shaded render, white ground). It prints on
+      // top-down under an accent scan line (1½ beats from u = 0), washed 42 % toward white so its black servo blocks read
+      // as mid-grey, the weight of the other panels' hairlines (white stays white, so no box shows round it). A wide,
+      // short panel (a landscape phone) shows the torso and thighs across the panel's width, cropped by its bottom
+      // edge, instead of a whole robot a few px tall. Until the file has loaded (or if it is missing): a hairline biped
+      // glyph in the same box, so the panel is never empty.
+      const ROBOT_BOX = [270, 88, 660, 1334]; // (the render's content box, px of the 1200 × 1500 file)
+      function vRobot(R, u) {
+        const im = img(IMG.robotCad), k = api.reduced ? 1 : eOut((u || 0) / (BEAT * 1.5));
+        let [sx, sy, sw, sh] = ROBOT_BOX;
+        // (the same ~80 % content box as the other panels, standing on a hairline ground where theirs sits)
+        let h = R.h * 0.82, w = h * sw / sh;
+        if (w > R.w * 0.84) { w = R.w * 0.84; h = w * sh / sw; }
+        let gy = R.y + R.h * 0.93, x = R.x + (R.w - w) / 2, y = gy - h;
+        const crop = ready(im) && w < R.w * 0.4;
+        if (crop) { // (top-anchored cover crop: as wide as the others' drawings, running off the panel's bottom)
+          w = Math.min(R.w * 0.62, R.h * 1.1); x = R.x + (R.w - w) / 2; y = R.y + R.h * 0.08; h = R.y + R.h + 6 - y;
+          sh = Math.min(sh, sw * h / w);
+        } else seg(R.x + R.w * 0.06, Math.round(gy) + 0.5, R.x + R.w * 0.94, Math.round(gy) + 0.5, C.g400);
+        ctx.save(); ctx.beginPath(); ctx.rect(x - 4, y - 4, w + 8, (h + 8) * k); ctx.clip();
+        if (ready(im)) {
+          ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(im, sx, sy, sw, sh, x, y, w, h);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.42)'; ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
+        } else { // torso box on two legs of three segments, a foot each (proportions of the render)
+          const tw = w, th = h * 0.13, lw = w * 0.2, ly = y + th, lh = h - th - h * 0.06;
+          srect(x, y, tw, th, C.ink);
+          [x + w * 0.2, x + w * 0.6].forEach(lx => {
+            for (let s = 0; s < 3; s++) srect(lx, ly + s * lh / 3 + 2, lw, lh / 3 - 4, C.g500);
+            srect(lx - w * 0.04, y + h - h * 0.06, lw + w * 0.08, h * 0.06, C.ink);
+          });
+        }
+        ctx.restore();
+        if (k < 1) { ctx.fillStyle = C.accent; ctx.fillRect(x - 6, y - 4 + (h + 8) * k, w + 12, 1); }
+      }
+
       // V1 — LpWM: dense latent → rectified sparse code → predictor rollout (toy). Rows = time, columns = dims.
       function vCode(R, lt, t, o) {
         o = o || {};
@@ -1456,7 +1514,7 @@
         const hx = Math.max(G.mobile ? G.F.x0 : G.TX + G.TW * 0.5, Math.min(R.x, xR - hw));
         if (hx !== R.x) mlabel('rad.h1', h1, hx, R.y + 12, { size: 13, color: C.ink });
         const capV = [nw ? ' Radial-VCReg · toy' : ' Radial-VCReg · 2-D toy · illustrative', ' Radial-VCReg · toy', ' Radial-VCReg']
-          .map(q => [['fig. 07 · ', T2], [`[${SN.radial}]`, C.accent], [q, T2]]).concat([[[`[${SN.radial}]`, C.accent], [' Radial-VCReg', T2]]]);
+          .map(q => sceneRef('fig. 07 · ', SN.radial, q)).concat([sceneRef('', SN.radial, ' Radial-VCReg')]);
         labelMix(capV.find(q => hx + mixW(q) <= xR) || capV[capV.length - 1], hx, R.y + 32); // (the "→ fig. 07" tag on "no limits")
         // inset: histogram of radii vs the χ₂ pdf  r·exp(−r²/2)
         // (desktop: right under the ring, its right edge on the ring's 95% shell, so the chart sits by what it explains)
@@ -1723,7 +1781,11 @@
         const { TX, TY, sz, F } = G, size = sz.XL, y = TY + (G.mobile ? 0 : size * 0.4);
         const Lo = lay(SP.s0.segs, serifF(size), size, F.w * 0.9);
         const fy = y + Lo.last + size * 0.3 + (G.mobile ? 26 : 40);
-        const fw = Math.round(G.mobile ? F.w * 0.84 : Math.min(F.w * 0.58, (F.y1 - fy - 30) / 0.66)), fh = Math.round(fw * 0.66);
+        let fw = Math.round(G.mobile ? F.w * 0.84 : Math.min(F.w * 0.58, (F.y1 - fy - 30) / 0.66));
+        // (a short or narrow desktop window: give up a little frame width, ≤ 10 %, so BITS keeps its column on the left
+        // (232 px: the log's widest row, "bits firmware.bin compiled", at 12 px) instead of shrinking to one line under it)
+        if (!G.mobile) { const col = Math.floor(F.w - 36 - 232); if (fw > col && col >= fw * 0.9) fw = col; }
+        const fh = Math.round(fw * 0.66);
         return { x: G.mobile ? TX : Math.round(F.x1 - fw), y: fy, w: fw, h: fh };
       }
       const TAU = Math.PI * 2;
@@ -1883,7 +1945,9 @@
           label(tag, x + cols[0] * cw, y, { size: fs, color: hi ? C.ink : T2, noKO: true });
           const it = item.length > n - cols[1] ? item.slice(0, n - cols[1] - 1) + '…' : item;
           label(it, x + cols[1] * cw, y, { size: fs, color: hi ? C.accent : C.ink, noKO: true });
-          if (status && cols[2] + status.length <= n) label(status, x + cols[2] * cw, y, { size: fs, color: status === 'ok' ? C.accent : T2, noKO: true });
+          // (a status too long for a narrow column says "ok" instead: "compiled" and "seated" both mean it)
+          const st = status && cols[2] + status.length > n && /^[a-z]+$/.test(status) ? 'ok' : status;
+          if (st && cols[2] + st.length <= n) label(st, x + cols[2] * cw, y, { size: fs, color: st === 'ok' ? C.accent : T2, noKO: true });
         };
         if (mode === 'line') { // one line, the newest row set compactly: tag, item, status (each dropped from the right if it runs long)
           tracked('BITS', T.x, T.y);
@@ -2870,13 +2934,17 @@
           const gw = (R.w - (cols - 1) * gap) / cols, gh = (R.h - rowsN * lab - (rowsN - 1) * gap) / rowsN;
           // (each panel's drawing fills the same ~80 % content box: the LpWM rollout spreads over the panel's height,
           // the radial burst is scaled so its 95 % shell spans ~80 % of the width)
-          // (in scene order, [1] … [4])
-          const cells = [
-            [SN.lpwm, 'LpWM', (r) => vCode(r, BEAT * 7.5, t, { mini: true, fill: true })],
-            [SN.lpjepa, 'Rectified LpJEPA', (r) => vHist(r, BAR * 1.5 + lt, t, { mini: true, fill: BAR, rect: BAR })],
-            [SN.radial, 'Radial-VCReg', (r) => vRadial(r, BAR + 0.1 + lt * 0.8, t, { mini: true, burst: BAR })],
-            [SN.swf, 'SkyWindFarm', (r) => vTurb(r, BAR * 2, t, { mini: true })],
-          ].sort((a, b) => a[0] - b[0]);
+          // (the four scenes on keys 1–4, in key order, read from the registry: SN. The robot's panel is its CAD
+          // render. A page that is not on a key only fills a slot the keys leave empty, unnumbered.)
+          const VIG = {
+            lpwm: ['LpWM', (r) => vCode(r, BEAT * 7.5, t, { mini: true, fill: true })],
+            lpjepa: ['Rectified LpJEPA', (r) => vHist(r, BAR * 1.5 + lt, t, { mini: true, fill: BAR, rect: BAR })],
+            swf: ['SkyWindFarm', (r) => vTurb(r, BAR * 2, t, { mini: true })],
+            robot: ['Robot', (r, u) => vRobot(r, u)],
+            radial: ['Radial-VCReg', (r) => vRadial(r, BAR + 0.1 + lt * 0.8, t, { mini: true, burst: BAR })],
+          };
+          const cells = Object.keys(VIG).filter(k => SN[k]).sort((a, b) => SN[a] - SN[b]).slice(0, 4).map(k => [SN[k], ...VIG[k]]);
+          Object.keys(VIG).forEach(k => { if (cells.length < 4 && !SN[k]) cells.push([null, ...VIG[k]]); });
           cells.forEach(([n, name, fn], i) => {
             const u = lt - i * S16;
             if (u < 0) return;
@@ -2884,10 +2952,10 @@
             srect(r.x, r.y, r.w, r.h, C.g300);
             plus(r.x, r.y, 3, C.accent);
             // the panel's name, or a shorter one, or just its number: never wider than the panel
-            const nm = [name, name.replace('Rectified ', '')].find(q => mixW([[`[${n}] ${q}`]]) <= r.w + 2);
-            labelMix([[`[${n}]`, C.accent], [nm ? ' ' + nm : '', C.ink]], r.x, r.y - 8);
+            const chip = n ? `[${n}]` : '', nm = [name, name.replace('Rectified ', '')].find(q => mixW([[`${chip} ${q}`.trim()]]) <= r.w + 2);
+            labelMix([[chip, C.accent], [nm ? (chip ? ' ' : '') + nm : '', C.ink]], r.x, r.y - 8);
             ctx.save(); ctx.beginPath(); ctx.rect(r.x + 1, r.y + 1, r.w - 2, r.h - 2); ctx.clip();
-            fn({ x: r.x + 6, y: r.y + 6, w: r.w - 12, h: r.h - 12 });
+            fn({ x: r.x + 6, y: r.y + 6, w: r.w - 12, h: r.h - 12 }, u);
             ctx.restore();
           });
           ctx.restore();
@@ -3375,7 +3443,7 @@
       // (a step, the slider, pause, skip) instead keeps the film where it is, and the music joins it there.
       const FRESH = 0.35;
       const goBtn = H('button', { type: 'button', class: 'bd-go', 'aria-label': 'Play the film with sound' },
-        H('span', { class: 'dot', 'aria-hidden': 'true' }), H('span', null, H('span', { class: 'pl', 'aria-hidden': 'true', text: '▶' }), ' Play with sound'),
+        H('span', { class: 'pl', 'aria-hidden': 'true' }), H('span', { text: 'Play with sound' }),
         TOUCH ? null : H('span', { class: 'k', text: '[space]' }));
       const veil = H('div', { class: 'bd-veil', 'aria-hidden': 'true' });
       el.append(veil, goBtn);
@@ -3389,12 +3457,27 @@
         if (on) placePill();
         el.classList.toggle('is-waiting', on);
       }
-      // centred on the film's frame (the scene's centre of mass), not the viewport
+      // In clear space, never on a line or a word of the film: in the text column under BITS (its left edge on the
+      // column's, its bottom on the ATOMS frame's) where the terminal has a column; under the terminal's last line where
+      // it sits below the frame and there is room; else (phones) centred in the ATOMS frame, like a player's button,
+      // its halo clearing the drawing. Only the first seconds (the bench) matter: that is what a shared link shows.
       function placePill() {
         if (!G) return;
-        const F = G.F;
-        goBtn.style.left = Math.round((F.x0 + F.x1) / 2) + 'px';
-        goBtn.style.top = Math.round(Math.max(F.y0 + 40, Math.min(F.y1 - 40, (F.y0 + F.y1) / 2))) + 'px';
+        const B = benchGeom(), M = B.M, T = B.T, F = G.F, gap = G.phone ? 20 : 26;
+        goBtn.classList.remove('is-compact');
+        let pw = goBtn.offsetWidth, ph = goBtn.offsetHeight;
+        // the terminal's last line (the prompt + the whole log, as the bench ends): its text bottom
+        const ey = T.y + (B.tm === 'col' ? 20 : 12), y0 = ey + Math.round(B.lh * 1.45);
+        const fit = Math.max(1, Math.floor((T.y + T.h - 6 - y0) / B.lh) + 1), lines = Math.min(fit, BENCH.log.length + 1);
+        const logEnd = y0 + (lines - 1) * B.lh + 5;
+        let x = M.x + (M.w - pw) / 2, y = M.y + (M.h - ph) / 2;
+        if (B.tm === 'col') {
+          const room = M.x - 30 - T.x;
+          if (pw > room) { goBtn.classList.add('is-compact'); pw = goBtn.offsetWidth; ph = goBtn.offsetHeight; }
+          if (pw <= room && M.y + M.h - ph >= logEnd + gap) { x = T.x; y = M.y + M.h - ph; }
+        } else if (B.tm === 'below' && logEnd + gap + ph <= F.y1) { x = M.x; y = logEnd + gap; }
+        goBtn.style.left = Math.round(x) + 'px';
+        goBtn.style.top = Math.round(y) + 'px';
       }
       // (shown a moment after enter(): a gesture's unlock takes a few ms to land, and must not flash the pill)
       function pillSoon(ms) { clearTimeout(pillT); pillT = setTimeout(() => pill(true), ms); }
@@ -3411,6 +3494,10 @@
           if (!soundOn) holdUntil = performance.now() + 450; // (and the first frame waits for it)
         }
         try {
+          // (iOS: Web Audio follows the ringer switch unless the page asks for playback; this tap asked for sound)
+          if (navigator.audioSession && navigator.audioSession.type !== 'playback') navigator.audioSession.type = 'playback';
+        } catch (e) {}
+        try {
           if (a && a.ctx && a.ctx.state !== 'running' && typeof a.ctx.resume === 'function') { const r = a.ctx.resume(); if (r && r.catch) r.catch(() => {}); }
           if (a && typeof a.unlock === 'function') a.unlock();
           if (a && !a.enabled && typeof a.setEnabled === 'function') a.setEnabled(true); // (explicitly asked for sound)
@@ -3420,9 +3507,45 @@
       veil.addEventListener('click', () => playWithSound());
       // audio became ready by any path while the pill was up: that gesture is the "play with sound". (It can happen inside
       // the very keydown or pointerdown that key() or the pill's click then sees, so they remember the pill for a moment.)
-      let pillGoneAt = -1e9;
+      let pillGoneAt = -1e9, readyAt = -1e9;
       const pillWasUp = () => pillUp || performance.now() - pillGoneAt < 400;
-      try { const a0 = AU(); if (a0 && typeof a0.onReady === 'function') a0.onReady(() => { if (pillUp) { if (AU().enabled) restart0 = true; pill(false); pillGoneAt = performance.now(); } }); } catch (e) {}
+      try { const a0 = AU(); if (a0 && typeof a0.onReady === 'function') a0.onReady(() => { readyAt = performance.now(); if (pillUp) { if (AU().enabled) restart0 = true; pill(false); pillGoneAt = performance.now(); } }); } catch (e) {}
+      // The speaker and the S key, while audio is still held back, also mean "sound on". The speaker already reads "on"
+      // then (music is on by default), so a visitor who hears nothing clicks it, and core's toggle would turn that into
+      // a mute, saved for every later visit. So the gesture that unlocks audio never toggles it: in the film with the
+      // pill up it is the pill ("play with sound", from 0:00), elsewhere on [5] it only unlocks. (Capture listeners on
+      // window: core's own pointerdown unlock runs first and may already have made audio ready, hence readyAt; its
+      // keydown handler bubbles, so an S stopped here never reaches it.)
+      const soundBtn = document.getElementById('sound');
+      const wasLocked = () => { const a = AU(); return !!(a && a.enabled && (!a.ready || performance.now() - readyAt < 80)); };
+      let eatClick = false;
+      function soundGesture() {
+        if (mode === 'film' && pillWasUp()) { pillGoneAt = -1e9; playWithSound(); return; }
+        const a = AU();
+        try { if (a && typeof a.unlock === 'function') a.unlock(); } catch (e) {}
+      }
+      window.addEventListener('pointerdown', e => {
+        eatClick = !!(api.isActive() && soundBtn && e.target instanceof Node && soundBtn.contains(e.target) && wasLocked());
+        resumeStalled();
+      }, true);
+      window.addEventListener('click', e => {
+        if (!eatClick) return;
+        eatClick = false;
+        if (!(api.isActive() && soundBtn && e.target instanceof Node && soundBtn.contains(e.target))) return;
+        e.stopPropagation(); e.preventDefault();
+        soundGesture();
+      }, true);
+      window.addEventListener('keydown', e => {
+        if (!api.isActive()) return;
+        resumeStalled();
+        if ((e.key !== 's' && e.key !== 'S') || e.metaKey || e.ctrlKey || e.altKey || e.repeat) return;
+        const t = e.target;
+        if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+        if (document.querySelector('.is-open[aria-hidden="false"]')) return; // (an overlay is open: core's keys)
+        if (!wasLocked()) return;
+        e.stopPropagation(); e.preventDefault();
+        soundGesture();
+      }, true);
 
       /* ---------------------------------------------------------- transport */
       let mode = 'film', pos = 0, playing = false, bedTimer = 0, tailTimer = 0, watched = false, shownT = 0, hintUntil = 0, settledAt = -1e9;
@@ -3578,13 +3701,15 @@
       const list = H('div', { class: 'bd-list' });
       secIndex.append(list);
       const rows = {}, thumbs = {};
-      // the four research rows name their scene: "[n]" (click → that scene; the row itself still opens the paper)
-      // (the biped's chip opens the robot's own page, #robot: its CAD, part by part, and the photo)
-      const SCENE_OF = { lpwm: ['lpwm', SN.lpwm], 'rectified-lpjepa': ['lpjepa', SN.lpjepa], 'radial-vcreg': ['radial-vcreg', SN.radial], skywindfarm: ['skywindfarm', SN.swf], biped: ['robot', 'robot'] };
+      // the rows with a page of their own name it: "[n]" (click → that scene; the row itself still opens the paper or
+      // the build log). The biped's page is #robot (its CAD, part by part, and the photo). A hidden page (menu / Find
+      // only, no key) gets a word chip that says what it opens instead of a number: "[robot]", "[demo]" (Radial-VCReg's
+      // interactive page).
+      const SCENE_OF = { lpwm: ['lpwm', SN.lpwm], 'rectified-lpjepa': ['lpjepa', SN.lpjepa], 'radial-vcreg': ['radial-vcreg', SN.radial || 'demo'], skywindfarm: ['skywindfarm', SN.swf], biped: ['robot', SN.robot || 'robot'] };
       function sceneChip(p) {
         const sc = SCENE_OF[p.id];
         if (!sc) return null;
-        const c = H('span', { class: 'sc', text: `[${sc[1]}]`, title: typeof sc[1] === 'number' ? `Scene [${sc[1]}]: ${p.name}` : `The robot page: ${p.name}, from its CAD` });
+        const c = H('span', { class: 'sc', text: `[${sc[1]}]`, title: p.id === 'biped' ? `The robot page${typeof sc[1] === 'number' ? ` [${sc[1]}]` : ''}: the biped, from its CAD` : typeof sc[1] === 'number' ? `Scene [${sc[1]}]: ${p.name}` : `The ${p.name} page: an interactive demo` });
         c.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); ui('select'); location.hash = '#' + sc[0]; });
         c.addEventListener('pointerenter', () => ui('hover'));
         return c;
@@ -3594,9 +3719,14 @@
         const src = p.thumb || p.img || null;
         const th = H('span', { class: 'th', 'aria-hidden': 'true' });
         if (src) {
-          const im = H('img', { src: CROP[src] ? '' : src, alt: '', loading: 'lazy', decoding: 'async' });
-          if (CROP[src]) { const u = cropSrc(src, v => { im.src = v; }); if (u) im.src = u; } // (Arbor: the left panel only)
-          if (FY[src] != null) im.style.objectPosition = `50% ${Math.round(FY[src] * 100)}%`;
+          // (p.tcrop: a crop for this 58 × 40 thumbnail only, e.g. the biped's face looking down at the robot in his
+          // hands; at thumbnail size the whole square photo is mostly hair and T-shirt. Keyed '#t' so the montage and
+          // the cards keep the full photo.)
+          const key = p.tcrop ? src + '#t' : src;
+          if (p.tcrop) CROP[key] = p.tcrop;
+          const im = H('img', { src: CROP[key] ? '' : src, alt: '', loading: 'lazy', decoding: 'async' });
+          if (CROP[key]) { const u = cropSrc(key, v => { im.src = v; }); if (u) im.src = u; } // (Arbor: the left panel only)
+          if (FY[src] != null && !p.tcrop) im.style.objectPosition = `50% ${Math.round(FY[src] * 100)}%`;
           th.append(im);
         }
         thumbs[p.id] = th; // generated thumbnails (no image) are filled in once the fonts are in (see GEN)
@@ -3616,8 +3746,10 @@
         ll.append(H('a', { href: s.href, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null }, H('span', { text: s.label })));
       });
       const ll2 = H('div', { class: 'bd-links bd-links--sub' },
-        H('a', { href: 'press.html' }, H('span', { text: 'Press' })), H('a', { href: 'build.html' }, H('span', { text: 'Read as text' })), H('a', { href: 'about.html' }, H('span', { text: 'About' })));
+        H('a', { href: 'press.html' }, H('span', { text: 'Press' })), H('a', { href: 'build.html' }, H('span', { text: 'Read as text' })), H('a', { href: 'me.html' }, H('span', { text: 'About' })));
       secElse.append(ll, ll2);
+      // friends' sites: just their names (no pointing arrows). (The owner's "get rid of this section about friends" was
+      // the About page's list, gone in b28cd17; here only the arrows went.)
       const secFr = H('section', { class: 'bd-fr' }, H('div', { class: 'h', text: 'Check out my friends’ sites' }));
       const fl = H('div', { class: 'bd-links' });
       FRIENDS.forEach(f => fl.append(H('a', { href: f.href, target: '_blank', rel: 'noopener' }, H('span', { text: f.label }))));
@@ -3896,7 +4028,7 @@
         jumpHide();
         const mob = innerWidth < 800;
         const items = cfg.mode === 'flip' ? [{ flip: cfg.frames, title: cfg.title, meta: cfg.meta }]
-          : cfg.mode === 'friends' ? FRIENDS.map(f => ({ text: f.label, title: f.name, meta: f.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''), href: f.href }))
+          : cfg.mode === 'friends' ? FRIENDS.map(f => ({ text: f.label, title: f.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''), href: f.href })) // (the name is in the box: the caption is the site)
           : cfg.cards.map(c => (c.art && !(artFn('swfUnit') && artFn('swfTether')) ? Object.assign({}, c, { art: null, src: c.alt }) : c));
         const rects = span.getClientRects(), r = rects[rects.length - 1] || span.getBoundingClientRect(), r0 = rects[0] || r; // r0: first line of a wrapped phrase
         const vw = innerWidth, vh = innerHeight, n = items.length;
@@ -3982,10 +4114,14 @@
           // below the tapped line when the sheet fits there (the sentence it belongs to stays readable above it);
           // above only when it fits there and not below; otherwise whichever side has more room
           const need0 = need(), up = downRoom >= need0 ? false : upRoom >= need0 ? true : upRoom > downRoom, room = up ? upRoom : downRoom;
-          if (need() > room && !textual) { // too tall: keep the column width, crop the images shorter (object-fit: cover)
-            const ih = cards.reduce((q, k) => q + (k.im ? k.im.offsetHeight : 0), 0) / cols, f = Math.max(0.35, 1 - (need() - room) / Math.max(1, ih));
-            cards.forEach(k => { if (k.im) k.im.style.height = Math.round(k.im.offsetHeight * f) + 'px'; });
-            hts = cards.map(k => k.c.offsetHeight);
+          if (need() > room && !textual) { // too tall: keep the column width, crop the photos shorter (object-fit: cover)
+            // (a generated text card keeps its natural height: cropped, it loses its first and last lines. The photos
+            // give up the height instead: the largest crop that fits, found by bisection, never below 35 %)
+            const shr = cards.filter(k => k.im && k.it.gen !== 'text'), h0 = shr.map(k => k.im.offsetHeight);
+            const apply = f => { shr.forEach((k, i) => { k.im.style.height = Math.round(h0[i] * f) + 'px'; }); hts = cards.map(k => k.c.offsetHeight); };
+            let lo = 0.35, hi = 1;
+            apply(lo);
+            if (need() <= room) { for (let it = 0; it < 7; it++) { const m = (lo + hi) / 2; apply(m); if (need() <= room) lo = m; else hi = m; } apply(lo); }
           }
           const nd = Math.min(room, need());
           let py, ph;
@@ -4088,7 +4224,9 @@
           lastStanza = k;
         }
         const y = set.scrollTop + 40, two = innerWidth >= 1200;
-        const idx = y >= secFr.offsetTop - set.clientHeight * 0.6 ? 2 : !two && y >= secIndex.offsetTop - 60 ? 1 : 0;
+        // (scrolled to the foot counts as "Friends": the section is short, so its top may never climb that far)
+        const atEnd = set.scrollTop > 0 && set.scrollTop >= set.scrollHeight - set.clientHeight - 8;
+        const idx = atEnd || y >= secFr.offsetTop - set.clientHeight * 0.6 ? 2 : !two && y >= secIndex.offsetTop - 60 ? 1 : 0;
         if (idx !== st2.get() && !(two && st2.get() === 1 && idx === 0 && set.scrollTop < 10)) st2.set(idx);
       }
 
@@ -4155,26 +4293,63 @@
         }
       }
 
+      /* ---------------------------------------------------------- audio stalls */
+      // The picture follows the score's heard position, so a context that stops while the page is visible (iOS: a call,
+      // Siri, an alarm; an output route change) would freeze the film on one frame. Its clock is watched: frozen for
+      // 0.35 s of visible time (a tab coming back resumes in a few ms, well under that), the score is stopped and the
+      // film runs on the wall clock, silent; the next gesture on [5] asks the context to resume, and when its clock
+      // moves again the score rejoins the film where it is.
+      let stalled = false, ctxT = -1, frozenFor = 0;
+      function watchClock(dt) {
+        const a = aud(), c = a && a.ctx;
+        if (!c || !soundOn) { stalled = false; frozenFor = 0; ctxT = -1; return; }
+        const moved = c.state === 'running' && c.currentTime !== ctxT;
+        ctxT = c.currentTime;
+        if (moved) {
+          frozenFor = 0;
+          if (stalled) { stalled = false; if (mode === 'film' && playing) { scoreStop(0); scorePlay(pos); } }
+          return;
+        }
+        if (stalled || !(mode === 'film' && playing && sPlaying())) return;
+        frozenFor += dt;
+        if (frozenFor > 0.35) { stalled = true; scoreStop(0); }
+      }
+      function resumeStalled() {
+        const a = aud(), c = a && a.ctx;
+        if (!c || c.state === 'running' || c.state === 'closed' || document.hidden || typeof c.resume !== 'function') return;
+        try { const r = c.resume(); if (r && r.catch) r.catch(() => {}); } catch (e) {}
+      }
+
       /* ---------------------------------------------------------- loop */
+      let stillAt = -1e9; // (paused: when the still frame was last drawn)
       api.loop((t, dt) => {
         if (mode !== 'film') { settledTick(t); return; }
         // (the gesture that brought us here is still unlocking audio: hold the first frame so film and music start together)
         if (playing && !soundOn && holdUntil && performance.now() < holdUntil) { render(); syncControls(); return; }
+        watchClock(dt);
         if (playing) {
           let p = pos + dt;
-          if (soundOn && sPlaying()) {
+          if (soundOn && sPlaying() && !stalled) {
             const sp = sHeard();
             // (never more than 30 ms ahead of what is heard: at a start the picture waits for the score's first sound)
             if (isFinite(sp)) { const err = sp - p; p = Math.abs(err) > 0.35 ? sp : Math.min(p + err * 0.12, sp + 0.03); }
           }
           pos = Math.max(0, Math.min(DUR, p));
           if (pos >= SETTLE_AT) { settle('end'); return; }
+        } else {
+          // paused: film time stands still, and so does the frame (a seek, a scrub, a resize or play redraws at once);
+          // four redraws a second catch anything else (an image that just loaded) without redrawing 60 times a second
+          if (t - stillAt < 0.25 && t >= stillAt) return;
+          stillAt = t;
         }
         render();
         syncControls();
       });
       api.onResize(() => { relayout(); resetText(); stanzaTops = null; checkSticky(); if (mode === 'film') render(); jumpHide(); showControls(); if (pillUp) placePill(); });
-      api.links(SOCIALS.map(s => ({ label: s.label, href: s.href })));
+      // (no pointing arrows on [5], as with the friends' names: core adds " ↗" to external links, so it comes off here)
+      (api.links(SOCIALS.map(s => ({ label: s.label, href: s.href }))) || []).forEach(a => {
+        Array.from(a.childNodes).forEach(n => { if (n.nodeType === 3 && /↗/.test(n.nodeValue)) n.remove(); });
+      });
       // tiny inspection hook (used by visual tests): el._bd.seek(seconds), el._bd.state()
       el._bd = { seek: s => { if (mode !== 'film') replay(); seek(s, true); }, pause: () => { if (playing) togglePlay(); },
         state: () => ({ mode, pos, playing, soundOn, score: !!score, scorePlaying: sPlaying(), scorePos: score ? sPos() : null, bed: !!bed, pill: pillUp, frames: MONTAGE.length, projects: PROJECTS.length }),
@@ -4206,7 +4381,7 @@
         },
         exit() {
           if (mode === 'settled') settledAt = performance.now(); // (the index was on screen until now)
-          playing = false; restart0 = false; holdUntil = 0; pill(false);
+          playing = false; restart0 = false; holdUntil = 0; pill(false); stalled = false; frozenFor = 0;
           scoreStop(0.3); stopBed(); jumpHide(); ovHideAll();
           clearTimeout(bedTimer); clearTimeout(tailTimer); clearTimeout(scrubTimer);
         },
