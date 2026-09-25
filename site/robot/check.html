@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Biped mesh check</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg: #ffffff; --ink: #000000; --muted: #555555; --line: #dddddd; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #ffffff; --ink: #000000; } }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font: 12px/15px 'Geist Mono', ui-monospace, Menlo, monospace; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+  #info { position: fixed; left: 16px; top: 12px; right: 16px; color: var(--muted); pointer-events: none; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="info">loading…</div>
+<script src="biped-loader.js"></script>
+<script>
+/* Developer check page for biped.bin / biped.json (not linked from the site).
+   Query: ?view=iso|front|side|back|top  &explode=0..1  &walk=1  &spin=1  &lines=1  &only=<group>  &az=deg&el=deg */
+(function () {
+  'use strict';
+  const Q = new URLSearchParams(location.search);
+  const views = { iso: [35, 18], front: [0, 0], side: [90, 0], back: [180, 0], top: [0, 89] };
+  let [az, el] = views[Q.get('view') || 'iso'] || views.iso;
+  if (Q.has('az')) az = +Q.get('az');
+  if (Q.has('el')) el = +Q.get('el');
+  const explode = +(Q.get('explode') || 0), walk = Q.get('walk') === '1', spin = Q.get('spin') === '1', lines = Q.get('lines') === '1';
+  const only = Q.get('only');
+  const cv = document.getElementById('c');
+  const gl = cv.getContext('webgl', { antialias: true });
+  const info = document.getElementById('info');
+  if (!gl) { info.textContent = 'WebGL unavailable'; return; }
+
+  const vs = `attribute vec3 p; attribute vec3 n; attribute vec3 c; uniform mat4 M; uniform mat4 V; uniform vec3 E;
+    varying vec3 vn; varying vec3 vc; void main(){ vec4 w = M * vec4(p,1.0); w.xyz += E; vn = mat3(M) * n; vc = c; gl_Position = V * w; }`;
+  const fs = `precision mediump float; varying vec3 vn; varying vec3 vc; uniform vec3 L; uniform float line;
+    void main(){ vec3 N = normalize(vn); float d = abs(dot(N, L)); vec3 col = vc * (0.42 + 0.58 * d);
+      gl_FragColor = vec4(mix(col, vec3(0.0), line), 1.0); }`;
+  function sh(t, s) { const o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(o); return o; }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const loc = { p: gl.getAttribLocation(prog, 'p'), n: gl.getAttribLocation(prog, 'n'), c: gl.getAttribLocation(prog, 'c'),
+    M: gl.getUniformLocation(prog, 'M'), V: gl.getUniformLocation(prog, 'V'), E: gl.getUniformLocation(prog, 'E'),
+    L: gl.getUniformLocation(prog, 'L'), line: gl.getUniformLocation(prog, 'line') };
+  const vbo = a => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, a, gl.STATIC_DRAW); return b; };
+
+  Site.biped.load('./').then(model => {
+    const t0 = performance.now();
+    const draws = [];
+    for (const p of model.parts) {
+      if (only && p.group !== only) continue;
+      const f = Site.biped.flat(p);
+      const d = { part: p, n: f.positions.length / 3, bp: vbo(f.positions), bn: vbo(f.normals), bc: vbo(f.colors) };
+      if (lines) {
+        const e = Site.biped.edges(p, 35);
+        const seg = [];
+        for (let i = 0; i < e.feature.length; i++) if (e.feature[i]) {
+          const a = e.pairs[2 * i] * 3, b = e.pairs[2 * i + 1] * 3;
+          seg.push(p.positions[a], p.positions[a + 1], p.positions[a + 2], p.positions[b], p.positions[b + 1], p.positions[b + 2]);
+        }
+        d.nl = seg.length / 3; d.bl = vbo(new Float32Array(seg)); d.bz = vbo(new Float32Array(seg.length));
+      }
+      draws.push(d);
+    }
+    const prep = performance.now() - t0;
+    const D = model.dims;
+    function resize() {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(innerWidth * dpr); cv.height = Math.round(innerHeight * dpr);
+      gl.viewport(0, 0, cv.width, cv.height);
+    }
+    addEventListener('resize', resize); resize();
+    let drag = null;
+    cv.addEventListener('pointerdown', e => { drag = [e.clientX, e.clientY, az, el]; cv.setPointerCapture(e.pointerId); });
+    cv.addEventListener('pointermove', e => { if (!drag) return; az = drag[2] - (e.clientX - drag[0]) * 0.4; el = Math.max(-89, Math.min(89, drag[3] + (e.clientY - drag[1]) * 0.4)); });
+    cv.addEventListener('pointerup', () => { drag = null; });
+    gl.enable(gl.DEPTH_TEST); gl.clearColor(1, 1, 1, 1);
+    let frames = 0, fpsT = performance.now(), fps = 0;
+    function view() {
+      // orthographic camera orbiting the robot; world is Z-up, camera looks at the robot's front (+X) at az = 0
+      const a = az * Math.PI / 180, e = el * Math.PI / 180;
+      const fwd = [-Math.cos(e) * Math.cos(a), -Math.cos(e) * Math.sin(a), -Math.sin(e)]; // camera looks along fwd
+      const up0 = [0, 0, 1];
+      let r = [fwd[1] * up0[2] - fwd[2] * up0[1], fwd[2] * up0[0] - fwd[0] * up0[2], fwd[0] * up0[1] - fwd[1] * up0[0]];
+      const rl = Math.hypot(...r) || 1; r = r.map(v => v / rl);
+      const u = [r[1] * fwd[2] - r[2] * fwd[1], r[2] * fwd[0] - r[0] * fwd[2], r[0] * fwd[1] - r[1] * fwd[0]];
+      const cx = -20, cy = 0, cz = explode ? 223 * (1 + explode * 0.4) - 110 * explode : 223;
+      const h = (explode ? 520 + 380 * explode : 520) / 2, asp = cv.width / cv.height;
+      const sx = 1 / (h * Math.max(asp, 0.62)), sy = sx * asp;
+      const M = new Float32Array(16);
+      // rows: right, up, -fwd (depth), with scale; column-major
+      const rows = [r, u, fwd.map(v => -v)];
+      const s = [sx, sy, -1 / 1000];
+      for (let i = 0; i < 3; i++) {
+        M[i] = rows[i][0] * s[i]; M[4 + i] = rows[i][1] * s[i]; M[8 + i] = rows[i][2] * s[i];
+        M[12 + i] = -(rows[i][0] * cx + rows[i][1] * cy + rows[i][2] * cz) * s[i];
+      }
+      M[15] = 1;
+      return { M, L: [0.35 * r[0] + 0.6 * u[0] - fwd[0], 0.35 * r[1] + 0.6 * u[1] - fwd[1], 0.35 * r[2] + 0.6 * u[2] - fwd[2]] };
+    }
+    function frame(now) {
+      const t = now / 1000;
+      if (spin && !drag) az += 0.15;
+      const angles = walk ? Site.biped.gait(t * 0.6) : {};
+      let mats = Site.biped.pose(model, angles);
+      if (walk) {
+        const dz = Site.biped.groundShift(model, mats);
+        const R = Site.biped.mat4.ident(); R[14] = dz;
+        mats = Site.biped.pose(model, angles, { root: R });
+      }
+      const { M: V, L } = view();
+      const ll = Math.hypot(...L);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.uniformMatrix4fv(loc.V, false, V);
+      gl.uniform3f(loc.L, L[0] / ll, L[1] / ll, L[2] / ll);
+      gl.enable(gl.POLYGON_OFFSET_FILL); gl.polygonOffset(1, 1);
+      for (const d of draws) {
+        const ex = d.part.explode;
+        gl.uniformMatrix4fv(loc.M, false, mats[d.part.link]);
+        gl.uniform3f(loc.E, ex[0] * explode, ex[1] * explode, ex[2] * explode);
+        gl.uniform1f(loc.line, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, d.bp); gl.enableVertexAttribArray(loc.p); gl.vertexAttribPointer(loc.p, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, d.bn); gl.enableVertexAttribArray(loc.n); gl.vertexAttribPointer(loc.n, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, d.bc); gl.enableVertexAttribArray(loc.c); gl.vertexAttribPointer(loc.c, 3, gl.FLOAT, false, 0, 0);
+        gl.drawArrays(gl.TRIANGLES, 0, d.n);
+        if (lines && d.nl) {
+          gl.uniform1f(loc.line, 0.85);
+          gl.bindBuffer(gl.ARRAY_BUFFER, d.bl); gl.vertexAttribPointer(loc.p, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, d.bz); gl.vertexAttribPointer(loc.n, 3, gl.FLOAT, false, 0, 0);
+          gl.vertexAttribPointer(loc.c, 3, gl.FLOAT, false, 0, 0);
+          gl.drawArrays(gl.LINES, 0, d.nl);
+        }
+      }
+      frames++;
+      if (now - fpsT > 1000) { fps = frames * 1000 / (now - fpsT); frames = 0; fpsT = now; }
+      info.textContent = `biped.bin  ${model.parts.length} parts · ${D.mesh.webTriangles.toLocaleString()} triangles · prep ${prep.toFixed(0)} ms · ${fps.toFixed(0)} fps\n` +
+        `${D.overall.height} × ${D.overall.width} × ${D.overall.depth} mm (H × W × D) · hip→knee ${D.legs.thighLength} · knee→ankle ${D.legs.shinLength} · ankle→sole ${D.legs.ankleToSole}`;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }).catch(err => { info.textContent = 'error: ' + err; console.error(err); });
+})();
+</script>
+</body>
+</html>

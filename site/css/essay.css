@@ -1,0 +1,255 @@
+/* Essays (page mode): a quiet long-form reading layout for /dearmoderneducation and /fromsubtoexp.
+   Loaded after site.css. Page-private: every rule is scoped to .essay / .essay-*, plus the page-mode hint
+   placement that /me also uses. */
+
+.page.essay {
+  max-width: 688px;                     /* 640 px measure + 2 × 24 px gutter */
+  padding: 150px 24px 168px;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--ink);
+  font-optical-sizing: auto;
+  font-kerning: normal;
+}
+
+/* ---------- Head: kicker, title, dek ---------- */
+
+.essay-head { margin: 0 0 52px; }
+.essay .kicker {
+  margin: 0 0 20px;
+  font: 400 11px/14px var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #555;
+}
+.essay .kicker .acc { color: var(--accent); }
+.essay .kicker .dot { margin: 0 .55em; color: var(--g500); }
+.page.essay h1 {
+  margin: 0;
+  font-size: 36px;
+  line-height: 1.1;
+  letter-spacing: -.024em;
+  font-weight: 400;
+  text-wrap: balance;
+}
+.essay .dek {
+  margin: 14px 0 0;
+  font-size: 21px;
+  line-height: 1.4;
+  font-style: italic;
+  color: #444;
+  text-wrap: balance;
+}
+.essay-head::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  margin-top: 40px;
+  background: var(--ink);
+}
+
+/* ---------- Body ---------- */
+
+.essay-body { counter-reset: sec; }
+.essay-body p { margin: 0 0 1.12em; text-wrap: pretty; }
+.essay-body .lede { font-size: 20px; line-height: 1.62; }
+.essay-body em { font-style: italic; }
+.essay-body strong { font-weight: 500; }
+.essay-body .math { white-space: nowrap; }
+.essay-body .math i { font-style: italic; padding-right: .04em; }
+.essay-body sup { font-size: .66em; line-height: 0; vertical-align: .5em; }
+
+/* quiet section heads: a small mono index in deep blue, then the title in the reading face */
+.essay-body h2 {
+  counter-increment: sec;
+  margin: 2.5em 0 .7em;
+  font-size: 25px;
+  line-height: 1.24;
+  letter-spacing: -.014em;
+  font-weight: 400;
+  text-wrap: balance;
+  scroll-margin-top: 110px;
+}
+.essay-body h2::before {
+  content: counter(sec, decimal-leading-zero);
+  display: block;
+  margin-bottom: 10px;
+  font: 400 11px/14px var(--mono);
+  letter-spacing: .06em;
+  color: var(--accent);
+}
+
+/* pull quotes / blockquotes in the site style: a deep-blue hairline, a larger line */
+.essay-body blockquote,
+.essay-body .pull {
+  margin: 1.7em 0;
+  padding: 2px 0 2px 22px;
+  border-left: 1px solid var(--accent);
+  font-size: 23px;
+  line-height: 1.42;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.essay-body blockquote p { margin: 0; }
+
+/* links: a thin underline that turns deep blue (as on /me) */
+.page.essay a {
+  border-bottom: 0;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
+  text-decoration-color: var(--g400);
+  overflow-wrap: anywhere;
+  transition: color .15s, text-decoration-color .15s;
+}
+.page.essay a:hover, .page.essay a:focus-visible { color: var(--accent); text-decoration-color: var(--accent); }
+.page.essay a:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+
+/* footnote reference: a small mono [1] in deep blue */
+.page.essay sup.fn { font: 500 11px/0 var(--mono); vertical-align: .72em; margin-left: 1px; letter-spacing: 0; }
+.page.essay sup.fn a { color: var(--accent); text-decoration: none; padding: 0 1px; }
+.page.essay sup.fn a::before { content: '['; }
+.page.essay sup.fn a::after { content: ']'; }
+.page.essay sup.fn a:hover { text-decoration: underline; text-underline-offset: .2em; }
+.page.essay [id] { scroll-margin-top: 110px; }
+
+/* the letter's sign-off */
+.essay .signature { margin: 52px 0 0; font-style: italic; color: #333; }
+.essay .signature p { margin: 0; }
+.essay .signature .name { margin-top: 4px; font-style: normal; font-size: 26px; letter-spacing: -.015em; color: var(--ink); }
+
+/* ---------- Notes and works cited: mono 12 px, label column like /me's foot ---------- */
+
+.essay-notes {
+  margin: 72px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--g300);
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  column-gap: 16px;
+  font: 400 12px/1.7 var(--mono);
+  letter-spacing: .01em;
+  color: #333;
+}
+.essay-notes + .essay-notes { margin-top: 40px; }
+.essay-notes h3 {
+  margin: 0;
+  font: 400 11px/20px var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #555;
+}
+.essay-notes .list > * { margin: 0 0 12px; }
+.essay-notes .list > :last-child { margin-bottom: 0; }
+.essay-notes .footnote { display: grid; grid-template-columns: 24px 1fr; }
+.essay-notes .footnote-number { color: var(--accent); }
+.essay-notes .footnote .back { margin-left: 6px; color: var(--accent); text-decoration: none; }
+.essay-notes .footnote:target { animation: essay-flash 2.4s ease-out both; }
+@keyframes essay-flash {
+  from { background: var(--accent-soft); box-shadow: 0 0 0 6px var(--accent-soft); }
+  to { background: rgba(20, 50, 245, 0); box-shadow: 0 0 0 6px rgba(20, 50, 245, 0); }
+}
+.essay-notes .citation { padding-left: 2em; text-indent: -2em; }
+.essay-notes em { font-style: italic; }
+.page.essay .essay-notes a { text-underline-offset: .25em; }
+
+/* ---------- End: read next, author, credit ---------- */
+
+.essay-end {
+  margin: 72px 0 0;
+  padding: 22px 0 0;
+  border-top: 1px solid var(--g300);
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  column-gap: 16px;
+  row-gap: 10px;
+}
+.essay-end dt { font: 400 11px/28px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: #555; }
+.essay-end dd { margin: 0; font-size: 17px; line-height: 28px; }
+.page.essay .credit {
+  margin: 56px 0 0;
+  font: 400 11px/14px var(--mono);
+  letter-spacing: .02em;
+  color: #666;
+}
+.page.essay .credit a { color: inherit; text-underline-offset: .25em; }
+
+/* ---------- Reading progress + top veil ---------- */
+
+/* a deep-blue hairline across the very top that fills as you read */
+.essay-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 45;
+  pointer-events: none;
+  background: var(--accent);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+/* Once the page scrolls, a taller top veil keeps the text from showing through under the wordmark
+   (the page chrome's own gradient is 64 px). Off at the top. Below .chrome-top (40) and the hint (35). */
+.essay-veil {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 84px;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(#fff 62%, rgba(255, 255, 255, 0));
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.essay-veil.is-on { opacity: 1; }
+
+/* a calm entrance: the head fades up line by line, then the text */
+.essay-head > * { animation: yd-fade-in .7s var(--ease) both; }
+.essay-head > :nth-child(2) { animation-delay: 50ms; }
+.essay-head > :nth-child(3) { animation-delay: 100ms; }
+.essay-head::after { animation: yd-fade-in .7s var(--ease) 150ms both; }
+.essay-body { animation: yd-fade-in .8s var(--ease) 180ms both; }
+
+/* Core hints (e.g. "Sound on") never land on the running text: a small opaque label in the bottom chrome
+   band beside the sound toggle (bottom-left on narrow windows). Touch screens get none. */
+body.page-mode .hint {
+  top: auto; left: auto; right: calc(var(--gutter) + 34px); bottom: 27px;
+  width: auto; max-width: none; margin: 0; padding: 2px 8px;
+  white-space: nowrap; text-align: left; background: #fff;
+  transform: translateY(4px);
+}
+body.page-mode .hint.is-visible { transform: none; }
+@media (max-width: 800px) {
+  body.page-mode .hint { right: auto; left: 8px; bottom: 23px; }
+}
+@media (hover: none), (pointer: coarse) {
+  body.page-mode .hint { display: none; }
+}
+
+/* ---------- Phones ---------- */
+
+@media (max-width: 800px) {
+  .page.essay { padding: 104px 16px 150px; font-size: 18px; line-height: 1.62; }
+  .essay-head { margin-bottom: 40px; }
+  .essay .kicker { margin-bottom: 16px; }
+  .page.essay h1 { font-size: 29px; line-height: 1.12; }
+  .essay .dek { font-size: 19px; margin-top: 12px; }
+  .essay-head::after { margin-top: 32px; }
+  .essay-body .lede { font-size: 19px; line-height: 1.6; }
+  .essay-body h2 { font-size: 22px; margin-top: 2.2em; }
+  .essay-body blockquote, .essay-body .pull { font-size: 20.5px; padding-left: 16px; }
+  .essay .signature { margin-top: 44px; }
+  .essay-notes { display: block; margin-top: 60px; }
+  .essay-notes h3 { margin-bottom: 12px; }
+  .essay-end { grid-template-columns: 84px 1fr; column-gap: 12px; margin-top: 60px; }
+  .essay-end dd { font-size: 16.5px; line-height: 1.5; padding-top: 3px; }
+  .page.essay .credit { margin-top: 44px; }
+  .essay-veil { height: 76px; }
+}
+
+@media print {
+  .chrome-top, .pill--find, .sound-toggle, .hint, .reveal-card, .essay-progress, .essay-veil { display: none !important; }
+  body.page-mode::after { display: none; }
+  .page.essay { padding: 0; max-width: none; }
+}

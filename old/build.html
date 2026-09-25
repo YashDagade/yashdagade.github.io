@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Archived copy of yashdagade.com before the 2026 redesign. -->
+    <meta name="robots" content="noindex">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To The Builders</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⚙️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&family=IBM+Plex+Mono:wght@300;400&family=Cormorant+Garamond:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/essay-theme.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 40px 120px;
+            min-height: 100vh;
+        }
+
+        /* Typography Styles */
+        .manifesto {
+            line-height: 1.8;
+        }
+
+        body.classic .manifesto {
+            font-size: 20px;
+            line-height: 1.9;
+        }
+
+        body.modern .manifesto {
+            font-size: 18px;
+            line-height: 1.8;
+            font-weight: 300;
+            letter-spacing: -0.01em;
+        }
+
+        body.editorial .manifesto {
+            font-size: 22px;
+            line-height: 1.85;
+        }
+
+        body.mono .manifesto {
+            font-size: 16px;
+            line-height: 1.9;
+            font-weight: 300;
+        }
+
+        body.contrast .manifesto {
+            font-size: 19px;
+            line-height: 1.85;
+            font-weight: 300;
+        }
+
+        body.elegant .manifesto {
+            font-size: 23px;
+            line-height: 1.9;
+            font-weight: 300;
+        }
+
+        .manifesto p {
+            margin-bottom: 1.6em;
+        }
+
+        /* Emphasized Words */
+        .emphasis {
+            font-weight: 600;
+            position: relative;
+            display: inline-block;
+        }
+
+        body.classic .emphasis {
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        body.modern .emphasis {
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        body.editorial .emphasis {
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        body.mono .emphasis {
+            font-weight: 400;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 4px;
+        }
+
+        body.contrast .emphasis {
+            font-weight: 500;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 2px;
+        }
+
+        body.elegant .emphasis {
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        /* Opening */
+        .opening {
+            font-size: 1.3em;
+            margin-bottom: 2em;
+            line-height: 1.6;
+        }
+
+        body.modern .opening {
+            font-weight: 400;
+        }
+
+        body.editorial .opening {
+            font-weight: 500;
+        }
+
+        /* Closing */
+        .closing {
+            margin-top: 3em;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        body.mono .closing {
+            font-style: normal;
+            opacity: 0.7;
+        }
+
+        /* Attribution */
+        .attribution {
+            margin-top: 4em;
+            font-size: 0.85em;
+            opacity: 0.5;
+            font-style: italic;
+        }
+
+        body.mono .attribution {
+            font-style: normal;
+        }
+
+        /* Contact */
+        .contact {
+            margin-top: 3em;
+            padding: 30px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.contrast .contact {
+            border-top-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .contact a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px solid currentColor;
+            transition: opacity 0.3s ease;
+        }
+
+        .contact a:hover {
+            opacity: 0.6;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 60px 24px 80px;
+            }
+
+            .style-selector {
+                top: 20px;
+                right: 20px;
+            }
+
+            body.classic .manifesto {
+                font-size: 18px;
+            }
+
+            body.modern .manifesto {
+                font-size: 16px;
+            }
+
+            body.editorial .manifesto {
+                font-size: 19px;
+            }
+
+            body.mono .manifesto {
+                font-size: 14px;
+            }
+
+            body.contrast .manifesto {
+                font-size: 17px;
+            }
+
+            body.elegant .manifesto {
+                font-size: 20px;
+            }
+
+            .opening {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Fade in animation (keyframes defined in essay-theme.css) */
+        .manifesto {
+            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* archive: a quiet way back to the current site */
+        .new-site-link { position: absolute; top: 36px; left: 40px; z-index: 1000; font: 13px/20px Georgia, serif; color: inherit; opacity: .45; text-decoration: none; transition: opacity .3s ease; }
+        .new-site-link:hover { opacity: 1; }
+        @media (max-width: 768px) { .new-site-link { top: 18px; left: 20px; } }
+    </style>
+</head>
+<body class="classic">
+    <a class="new-site-link" href="../index.html" title="Back to the current site">&larr; new site</a>
+    <div class="nav-controls no-select">
+        <a href="index.html" class="home-btn" aria-label="Home">🚀</a>
+        <button class="style-btn" id="styleBtn" aria-label="Change style">.</button>
+    </div>
+
+    <div class="container">
+        <div class="manifesto">
+            <p class="opening">
+                Here's to the <span class="emphasis">builders</span>.<br>
+                The <span class="emphasis">misfits</span>. The <span class="emphasis">rebels</span>. The <span class="emphasis">troublemakers</span>.<br>
+                The <span class="emphasis">round pegs in the square holes</span>.<br>
+                The ones who see <span class="emphasis">things differently</span>.
+            </p>
+
+            <p>
+                They are driven by "why" and not afraid to <span class="emphasis">question everything</span>. <br>
+                They strive to see the beauty in math and physics.
+            </p>
+
+            <p>
+                They know that the only laws of this universe are the <span class="emphasis">laws of physics</span>.<br>
+                They're not fond of rules or bureaucracy.<br>
+                And they have no respect for the status quo.
+            </p>
+
+            <p>
+                They reason from <span class="emphasis">first principles</span> and are <span class="emphasis">non-mimetic</span> in their wants. <br>
+                The fact that something hasn't been done before bears no reason to them for why it can't be done.
+            </p>
+
+            <p>
+                They are daring enough to think they can <span class="emphasis">change the world</span> and don't need time, money or resources to do so. 
+                <br>They operate purely on their <span class="emphasis">will power</span>.
+            </p>
+
+            <p>
+                If they want to do something they will find a way to get it done. <br>
+                They push themselves to their limits to discover that they have <span class="emphasis">no limits</span>.
+            </p>
+
+            <p>
+                They often move in silence and don't care to see their names in the press. <br>
+                Sometimes they are misunderstood, but that doesn't bother them as long as humanity would be grateful for what they build.
+            </p>
+
+            <p>
+                They build for the sake of building; they often differentiate for the sake of it.
+            </p>
+
+            <p>
+                They have a <span class="emphasis">high bar for quality</span>; and don't really care for external validation.
+            </p>
+
+            <p>
+                They are skittish about mediocrity and pine for <span class="emphasis">excellence</span>. <br>
+                They have strong loosely held beliefs and change their minds swiftly in light of evidence.
+            </p>
+
+            <p>
+                They don't trust things easily, and they <span class="emphasis">build before they search</span>. <br>
+                They take things in their own hands and are curious about everything.
+                <span class="emphasis">And they yearn to build</span>.
+            </p>
+
+            <p>
+                They are known by many names in their communities: The creative spirits. The underdogs. The resolute. The determined. The indefatigable. The outsiders. The defiant. The independent thinkers. The fighters and the true believers.
+            </p>
+
+            <p>
+                And they come from many different generations, places, religions, cultures and ages.
+            </p>
+
+            <p>
+                But intrinsically they all are living <span class="emphasis">the same life</span>.
+            </p>
+
+            <p>
+                Whilst the rest of humanity may be rationalizing everything happening around them, they have a rational for everything they do.
+            </p>
+
+            <p>
+                Whilst the rest of humanity relentlessly competes to capture the most value;  <br>
+                they <span class="emphasis">race unrelentingly toward creating value</span>.
+            </p>
+
+            <p>
+                You can quote them, disagree with them,<br>
+                glorify or vilify them.<br>
+                About the only thing you can't do is <span class='emphasis'>ignore them</span>.
+            </p>
+
+            <p>
+                Because they <span class="emphasis">change things</span>.
+            </p>
+
+            <p>
+                They push the human race forward.
+            </p>
+
+            <p class="closing">
+                While some may call them the crazy ones<br>
+                we know that the people who are crazy enough to think they can change the world,<br>
+                are the ones who do!
+            </p>
+            
+            <p class="attribution">
+                Inspired by Think Different, Apple; Ethos of Sequoia; Against the Odds, James Dyson, and many other builders
+            </p>
+        </div>
+    </div>
+
+    <script src="../scripts/essay-theme.js"></script>
+</body>
+</html>

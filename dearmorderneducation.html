@@ -1,195 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dear Modern Education - Yash Dagade</title>
-    <link rel="icon" href="assets/rocket-icon.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/essay-theme.css">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            }
-        };
-    </script>
-    <style>
-        /* ---------- Page layout ---------- */
-        .container {
-            max-width: 660px;
-            margin: 0 auto;
-            padding: 90px 24px 120px;
-        }
-
-        /* ---------- Header ---------- */
-        .header {
-            text-align: center;
-            margin-bottom: 60px;
-            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .header h1 {
-            font-size: 2.6em;
-            font-weight: 600;
-            letter-spacing: -0.015em;
-            line-height: 1.15;
-            margin-bottom: 18px;
-        }
-
-        body.mono .header h1 { font-size: 2em; }
-        body.elegant .header h1 { font-size: 2.9em; font-weight: 500; }
-        body.editorial .header h1 { font-weight: 700; }
-
-        .header .byline {
-            font-size: 1.15em;
-            color: var(--muted);
-            font-style: italic;
-        }
-
-        body.mono .header .byline,
-        body.modern .header .byline { font-style: normal; }
-
-        .header::after {
-            content: "";
-            display: block;
-            width: 56px;
-            height: 1px;
-            background: var(--rule);
-            margin: 36px auto 0;
-        }
-
-        /* ---------- Letter body ---------- */
-        .letter-content {
-            font-size: 1.16em;
-            line-height: 1.85;
-            animation: fadeIn 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.classic .letter-content { font-size: 1.22em; line-height: 1.85; }
-        body.modern .letter-content { font-size: 1.06em; line-height: 1.8; font-weight: 300; letter-spacing: -0.005em; }
-        body.editorial .letter-content { font-size: 1.18em; line-height: 1.9; }
-        body.elegant .letter-content { font-size: 1.3em; line-height: 1.85; font-weight: 400; }
-        body.mono .letter-content { font-size: 0.98em; line-height: 1.95; font-weight: 300; }
-        body.contrast .letter-content { font-size: 1.1em; line-height: 1.85; font-weight: 300; }
-
-        .letter-content p {
-            margin-bottom: 1.55em;
-            text-align: left;
-        }
-
-        .letter-content p:first-child {
-            font-size: 1.08em;
-        }
-
-        .letter-content strong {
-            font-weight: 600;
-            color: var(--accent);
-        }
-
-        .letter-content em { font-style: italic; }
-        body.mono .letter-content em { font-style: normal; background: rgba(0,0,0,0.05); padding: 1px 3px; }
-        body.contrast .letter-content em { color: #ffffff; }
-
-        /* ---------- Signature ---------- */
-        .signature {
-            margin-top: 56px;
-            text-align: left;
-            font-style: italic;
-            color: var(--muted);
-            border-top: 1px solid var(--rule);
-            padding-top: 32px;
-        }
-
-        body.mono .signature { font-style: normal; }
-
-        .signature p {
-            margin-bottom: 0.5em;
-        }
-
-        .signature .name {
-            font-weight: 600;
-            color: var(--text);
-            font-style: normal;
-        }
-
-        /* ---------- Math styling ---------- */
-        .MathJax {
-            font-size: 1em !important;
-        }
-
-        /* ---------- Mobile ---------- */
-        @media (max-width: 768px) {
-            .container {
-                padding: 70px 18px 90px;
-            }
-
-            .header { margin-bottom: 42px; }
-            .header h1 { font-size: 2em; }
-            body.elegant .header h1 { font-size: 2.2em; }
-            .header .byline { font-size: 1.05em; }
-
-            .letter-content { font-size: 1.05em; line-height: 1.75; }
-            body.classic .letter-content { font-size: 1.1em; }
-            body.elegant .letter-content { font-size: 1.15em; }
-            body.mono .letter-content { font-size: 0.9em; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dear Modern Education — Yash Dagade</title>
+  <!-- The old, misspelled address of the letter: send readers (and old links) to its new home. -->
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://www.yashdagade.com/dearmoderneducation">
+  <meta http-equiv="refresh" content="0; url=dearmoderneducation.html">
+  <link rel="icon" href="site/img/icon/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="site/img/icon/favicon-32.png" sizes="32x32" type="image/png">
+  <script>location.replace('dearmoderneducation.html' + location.search + location.hash);</script>
+  <style>
+    body { margin: 0; padding: 40px 24px; background: #fff; color: #000; font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    a { color: #1432F5; }
+  </style>
 </head>
-<body class="classic">
-    <div class="progress-bar" id="progressBar"></div>
-
-    <div class="nav-controls no-select">
-        <a href="/index.html" class="home-btn" aria-label="Home">🚀</a>
-        <button class="style-btn" id="styleBtn" aria-label="Change style">.</button>
-    </div>
-
-    <div class="container">
-        <div class="header">
-            <h1>Dear Modern Education</h1>
-            <p class="byline">A Letter on Learning in the Age of AI</p>
-        </div>
-
-        <div class="letter-content">
-            <p>Dear Modern Education,</p>
-
-            <p>You are a beautiful idea, I must admit. The notion of enriching people's lives with clarity and intention—of helping us grow into thoughtful citizens—is one of the noblest dreams humanity has pursued. And you, dear education, have followed that dream with remarkable persistence. Even when we disagree on how you go about achieving your goals, I admire you deeply for trying.</p>
-
-            <p>However, as we enter a new era, I urge you to reconsider some aspects of your approach. Your present form was brilliantly designed for an industrialized world, but today, the landscape is starting to change. Calculators are no longer female mathematicians but electronic devices capable of crunching numbers instantaneously. Essays with perfect grammar and spelling but devoid of original thought can now be effortlessly generated by AI. And information like George Washington's birthday is accessible within seconds without memorization.</p>
-
-            <p>And yet, you still insist we memorize formulas instead of understanding the intuition behind them. You ask us to recite disconnected historical dates, rather than reflect on the humanity behind them. You teach us to follow rigid five-paragraph structures, but not to pursue ideas with joy and originality.</p>
-
-            <p>As you may now know education, in our modern world, no one really needs to ever compute the derivative of $x^2$ or solve a tricky world problem about a sliding ladder (looking at you AP Calculus). We can now delegate these tasks to AI. Yet, our lives would not be as beautiful if we don't learn about the beauty behind derivatives that give me intuition on why not to jump in an accelerating elevator. This knowledge you see is gained through intuition. Yet all your tests and grades are all about testing memorization. As our world changes, I hope you can start rewarding intuition over memorization.</p>
-
-            <p>Now, on writing. Writing is one of the clearest expressions of thinking. But good writing isn't about neatly defined margins or a rigid five-paragraph structure—it's about ideas. We can now generate perfectly formatted, grammatically correct essays with AI, even if they're completely meaningless. And yet, you still insist on word counts, penalize spelling mistakes, and frown upon bullet points or creative structure. You overlook our efforts to prioritize clarity. But clarity of thought is still deeply human—while formatting can be outsourced to machines. I hope you begin to care less about how our writing <em>looks</em>, and more about what it <em>says</em>.</p>
-
-            <p>History, too, has lost its humanity.Instead of helping us understand people—their decisions, values, and mistakes—we're taught to memorize dry textbook summaries: <em>King Charles III ruled this land for 24 years, the economy thrived, then a famine struck, and he relinquished control.</em></p>
-
-            <p>How does that make me a better citizen?</p>
-
-            <p>I don't want to just know <strong>what</strong> happened—I want to understand <strong>why</strong> it happened, and what it felt like to be in the shoes of those making the decisions. I want to read autobiographies and letters. I want to reflect on questions like: <em>What could have been done differently? Why did the king make the choices he did? And what can I learn from that?</em> That's how we grow. That's how history rhymes—not in dates or timelines, but in the patterns of human thought and behavior that echo across time. I hope you now start teaching us history as a study of human nature.</p>
-
-            <p>Education, as you have taught me, is much more than memorizing and applying concepts. It's about gaining intuition and problem solving. It's about struggling for a while and sprinting in the darkness before accidentally fumbling out into the light. It's about pondering on new paths and than tracing your steps back to discover newer and hopefully more efficient routes. Education is about enriching our lives with the beautiful (even if often times flawed) notions of the universe that help you see non-trivial things trivially.</p>
-
-            <p>And to be honest we do learn these things in our current system. But not intentionally, accidentally. Most of our neurons are fired instead towards optimizing towards these meaningless rubrics.</p>
-
-            <p>Modern education, I'm not asking you to abandon rigor. I'm asking you to redefine it.</p>
-
-            <p>Instead of caring about perfect grammar, care about bold ideas. Instead of rewarding clean handwriting, reward messy curiosity. Make room for the tinkerers and the explorers—the ones who break things just to learn how to fix them.</p>
-
-            <p>AI is already replacing the mundane. Soon, it'll be absurd to teach students how to do things without ever teaching <em>why</em>. Help us seek out better questions than telling us how to find the right answers. Inspire in us a love of pondering instead off instilling in us the confidence of knowledge.</p>
-
-            <div class="signature">
-                <p>Yours in messy curiosity,</p>
-                <p class="name">Yash</p>
-            </div>
-        </div>
-    </div>
-
-    <script src="scripts/essay-theme.js"></script>
+<body>
+  <p>Dear Modern Education has moved to <a href="dearmoderneducation.html">yashdagade.com/dearmoderneducation</a>.</p>
 </body>
 </html>
