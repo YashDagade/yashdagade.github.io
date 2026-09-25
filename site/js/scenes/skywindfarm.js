@@ -50,12 +50,12 @@
   };
 
   const IMG = 'site/img/swf/';
-  // owner feedback: patent, ISEF, and the two videos together; never the paper PDF
+  // owner feedback: the flight video leads (the main video), then patent, ISEF and the explanation; never the paper PDF
   const LINKS = [
+    { label: '▶ Watch it fly', href: 'https://youtu.be/Z6k2j59-ubo' },
     { label: 'Utility patent', href: 'https://patents.google.com/patent/US20250243843A1/en' },
     { label: 'ISEF project', href: 'https://isef.net/project/egsd018-skywindfarm' },
-    { label: 'explanation', m: 'Video: explanation', href: 'https://youtu.be/gDUk6V607js' },
-    { label: 'flight', m: 'Video: flight', href: 'https://youtu.be/Z6k2j59-ubo' },
+    { label: 'Explanation video', href: 'https://youtu.be/gDUk6V607js' },
   ];
   const V_DESIGN = 26.7;       // m/s at 3 km (Weibull c, paper p.4)
   const RHO_HUB = 0.8;         // kg/m³ at 3 km (paper, conservative)
@@ -3281,33 +3281,20 @@
         onInput: v => { S.base = v; S.sweep = null; touch(); },
       });
       api.links(LINKS.map(l => ({ label: l.label, href: l.href })));
-      // "Videos: explanation · flight" on one line, and hovering a link shows the real thing too
+      // the flight video leads, in deep blue; hovering any link shows the real thing too
       (function linkRow() {
         const grp = document.querySelector('.links-group[data-scene="skywindfarm"]');
         if (!grp) return;
         const as = grp.querySelectorAll('a');
         if (as.length !== 4) return;
-        const [, isef, expl, flight] = as;
-        const row = document.createElement('div');
-        row.style.cssText = 'font-size:var(--fs-xs);line-height:16px;color:#555;white-space:nowrap';
-        [expl, flight].forEach(a => {
-          a.style.display = 'inline';
-          if (a === expl) Array.from(a.childNodes).forEach(n => { if (n.nodeType === 3 && /↗/.test(n.textContent)) n.remove(); });
-        });
-        row.append('Videos: ', expl, ' · ', flight);
-        grp.append(row);
-        // phones list these links in core's [M] menu from their text: a hidden "Video: " keeps them self-explanatory
-        [[expl, 'explanation'], [flight, 'flight']].forEach(([a, nm]) => {
-          const vh = document.createElement('span');
-          vh.textContent = 'Video: ';
-          vh.style.display = 'none';
-          a.prepend(vh);
-          a.setAttribute('aria-label', `Video: ${nm}`);
-        });
+        const [flight, , isef, expl] = as;
+        flight.style.color = 'var(--accent)';
+        flight.style.fontSize = '12px';
+        flight.style.marginBottom = '2px';
         // smaller cards here: they flip up and left over the scene from the bottom-right corner
+        api.reveal(flight, { src: IMG + 'prototype-flight.jpg', title: 'Flight test video', meta: '2024 · 3:41', width: 260 });
         api.reveal(isef, { src: IMG + 'isef-poster.jpg', title: 'ISEF 2024 · EGSD018', meta: 'Third Award', width: 240 });
         api.reveal(expl, { src: IMG + 'explainer-video-still.jpg', title: 'Explanation video', meta: '2024 · 1:50', width: 240 });
-        api.reveal(flight, { src: IMG + 'prototype-flight.jpg', title: 'Flight test video', meta: '2024 · 3:41', width: 240 });
       })();
 
       function touch() { S.lastInteract = S.A; }
