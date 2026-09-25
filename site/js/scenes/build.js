@@ -177,7 +177,7 @@
   [[IMG.connectu, 1200 / 631], [IMG.eyeda, 1200 / 553], [IMG.hermes, 1.6], [IMG.idw, 1200 / 699], [IMG.lpjepa, 1172 / 1200],
     [IMG.radial, 291 / 300], [IMG.cp, 638 / 468], [IMG.cfd, 1334 / 649], [IMG.render, 1110 / 828], [IMG.poster, 862 / 542],
     [IMG.flight, 1400 / 786], [IMG.system, 1400 / 873], [IMG.sky, 1400 / 752], [IMG.ground, 1136 / 273], [IMG.arbor, 634 / 750],
-    [IMG.optionGlass, 690 / 580], [IMG.simpl, 1200 / 675], [IMG.resq, 1200 / 725], [IMG.drift, 1.6], [IMG.wesifted, 1200 / 654],
+    [IMG.optionGlass, 690 / 580], [IMG.simpl, 1200 / 675], [IMG.resq, 1200 / 725], [IMG.drift, 1.6], [IMG.wesifted, 1200 / 750],
     [IMG.robot, 1120 / 1400], [IMG.robotSq, 1], [IMG.robotCad, 1200 / 1500], [IMG.blinket, 1200 / 721]]
     .forEach(([s, a]) => { AR[s] = a; });
   // Source crops (px of the file): Arbor's public page is half sign-in form; only its left panel ("Follow the
@@ -254,7 +254,7 @@
     { id: 'resq', name: 'ResQ', year: '2025', y0: 2025, field: 'Safety', one: 'Watches traffic-camera streams and flags crashes with a vision LLM in real time', idx: 'Flags crashes in live traffic-camera streams with a vision LLM', href: 'https://res-q-eta.vercel.app/', img: IMG.resq, meta: 'Vision LLM · real time', film: true },
     { id: 'goedel', name: 'Goedel-Prover-V2, enhanced', year: '2025', y0: 2025, field: 'Experiments', one: 'Prompt adapter for Goedel-Prover-V2-8B: 84.6% → 85.2% on miniF2F (self-reported)', idx: 'Prompt adapter, 8B: 84.6% → 85.2% miniF2F (self-reported)', href: null, gen: 'title', meta: 'Lean · LLM' },
     { id: 'lotus', name: 'LOTUS', year: '2025', y0: 2025, field: 'Experiments', one: 'Generating Cas9 protein variants by flow matching in ESM-2 embedding space', idx: 'Cas9 variants via flow matching in ESM-2 space', href: 'https://github.com/YashDagade/Lotus', gen: 'title', meta: 'Flow matching · GitHub' },
-    { id: 'wesifted', name: 'WeSifted', year: '2025', y0: 2025, field: 'Products', one: 'Curated, profile-tailored legislation updates for small and mid-size businesses', idx: 'Legislation updates tailored to small and mid-size businesses', href: 'https://wesifted.com', img: IMG.wesifted, meta: 'Archived', arch: true },
+    { id: 'wesifted', name: 'WeSifted', year: '2025', y0: 2025, field: 'Products', one: 'Free quarterly briefings on the federal bills and laws that matter to your business, plus a source-cited AI bill chat', idx: 'Federal bills and laws, briefed for your business · AI bill chat', href: 'https://www.wesifted.com/', img: IMG.wesifted, meta: 'Live · wesifted.com' },
     { id: 'echo', name: 'Echo', year: '2025', y0: 2025, field: 'Products', one: 'AI documentation and note-taking for therapists', idx: 'AI documentation and note-taking for therapists', href: null, gen: 'title', meta: 'Archived', arch: true },
     { id: 'idontwannadie', name: 'idontwannadie.lol', year: '2024', y0: 2024, field: 'Safety', one: 'Safer-route maps built on 3.1M+ Minnesota crash records; PennApps XXV winner', idx: 'Safer routes from 3.1M+ MN crash records · PennApps XXV', href: 'https://idontwannadie.lol/', img: IMG.idw, meta: 'PennApps XXV', film: true },
     { id: 'skywindfarm', name: 'SkyWindFarm', year: '2022–24', y0: 2022, y1: 2024, field: 'Energy', one: 'Airborne wind energy: helium-lifted VAWT clusters that harvest high-altitude wind', idx: 'Helium-lifted turbine clusters harvesting high-altitude wind', href: 'https://youtu.be/Z6k2j59-ubo', video: 'https://youtu.be/Z6k2j59-ubo', img: IMG.flight, thumb: sq('aloft'), meta: 'Flight video · ISEF 2023 + 2024 · patent application' },
@@ -1240,6 +1240,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       const artFn = name => (window.Site && Site.art && typeof Site.art[name] === 'function' ? Site.art[name] : null);
       function unitArt(x, y, s, t, i, o) {
         o = o || {};
+        if (!(s > 0.01)) return { x, y };
         const f = artFn('swfUnit');
         if (f) {
           ctx.save();
@@ -1276,6 +1277,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         return { at };
       }
       function drawUnit(x, y, s, t, i) {
+        if (!(s > 0.01)) return;
         ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
         ctx.fillStyle = C.bg;
         ctx.beginPath(); ctx.ellipse(x, y, 34 * s, 15 * s, 0, Math.PI, 2 * Math.PI); ctx.closePath(); ctx.fill(); ctx.stroke();
@@ -1862,6 +1864,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       // (x, y) = deck centre, s = swfUnit scale. o: { alpha, energy, phase, bridle }
       function unitPart(which, x, y, s, o) {
         o = o || {};
+        if (!(s > 0.01)) return;
         const f = artFn('swfUnit');
         ctx.save();
         if (o.alpha != null) ctx.globalAlpha *= o.alpha;
