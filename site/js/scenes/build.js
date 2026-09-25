@@ -155,6 +155,7 @@
     yash: 'site/img/photos/portrait-headshot-2022.jpg', // the résumé headshot at full resolution (site/img/yash.jpg is 906 px)
     connectu: 'site/img/projects/connectu.jpg', eyeda: 'site/img/projects/eyeda-heatmap.jpg',
     hermes: 'site/img/projects/hermes.jpg', idw: 'site/img/projects/idontwannadie.jpg',
+    blinket: 'site/img/projects/blinket.jpg',
     lpjepa: 'site/img/projects/lpjepa.jpg', radial: 'site/img/projects/radialvcreg.jpg',
     cp: 'site/img/projects/skywindfarm-cp.jpg',
     cfd: 'site/img/swf/cfd-velocity-contour.jpg', render: 'site/img/swf/energy-unit-render.jpg',
@@ -177,7 +178,7 @@
     [IMG.radial, 291 / 300], [IMG.cp, 638 / 468], [IMG.cfd, 1334 / 649], [IMG.render, 1110 / 828], [IMG.poster, 862 / 542],
     [IMG.flight, 1400 / 786], [IMG.system, 1400 / 873], [IMG.sky, 1400 / 752], [IMG.ground, 1136 / 273], [IMG.arbor, 634 / 750],
     [IMG.optionGlass, 690 / 580], [IMG.simpl, 1200 / 675], [IMG.resq, 1200 / 725], [IMG.drift, 1.6], [IMG.wesifted, 1200 / 654],
-    [IMG.robot, 1120 / 1400], [IMG.robotSq, 1], [IMG.robotCad, 1200 / 1500]]
+    [IMG.robot, 1120 / 1400], [IMG.robotSq, 1], [IMG.robotCad, 1200 / 1500], [IMG.blinket, 1200 / 721]]
     .forEach(([s, a]) => { AR[s] = a; });
   // Source crops (px of the file): Arbor's public page is half sign-in form; only its left panel ("Follow the
   // question. Keep the discoveries." + the research tree) is shown. Canvas draws crop directly; <img> uses a
@@ -243,6 +244,7 @@
     { id: 'rectified-lpjepa', name: 'Rectified LpJEPA', year: '2026', y0: 2026, field: 'Research', one: 'JEPA pretraining on sparse, maximum-entropy representations', idx: 'JEPA pretraining on sparse, maximum-entropy features', href: 'https://arxiv.org/abs/2602.01456', img: IMG.lpjepa, meta: 'ICML 2026', film: true },
     { id: 'arbor', name: 'Arbor', year: '2026', y0: 2026, field: 'Tools', one: 'Research workspace: syncs W&B, GitHub and Notion into a research tree that knows what I’m working on and keeps me on track', idx: 'W&B, GitHub and Notion → a research tree that keeps me on track', href: ARBOR, img: IMG.arbor, meta: 'Live · private login', film: true },
     { id: 'hermes', name: 'Hermes', year: '2026', y0: 2026, field: 'Tools', one: 'Chrome extension that reads articles aloud with live word highlighting, 0.75–4×', idx: 'Chrome extension: reads articles aloud, word-synced, 0.75–4×', href: 'https://github.com/YashDagade/browser-reader', img: IMG.hermes, meta: 'Chrome extension · GitHub', film: true },
+    { id: 'blinket', name: 'Blinket', year: '2026', y0: 2026, field: 'Products', one: 'Hands-free internet for people with ALS: blinks and winks on an ordinary webcam drive search, chat, shopping and calls', idx: 'Hands-free internet for ALS: blinks and winks on a webcam', href: 'https://blinketmed.com/apps', video: 'https://youtu.be/NoRGMwNrWNU', img: IMG.blinket, meta: "TreeHacks ’26 · demo video", film: true },
     { id: 'option-glass', name: 'Option Glass', year: '2026', y0: 2026, field: 'Tools', one: 'macOS screen assistant: double-tap Option to ask about whatever is on screen', idx: 'macOS assistant: double-tap Option, ask about the screen', href: null, img: IMG.optionGlass, meta: 'macOS · Swift', film: true },
     { id: 'biped', name: 'Biped', year: '2026', y0: 2026, field: 'Experiments', one: 'Bipedal robot on HiWonder LX-16A bus servos; build log in progress', idx: 'Bipedal robot on LX-16A bus servos; build log in progress', href: 'biped/', img: IMG.robot, thumb: IMG.robotSq, tcrop: [128, 172, 380, 264], meta: 'Build log · Notion', film: true },
     { id: 'central-america-drift', name: 'Central America Drift', year: '2026', y0: 2026, field: 'Experiments', one: 'JS rigid-body sim of Central America rifting apart into islands', idx: 'Rigid-body JS sim of Central America rifting into islands', href: 'https://github.com/YashDagade/central_america_drift', img: IMG.drift, meta: 'Simulation · GitHub', film: true },
@@ -255,7 +257,7 @@
     { id: 'wesifted', name: 'WeSifted', year: '2025', y0: 2025, field: 'Products', one: 'Curated, profile-tailored legislation updates for small and mid-size businesses', idx: 'Legislation updates tailored to small and mid-size businesses', href: 'https://wesifted.com', img: IMG.wesifted, meta: 'Archived', arch: true },
     { id: 'echo', name: 'Echo', year: '2025', y0: 2025, field: 'Products', one: 'AI documentation and note-taking for therapists', idx: 'AI documentation and note-taking for therapists', href: null, gen: 'title', meta: 'Archived', arch: true },
     { id: 'idontwannadie', name: 'idontwannadie.lol', year: '2024', y0: 2024, field: 'Safety', one: 'Safer-route maps built on 3.1M+ Minnesota crash records; PennApps XXV winner', idx: 'Safer routes from 3.1M+ MN crash records · PennApps XXV', href: 'https://idontwannadie.lol/', img: IMG.idw, meta: 'PennApps XXV', film: true },
-    { id: 'skywindfarm', name: 'SkyWindFarm', year: '2022–24', y0: 2022, y1: 2024, field: 'Energy', one: 'Airborne wind energy: helium-lifted VAWT clusters that harvest high-altitude wind', idx: 'Helium-lifted turbine clusters harvesting high-altitude wind', href: 'https://isef.net/project/egsd018-skywindfarm', img: IMG.flight, thumb: sq('aloft'), meta: 'ISEF 2023 + 2024 · patent application' },
+    { id: 'skywindfarm', name: 'SkyWindFarm', year: '2022–24', y0: 2022, y1: 2024, field: 'Energy', one: 'Airborne wind energy: helium-lifted VAWT clusters that harvest high-altitude wind', idx: 'Helium-lifted turbine clusters harvesting high-altitude wind', href: 'https://youtu.be/Z6k2j59-ubo', video: 'https://youtu.be/Z6k2j59-ubo', img: IMG.flight, thumb: sq('aloft'), meta: 'Flight video · ISEF 2023 + 2024 · patent application' },
     { id: 'eyeda', name: 'EyeDa', year: '2022', y0: 2022, field: 'Safety', one: 'Distracted-driving nonprofit + real-time detection device; led a 15-person team', idx: 'Distracted-driving nonprofit + detection device; led 15 people', href: 'https://shreyadixit.org/shreya-innovation-lab/', img: IMG.eyeda, meta: 'KARE11 · CBS · Star Tribune', film: true },
   ];
   const PBY = {};
@@ -304,7 +306,7 @@
   // Hover map for the settled poem (brief §d + photos manifest §2). Every phrase opens cards beside the poem.
   // mode: card (one image) | jump (several cards) | mosaic | flip | friends. A card is { src | gen:'text', title,
   // meta, href?, lines? }. 'will power' shows power and energy: the Energy Unit, the units aloft, the ground station.
-  const SWF_HREF = 'https://isef.net/project/egsd018-skywindfarm';
+  const SWF_HREF = 'https://youtu.be/Z6k2j59-ubo'; // the flight video is SkyWindFarm's main link
   const HOVER = {
     'builders': { mode: 'flip', frames: MONTAGE, title: 'Stints, by year', meta: '2022 → 2026 · hover any blue phrase' },
     'misfits': { mode: 'card', src: IMG.yash, title: 'Yash Dagade', meta: 'B.S. Math + Philosophy, Duke ’28 · research at NYU CILVR', w: 220 },
@@ -3714,6 +3716,13 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         c.addEventListener('pointerenter', () => ui('hover'));
         return c;
       }
+      function videoChip(p) {
+        if (!p.video) return null;
+        const v = H('span', { class: 'sc', text: '▶ video', title: `${p.name}: watch the video`, role: 'link' });
+        v.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); ui('select'); window.open(p.video, '_blank', 'noopener'); });
+        v.addEventListener('pointerenter', () => ui('hover'));
+        return v;
+      }
       PROJECTS.forEach((p, i) => {
         const ext = p.href && /^https?:/.test(p.href);
         const src = p.thumb || p.img || null;
@@ -3732,7 +3741,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         thumbs[p.id] = th; // generated thumbnails (no image) are filled in once the fonts are in (see GEN)
         const r = H(p.href ? 'a' : 'div', { class: 'bd-row', href: p.href || null, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null, tabindex: p.href ? null : '0' },
           H('span', { class: 'no', text: pad2(i + 1) }), th,
-          H('span', { class: 'nm' }, H('span', { class: 'n' }, p.name, p.arch ? H('em', { text: 'archived' }) : null, sceneChip(p)),
+          H('span', { class: 'nm' }, H('span', { class: 'n' }, p.name, p.arch ? H('em', { text: 'archived' }) : null, sceneChip(p), videoChip(p)),
             H('span', { class: 'o', text: p.idx || p.one })),
           H('span', { class: 'yr' }, p.year, H('span', { text: p.field })));
         r.dataset.id = p.id;

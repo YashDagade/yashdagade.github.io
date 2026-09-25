@@ -2,7 +2,7 @@
  *
  * A three.js technical drawing (flat white faces with a soft key light, 1 px silhouette + crease lines computed on the
  * GPU, the part in focus in deep blue) under an SVG layer of dimension lines, leaders and joint axes. Seven steps:
- *   Assembled (turntable + overall dims) · Every part (explode, rebuild in assembly order) · Brain & power ·
+ *   Assembled (turntable) · Every part (explode, rebuild) · Brain & power ·
  *   Joints (the kinematic chain, one joint at a time) · Dimensions (front + side, to scale) · Walk · In hand (the photo, with the model at its scale).
  * three.js (UMD r149, jsDelivr) and the model (site/robot/biped.json + biped.bin, via site/robot/biped-loader.js) load
  * only when this scene is first created; until then the front blueprint from biped-2d.json is drawn.
@@ -52,25 +52,25 @@
   const STEPS = [
     {
       id: 'assembled', label: 'Assembled', dur: 14,
-      head: `My biped robot: 45${NB}cm tall, 3D-printed, with eight servos and a${NB}Pi.`,
-      sub: `446.2${NB}mm tall and 165${NB}mm wide at the torso: ten printed parts, eight LX-16A servos, a battery and a Raspberry${NB}Pi on top. Drag to turn it; hover any part for its size.`,
-      subT: `446.2${NB}mm tall and 165${NB}mm wide at the torso: ten printed parts, eight LX-16A servos, a battery and a Raspberry${NB}Pi on top. Drag to turn it; tap any part for its size.`,
-      ms: `446.2${NB}mm tall, 165${NB}mm wide. Drag to turn it; tap a part for its size.`,
+      head: `My biped robot.`,
+      sub: `I built it to play with modern robot policies: JEPA-based world models, VLAs, WAMs and others. It is a custom-embodiment biped with eight degrees of freedom. Drag to turn it; hover any part for its size.`,
+      subT: `I built it to play with modern robot policies: JEPA-based world models, VLAs, WAMs and others. It is a custom-embodiment biped with eight degrees of freedom. Drag to turn it; tap any part for its size.`,
+      ms: `Built to play with modern robot policies: JEPA-based world models, VLAs, WAMs. A custom 8-DOF biped.`,
       cap: 'Biped robot · the CAD assembly\nDrag to turn · hover a part',
       capT: 'Biped robot · the CAD assembly\nDrag to turn · tap a part',
     },
     {
       id: 'parts', label: 'Every part', dur: 17,
       head: `30 parts, and the ten printed ones come from just five designs.`,
-      sub: `The thigh and the shin are one design, and both legs use identical parts, not mirror images: every leg servo’s horn faces the robot’s left. It rebuilds in assembly order, feet first.`,
-      ms: `Thigh and shin are one design; both legs use identical parts. It rebuilds feet first.`,
-      cap: 'Exploded along each part’s axis,\nthen rebuilt in assembly order',
+      sub: `Hover any part for its name and size.`,
+      ms: `Tap any part for its name and size.`,
+      cap: 'Exploded along each part’s axis,\nthen rebuilt',
     },
     {
       id: 'brain', label: 'Brain & power', dur: 13,
-      head: `A Raspberry${NB}Pi runs the robot; one serial bus reaches all eight servos.`,
-      sub: `The Pi runs the Python controller and sits with the battery pack on a 3.5${NB}mm deck. Under the deck, in the open-front box: a step-down converter, the servo bus board and the two hip-yaw servos.`,
-      ms: `Pi and battery on a 3.5${NB}mm deck; step-down converter, bus board and hip-yaw servos below.`,
+      head: `I built this biped to run modern policies, including JEPA-based ones, on top of it.`,
+      sub: `A Raspberry${NB}Pi with Wi-Fi and Bluetooth drives the eight servos over one serial bus. It can run inference locally and talk to a larger model over the network for global inference.`,
+      ms: `A Raspberry${NB}Pi with Wi-Fi and Bluetooth: local inference on board, a larger model over the network.`,
       cap: 'Electronics lifted off the deck.\nThe torso box is open at the front',
     },
     {
@@ -108,7 +108,6 @@
   const SI = {};
   STEPS.forEach((s, i) => { SI[s.id] = i; });
 
-  const CAD_VIDEO = 'https://www.youtube.com/watch?v=iYGFW_f47-Y';
   // the one photo on the page ("In hand"), 1120 × 1400 (4:5)
   const PHOTO = { id: 'robot-held-inspecting', w: 1120, h: 1400, title: 'Checking it over', alt: 'Yash Dagade looking down at his bipedal robot, holding it by the feet with one hand on the battery box' };
 
@@ -133,8 +132,8 @@
         : [`${N} horn${side}`, `servo output horn · Ø19.5${NB}mm`];
     }
     if (/^yoke_/.test(id)) return [`Hip yoke${side}`, `56.5 × 56.5 × 42.5${NB}mm · printed`];
-    if (/^thigh_/.test(id)) return [`Thigh${side}`, `Ø59.1 × 121.4${NB}mm · same part as the shin`];
-    if (/^shin_/.test(id)) return [`Shin${side}`, `Ø59.1 × 121.4${NB}mm · same part as the thigh`];
+    if (/^thigh_/.test(id)) return [`Thigh${side}`, `Ø59.1 × 121.4${NB}mm · printed`];
+    if (/^shin_/.test(id)) return [`Shin${side}`, `Ø59.1 × 121.4${NB}mm · printed`];
     if (/^foot_/.test(id)) return [`Foot${side}`, `77 × 55 × 57.1${NB}mm · 38${NB}cm² of sole`];
     return [p.name, ''];
   }
@@ -1715,7 +1714,7 @@
         { id: 'servo_hip_pitch_L', m: /^servo_/, name: `LX-16A servo ×${NB}8`, sub: `four per leg, 52${NB}g each` },
         { id: 'horn_knee_L', m: /^horn_/, name: `Servo horn ×${NB}8`, sub: 'one per servo' },
         { id: 'thigh_L', m: /^thigh_/, name: `Thigh ×${NB}2`, sub: `Ø59.1 × 121.4${NB}mm`, acc: true },
-        { id: 'shin_L', m: /^shin_/, name: `Shin ×${NB}2`, sub: 'same part as the thigh', acc: true },
+        { id: 'shin_L', m: /^shin_/, name: `Shin ×${NB}2`, sub: `Ø59.1 × 121.4${NB}mm`, acc: true },
         { id: 'foot_L', m: /^foot_/, name: `Foot ×${NB}2`, sub: `77 × 55 × 57.1${NB}mm` },
       ];
       // (phones show every label too, one line each, so the counts still add up to 30; a tapped part opens its size card)
@@ -2371,7 +2370,7 @@
         items: STEPS.map(s => s.label),
         onSelect: (i) => goStep(i, true),
       });
-      if (!STILL) api.links([{ label: 'Build log', href: NOTION }, { label: 'CAD video', href: CAD_VIDEO }]);
+      if (!STILL) api.links([{ label: 'Leg video & build log', href: NOTION }]);
 
       /* ---------------------------------------------------------------- lifecycle */
       layout();

@@ -11,7 +11,7 @@
   <link rel="icon" href="site/img/icon/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="site/img/icon/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="site/img/icon/apple-touch-icon.png">
-  <script>location.replace('me.html' + location.search + location.hash);</script>
+  <script>location.replace((/(^|\.)yashdagade\.com$/.test(location.hostname) ? '/me' : 'me.html') + location.search + location.hash);</script>
   <style>
     html, body { margin: 0; background: #fff; color: #555; }
     body { font: 12px/15px 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .02em; padding: 40px; }
