@@ -46,7 +46,7 @@
     { group: 'Pages', title: 'Books read', path: '/books', href: 'books.html' },
     { group: 'Pages', title: 'Press', path: '/press', href: 'press.html' },
     { group: 'Pages', title: 'Old website', path: '/old', href: 'old/index.html' },
-    { group: 'Writing', title: 'Dear Modern Education', path: '/dearmorderneducation', href: 'dearmorderneducation.html' },
+    { group: 'Writing', title: 'Dear Modern Education', path: '/dearmoderneducation', href: 'dearmoderneducation.html' },
     { group: 'Writing', title: 'From Subsistence Towards Exploration', path: '/fromsubtoexp', href: 'fromsubtoexp.html' },
     { group: 'Elsewhere', title: 'Resume', path: '/resume.pdf', href: LINKS.resume, ext: true },
     { group: 'Elsewhere', title: 'GitHub', path: '@YashDagade', href: LINKS.github, ext: true },
