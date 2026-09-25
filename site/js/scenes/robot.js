@@ -1,4 +1,4 @@
-/* Robot — hidden scene (#robot · yashdagade.com/robot): Yash's biped, from its CAD.
+/* Robot — scene [4] (#robot · yashdagade.com/robot): Yash's biped, from its CAD.
  *
  * A three.js technical drawing (flat white faces with a soft key light, 1 px silhouette + crease lines computed on the
  * GPU, the part in focus in deep blue) under an SVG layer of dimension lines, leaders and joint axes. Seven steps:
@@ -9,7 +9,12 @@
  *
  * Render mode (stills for other pages): index.html?render=robot-<view> with view = front | side | back | 34 | 34r |
  * exploded | walk | top (&labels=1 adds leader labels to "exploded", &pad=0.06 sets the margin). It draws one frame
- * on white with no chrome and sets window.__robotReady = true. Exports live in site/img/robot/renders/.
+ * on white with no chrome and sets window.__robotReady = true. Exports live in site/img/robot/renders/, all shot
+ * headless at a 600 × 750 CSS px viewport, DPR 2 (→ 1200 × 1500 PNG; ≤ 800 px wide, so labels are the one-line
+ * phone style), once __robotReady is set:
+ *   robot-front.png          ?render=robot-front
+ *   robot-three-quarter.png  ?render=robot-34
+ *   robot-exploded.png       ?render=robot-exploded&pad=0.04&labels=1
  *
  * Facts: biped.json → dims (CAD, rectified), the biped repo README (HiWonder LX-16A serial bus servos driven from
  * Python), the LX-16A datasheet, and the Notion build log (goals). No number here is invented.
@@ -47,30 +52,32 @@
   const STEPS = [
     {
       id: 'assembled', label: 'Assembled', dur: 14,
-      head: `My bipedal robot: 45${NB}cm tall, 3D-printed, with eight servos and a Raspberry${NB}Pi.`,
-      sub: `446.2${NB}mm tall and 165${NB}mm wide at the torso: ten printed parts, eight LX-16A servos, a battery and the computer on top. Drag to turn it; hover any part for its size.`,
+      head: `My biped robot: 45${NB}cm tall, 3D-printed, with eight servos and a${NB}Pi.`,
+      sub: `446.2${NB}mm tall and 165${NB}mm wide at the torso: ten printed parts, eight LX-16A servos, a battery and a Raspberry${NB}Pi on top. Drag to turn it; hover any part for its size.`,
+      subT: `446.2${NB}mm tall and 165${NB}mm wide at the torso: ten printed parts, eight LX-16A servos, a battery and a Raspberry${NB}Pi on top. Drag to turn it; tap any part for its size.`,
       ms: `446.2${NB}mm tall, 165${NB}mm wide. Drag to turn it; tap a part for its size.`,
-      cap: 'Biped robot · the CAD assembly\nDrag to orbit · hover a part',
+      cap: 'Biped robot · the CAD assembly\nDrag to turn · hover a part',
+      capT: 'Biped robot · the CAD assembly\nDrag to turn · tap a part',
     },
     {
       id: 'parts', label: 'Every part', dur: 17,
-      head: `30 parts, and the printed ones come from five designs: the thigh and the shin are the same piece.`,
-      sub: `Both legs use identical parts, not mirror images: every leg servo's horn faces the robot's left. It rebuilds in assembly order, feet first.`,
-      ms: `Both legs use identical parts, not mirror images. It rebuilds feet first.`,
+      head: `30 parts, and the ten printed ones come from just five designs.`,
+      sub: `The thigh and the shin are one design, and both legs use identical parts, not mirror images: every leg servo’s horn faces the robot’s left. It rebuilds in assembly order, feet first.`,
+      ms: `Thigh and shin are one design; both legs use identical parts. It rebuilds feet first.`,
       cap: 'Exploded along each part’s axis,\nthen rebuilt in assembly order',
     },
     {
       id: 'brain', label: 'Brain & power', dur: 13,
-      head: `A Raspberry${NB}Pi runs the Python controller; one serial bus reaches all eight servos.`,
-      sub: `The Pi and the battery pack sit on a 3.5${NB}mm deck. Under it, inside the open-front box: a step-down converter, the servo-bus board and the two hip-yaw servos.`,
-      ms: `Pi and battery on a 3.5${NB}mm deck; converter, bus board and hip-yaw servos below.`,
+      head: `A Raspberry${NB}Pi runs the robot; one serial bus reaches all eight servos.`,
+      sub: `The Pi runs the Python controller and sits with the battery pack on a 3.5${NB}mm deck. Under the deck, in the open-front box: a step-down converter, the servo bus board and the two hip-yaw servos.`,
+      ms: `Pi and battery on a 3.5${NB}mm deck; step-down converter, bus board and hip-yaw servos below.`,
       cap: 'Electronics lifted off the deck.\nThe torso box is open at the front',
     },
     {
       id: 'joints', label: 'Joints', dur: 17,
-      head: `Each leg has four joints: hip yaw, hip pitch, knee and ankle. Eight servos, eight degrees of freedom.`,
-      sub: `The three pitch axes are parallel and 127${NB}mm apart; the ankle axis sits 46.4${NB}mm above the sole. Each LX-16A turns 0–240° with up to 17${NB}kg·cm at 6${NB}V.`,
-      ms: `Pitch axes 127${NB}mm apart; ankle axis 46.4${NB}mm above the sole. Each servo turns 0–240°.`,
+      head: `Each leg has four joints: hip yaw, hip pitch, knee and ankle.`,
+      sub: `Eight servos, eight degrees of freedom. The three pitch axes are parallel, 127${NB}mm apart; the ankle axis sits 46.4${NB}mm above the sole. Each LX-16A turns 0–240°, up to 17${NB}kg·cm at 6${NB}V.`,
+      ms: `Eight servos. Pitch axes 127${NB}mm apart; ankle axis 46.4${NB}mm above the sole. Each turns 0–240°.`,
       cap: 'Per leg: torso → hip yaw → hip pitch →\nknee → ankle → foot',
     },
     {
@@ -82,19 +89,22 @@
     },
     {
       id: 'walk', label: 'Walk', dur: 14,
-      head: `Keeping the foot flat is one rule: the ankle cancels the hip and the knee.`,
+      head: `One rule keeps the foot flat: the ankle cancels the hip and the knee.`,
       sub: `$\\theta_{\\text{ankle}} = -(\\theta_{\\text{hip}} + \\theta_{\\text{knee}})$. This gait is scripted; next come a MuJoCo digital twin, reinforcement learning and sim-to-real.`,
       ms: `$\\theta_{\\text{ankle}} = -(\\theta_{\\text{hip}} + \\theta_{\\text{knee}})$. Scripted for now; next: MuJoCo, RL, sim-to-real.`,
       cap: 'A scripted walk in place: the floor\nmoves with the stance foot',
     },
     {
       id: 'hand', label: 'In hand', dur: 16,
-      head: `The goal: put my sparse JEPA world model on this robot and let it learn online.`,
-      sub: `Built in a Duke dorm workspace. I plan to open-source the code and the CAD.`,
-      ms: `Built in a Duke dorm workspace. Code and CAD to be open-sourced.`,
-      cap: 'The CAD model beside the real one,\nSeptember 2026',
+      head: `The goal: my sparse JEPA world model learning online on this robot.`,
+      sub: `The CAD model beside the real robot, at the same scale. Next comes a MuJoCo digital twin, then learning on the hardware itself.`,
+      ms: `The CAD model beside the real robot, at the same scale.`,
+      cap: 'Dashed guides carry the model’s\nground and top across to the photo',
     },
   ];
+  // while paused the step clock still runs up to here, so a step opened while paused shows its drawn-on state
+  // (the same times the reduced-motion path jumps to); autoplay and continuous motion stay stopped
+  const SETTLE = { assembled: 3, parts: 5, brain: 5, joints: 5.1, dims: 9, walk: 0, hand: 5 };
   const SI = {};
   STEPS.forEach((s, i) => { SI[s.id] = i; });
 
@@ -110,7 +120,7 @@
     const side = p.side === 'R' ? ' · right' : p.side === 'L' ? ' · left' : '';
     const id = p.id;
     if (id === 'torso_frame') return ['Torso frame', `165 × 160 × 80${NB}mm · printed`];
-    if (id === 'deck') return ['Electronics deck', `3.5${NB}mm printed plate`];
+    if (id === 'deck') return ['Deck', `3.5${NB}mm printed plate`];
     if (id === 'pi') return ['Raspberry Pi', `85 × 56${NB}mm board`];
     if (id === 'battery') return ['Battery pack', `109.5 × 63 × 24.1${NB}mm`];
     if (id === 'buck') return ['Step-down converter', `61 × 27 × 23.5${NB}mm`];
@@ -236,6 +246,8 @@
     .scene--robot .rb-ov rect.f { fill: #000; stroke: none; }
     .scene--robot .rb-ov rect.fa { fill: var(--accent); stroke: none; }
     .scene--robot .rb-ov rect.w { fill: #fff; stroke: #000; stroke-width: 1px; }
+    /* a leader's end square keeps a 1 px white ring, so it still reads where it lands on a black servo or board */
+    .scene--robot .rb-ov rect.lq { stroke: #fff; stroke-width: 1px; }
     .scene--robot .rb-bp { transition: opacity .7s ease; }
     .scene--robot .rb-bp path { stroke: #000; stroke-width: 1px; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
     .scene--robot .rb-load { position: absolute; left: 0; top: 0; font: 11px/14px var(--mono); letter-spacing: .02em; color: #555;
@@ -262,12 +274,12 @@
     .scene--robot .rb-eyebrow { font-size: 12px; line-height: 15px; letter-spacing: .06em; color: #555; text-transform: uppercase; margin-bottom: 10px; }
     .scene--robot .rb-photo { margin: 0; }
     .scene--robot .rb-photo .fr { position: relative; background: var(--g100); overflow: hidden; }
-    .scene--robot .rb-photo img { display: block; width: 100%; height: 100%; object-fit: cover;
+    .scene--robot .rb-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 55% 50%;
       clip-path: inset(100% 0 0 0); transition: clip-path 1.1s cubic-bezier(.65, 0, .35, 1); }
     .scene--robot .rb-photo img.is-in { clip-path: inset(0 0 0 0); }
     .scene--robot .rb-photo figcaption { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; line-height: 15px;
       color: #555; margin-top: 10px; white-space: nowrap; }
-    .scene--robot .rb-photo figcaption b { font-weight: 400; color: #000; }
+    .scene--robot .rb-photo figcaption b { font-weight: 400; color: #555; text-transform: uppercase; letter-spacing: .06em; }
     /* corner ticks on the photo, like registration marks on a drawing sheet */
     .scene--robot .rb-photo .tk { position: absolute; width: 9px; height: 9px; border: 0 solid #000; pointer-events: none; }
     .scene--robot .rb-photo .tk.a { left: -6px; top: -6px; border-left-width: 1px; border-top-width: 1px; }
@@ -293,13 +305,16 @@
     .scene--robot .rb-read .row.is-on { color: var(--accent); }
     .scene--robot .rb-read .row.is-on .ax { color: var(--accent); }
     .scene--robot .rb-read .foot { margin-top: 12px; font-size: 12px; line-height: 16px; color: #555; }
-    .scene--robot .rb-read .check { margin-top: 12px; font-size: 12px; color: #000; font-variant-numeric: tabular-nums; }
+    .scene--robot .rb-read .check { margin-top: 12px; font-size: 12px; color: #000; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .scene--robot .rb-read .check b { font-weight: 400; color: var(--accent); }
+    .scene--robot .rb-photo figcaption .bl { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
     @media (max-width: 800px) {
       .scene--robot .rb-head { display: none; }
       .scene--robot .rb-mnav { display: flex; }
       .scene--robot .rb-photo figcaption { margin-top: 8px; }
-      .scene--robot .rb-photo figcaption .dt { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scene--robot .rb-photo img, .scene--robot .rb-panel, .scene--robot .rb-gl, .scene--robot .rb-bp { transition: none; }
     }
     .scene--robot.rb-still { position: fixed; inset: 0; z-index: 9999; background: #fff; cursor: default; }
     .scene--robot.rb-still .rb-gl { transition: none; }
@@ -435,14 +450,15 @@
       const imgHand = mk('img', null, frHand, { alt: PHOTO.alt, decoding: 'async', width: String(PHOTO.w), height: String(PHOTO.h) });
       ['a', 'b', 'c', 'd'].forEach(c => mk('i', 'tk ' + c, frwHand));
       const capHand = mk('figcaption', null, figHand);
-      mk('b', null, capHand).textContent = PHOTO.title;
-      mk('span', 'dt', capHand).textContent = 'September 2026';
+      const capB = mk('b', null, capHand);
+      capB.textContent = 'Photo · ' + PHOTO.title;
+      const capBL = mk('i', 'bl', capB);   // zero-size probe on the caption's baseline ("CAD MODEL" shares it)
       [pBrain, pJoint, pWalk, pHand, mnav, head].forEach(n => {
         ['pointerdown', 'touchstart', 'touchend'].forEach(ev => n.addEventListener(ev, e => e.stopPropagation(), { passive: true }));
       });
 
       /* ---------------------------------------------------------------- state */
-      const S = { step: 0, t: 0, paused: false, lastInteract: -1e9, spin: 0, phase: 0, entered: false, hintShown: false,
+      const S = { step: 0, t: 0, paused: false, lastInteract: -1e9, spin: 0, phase: 0, entered: false,
         orbitAz: 0, orbitEl: 0, orbitDecay: false, stanceX: null, stance: null, lastJointPhase: -1, lastLift: 0 };
       const L = { W: 0, H: 0 };
       let W = 0, H = 0;
@@ -515,27 +531,59 @@
         L.left = L.m ? 16 : W > 1100 ? 292 : 276;
         L.top = STILL ? 0 : L.hb + (L.m ? 14 : 22);
         L.bottom = STILL ? H : H - (L.m ? 112 : 86);
+        // phones: until the first gesture core's "tap for sound" invite sits just above the controls: keep the art above it
+        L.invite = !STILL && L.m && inviteUp();
+        if (L.invite) {
+          const hr = hintRect();
+          if (hr) L.bottom = Math.min(L.bottom, Math.round(hr.top - 10));
+        }
+        L.touch = L.m || coarse;
         L.panelW = L.m ? 0 : clamp(Math.round(W * 0.19), 210, 290);
         // right-hand readout panels only where the drawing keeps ≥ 420 px beside them (not on tablets / narrow windows)
         L.side = !STILL && !L.m && W - L.gut - L.panelW - 44 - L.left >= 420;
+        // wide screens: a step without a side panel centres its drawing on the headline's axis (W / 2)
+        L.sym = !STILL && !L.m && W > 1100;
         L.clipB = STILL ? 0 : L.m ? 96 : 70;
         if (STILL) { L.left = 0; L.gut = 0; }
         const hlTop = STILL ? null : L.m ? 94 : null;
         if (!STILL && hlTop !== L.hlTop) { L.hlTop = hlTop; api.headlineTop(hlTop); }
+        // (801–1100 px: where the headline box ends, for the step header; read on resize / headline change only)
+        L.hlRight = 0;
+        if (!STILL && !L.m && W <= 1100) {
+          const g = document.querySelector('.headline-group[data-scene="robot"]');
+          const r = g && g.getBoundingClientRect();
+          if (r && r.width) L.hlRight = r.right;
+        }
       }
-      const artRect = (panel, extraR) => ({ x0: L.left, x1: W - L.gut - (panel && L.side ? L.panelW + 44 : 0) - (extraR || 0), y0: L.top, y1: L.bottom });
-      // Brain & power without the side panel: every label in one column at the right
-      const brainCol = () => L.m || !L.side;
+      const coarse = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } })();
+      const hintEl = () => document.getElementById('hint');
+      function inviteUp() {
+        const au = A();
+        const h = hintEl();
+        return !!(h && h.classList.contains('is-visible') && !(au && au.ready));
+      }
+      function hintRect() { const h = hintEl(); if (!h) return null; const r = h.getBoundingClientRect(); return r.height ? r : null; }
+      const artRect = (panel, extraR) => {
+        const withPanel = panel && L.side;
+        const x1 = withPanel ? W - L.gut - L.panelW - 44 : L.sym ? W - L.left : W - L.gut;
+        return { x0: L.left, x1: x1 - (extraR || 0), y0: L.top, y1: L.bottom };
+      };
+      // Brain & power without the side panel: every label in one column at the right. The bus panel only where the
+      // drawing keeps ≥ 260 px between its two label columns (≈ 1180 px wide and up).
+      const brainCol = () => L.m || !L.side || (artRect(true).x1 - artRect(true).x0 - 360 < 260);
       const brainColW = () => (L.m ? nameW(BRAIN_LABELS) : labW(BRAIN_LABELS));
 
       // Per-step framing (targets for the smoothed camera). Called on step change, resize and headline change.
       function refit() {
         if (!meta) return;
         layout();
+        ancGen++;   // (the view changes: find the leaders' visible points again)
         const id = STILL ? 'still' : STEPS[S.step].id;
         const T = [-12, 0, 0];
         T1.T = T; T2.T = T;
         let f;
+        // Brain & power: the faded legs dissolve toward the bottom instead of ending on the canvas's straight edge
+        setFadeBottom(id === 'brain');
         if (id === 'still') return fitStill();
         if (id === 'assembled') {
           T1.el = 9;
@@ -545,13 +593,17 @@
         } else if (id === 'parts') {
           T1.el = 14;
           const e = extRange(pts((p) => 1).concat(pts()), azRange(18, 46, 6), T1.el, T);
-          f = fitTo(e, artRect(false, L.m ? 118 : 210), { l: 10, r: 20, t: 6, b: 6 });
+          f = fitTo(e, artRect(false, L.m ? 118 : 210), { l: 10, r: 20, t: 20, b: 6 });   // (t: room for the Pi's leader above the battery)
         } else if (id === 'brain') {
           T1.el = 13;
           const keep = new Set(['torso_frame', 'deck', 'pi', 'battery', 'buck', 'busboard', 'servo_hip_yaw_R', 'servo_hip_yaw_L']);
-          const e = extRange(pts((p) => (keep.has(p.id) ? BRAIN_LIFT[p.id] || 0 : false)), azRange(-44, -28, 4), T1.el, T);
-          f = brainCol() ? fitTo(e, artRect(false, brainColW() + (L.m ? 26 : 56)), { l: L.m ? 4 : 20, r: 4, t: 20, b: L.m ? 60 : 90, max: 2.6 })
+          const e = extRange(pts((p) => (keep.has(p.id) ? BRAIN_LIFT[p.id] || 0 : false)), azRange(BRAIN_AZ - 8, BRAIN_AZ + 8, 4), T1.el, T);
+          const rc = { x0: L.left, x1: W - L.gut - brainColW() - (L.m ? 26 : 56), y0: L.top, y1: L.bottom };
+          f = brainCol() ? fitTo(e, rc, { l: L.m ? 4 : 20, r: 4, t: 20, b: L.m ? 60 : 90, max: 2.6 })
             : fitTo(e, artRect(true), { l: 190, r: 170, t: 20, b: 110, max: 2.6 });
+          // phones (width-bound): the electronics sit right under the headline and the faded legs take the height below,
+          // instead of a blank band above the drawing
+          if (L.m) f.cy = Math.min(f.cy, rc.y0 + 16 + f.s * e.y1);
         } else if (id === 'joints') {
           T1.el = 7;
           const e = extOf(pts(), -58, T1.el, T);
@@ -570,11 +622,22 @@
           placeHand();
           const hd = L.hand;
           f = { s: hd.s, cx: hd.mx, cy: hd.yb };
+          // (compact: the model stands closer to the photo than the turntable's radius, so no ring)
+          TG.ring = hd.dim ? 1 : 0;
         }
         if (f) { T1.s = f.s; T1.cx = f.cx; T1.cy = f.cy; }
         if (id !== 'dims') TG.dual = 0;
         placePanels();
         if (!fitted) snapView();
+      }
+
+      let fadeB = '';
+      function setFadeBottom(on) {
+        const y1 = Math.round(H - (L.clipB || 0)), y0 = y1 - (L.m ? 70 : 90);
+        const v = on && !STILL ? `linear-gradient(to bottom, #000 ${y0}px, rgba(0,0,0,0) ${y1}px)` : '';
+        if (v === fadeB) return;
+        fadeB = v;
+        glCanvas.style.webkitMaskImage = v; glCanvas.style.maskImage = v;
       }
 
       // Dimensions: front (az 0) and side (az −90) orthographic views at one scale, side by side; phones: one at a time
@@ -586,11 +649,13 @@
         // side by side unless that halves the drawing (tall tablets): then one view at a time, like phones
         const pad = L.m ? { l: 58, r: 58, t: 34, b: 50 } : { l: 84, r: 84, t: 44, b: 62 };
         const s1 = Math.min(fitTo(eF, r, pad).s, fitTo(eS, r, pad).s);
+        // side by side: the two padded views sit a fixed gap apart, the pair centred in the art area
+        const pF = { l: 70, r: 50, t: 40, b: 58 }, pS = { l: 64, r: 76, t: 40, b: 58 }, GAP = 24;
+        const wF = eF.x1 - eF.x0, wS = eS.x1 - eS.x0;
         let s2 = 0;
         if (!L.m) {
-          const mid0 = (r.x0 + r.x1) / 2;
-          s2 = Math.min(fitTo(eF, { x0: r.x0, x1: mid0 - 10, y0: r.y0, y1: r.y1 }, { l: 70, r: 50, t: 40, b: 58 }).s,
-            fitTo(eS, { x0: mid0 + 10, x1: r.x1, y0: r.y0, y1: r.y1 }, { l: 70, r: 96, t: 40, b: 58 }).s, 2.2);
+          const rw = r.x1 - r.x0 - (pF.l + pF.r + pS.l + pS.r + GAP), rh = r.y1 - r.y0 - pF.t - pF.b;
+          s2 = Math.min(rw / (wF + wS), rh / Math.max(eF.y1 - eF.y0, eS.y1 - eS.y0), 2.2);
         }
         L.dimsAlt = L.m || s2 < 0.72 * Math.min(s1, 2.2);
         if (L.dimsAlt) {
@@ -602,14 +667,14 @@
           L.dimsSide = { x: 0 };
           TG.dual = 0;
         } else {
-          const mid = (r.x0 + r.x1) / 2;
-          const rF = { x0: r.x0, x1: mid - 10, y0: r.y0, y1: r.y1 }, rS = { x0: mid + 10, x1: r.x1, y0: r.y0, y1: r.y1 };
-          const pF = { l: 70, r: 50, t: 40, b: 58 }, pS = { l: 70, r: 96, t: 40, b: 58 };
-          const s = Math.min(fitTo(eF, rF, pF).s, fitTo(eS, rS, pS).s, 2.2);
+          const s = s2;
+          const fw = pF.l + wF * s + pF.r, sw = pS.l + wS * s + pS.r;
+          const xs = Math.round((r.x0 + r.x1) / 2 - (fw + GAP + sw) / 2);
+          const rF = { x0: xs, x1: xs + fw, y0: r.y0, y1: r.y1 }, rS = { x0: xs + fw + GAP, x1: xs + fw + GAP + sw, y0: r.y0, y1: r.y1 };
           const a = fitTo(eF, rF, Object.assign({ max: s }, pF)), b = fitTo(eS, rS, Object.assign({ max: s }, pS));
           Object.assign(T1, { az: 0, el: 0, s, cx: a.cx, cy: a.cy });
           Object.assign(T2, { az: -90, el: 0, s, cx: b.cx, cy: b.cy });
-          L.split = mid;
+          L.split = Math.round(rF.x1 + GAP / 2);
           TG.dual = 1;
         }
         placePanels();
@@ -645,7 +710,8 @@
         if (STILL) return;
         const id = STEPS[S.step].id;
         const x = W - L.gut - L.panelW;
-        const on = { brain: L.side && id === 'brain', joints: L.side && id === 'joints', walk: L.side && id === 'walk', hand: id === 'hand' };
+        const live = !G.lost;
+        const on = { brain: !brainCol() && id === 'brain', joints: live && L.side && id === 'joints', walk: live && L.side && id === 'walk', hand: id === 'hand' };
         pBrain.classList.toggle('is-on', on.brain);
         pJoint.classList.toggle('is-on', on.joints);
         pWalk.classList.toggle('is-on', on.walk);
@@ -666,28 +732,69 @@
       // top meet the real robot's soles and deck top along two hairline guides.
       const PH_TOP = 718 / 1400, PH_BOT = 1352 / 1400;    // the robot in the photo: top of the Pi … soles (image px)
       const RING_R = 158;                                  // turntable radius incl. its ticks (mm)
+      const TICK = 6;                                      // the photo's corner ticks stand 6 px outside its frame
+      // model px per mm, per px of photo HEIGHT (the frame never crops the photo vertically, so the robot always spans
+      // PH_TOP…PH_BOT of the frame's height)
+      const KH = (PH_BOT - PH_TOP) / (TOP * Math.cos(6 * D2R));
+      // where the stepper's labels end (desktop / tablet): compact layouts may use the room up to it
+      // (the items are full-width blocks: measure their text)
+      function stepperRight() {
+        try {
+          const root = stepper && stepper.el;
+          if (!root) return 0;
+          const rg = document.createRange();
+          let x = 0;
+          root.querySelectorAll('.stepper__item').forEach(b => {
+            const t = b.firstChild;
+            if (t && t.nodeType === 3) { rg.selectNodeContents(t); const rc = rg.getBoundingClientRect(); if (rc.width) x = Math.max(x, rc.right); }
+          });
+          return x;
+        } catch (e) { return 0; }
+      }
       function placeHand() {
         const r = artRect(false);
         const capH = 25;
-        const aw = r.x1 - r.x0, ah = r.y1 - r.y0;
-        let pw = Math.round((ah - capH - 8) * 0.8);
-        pw = Math.max(120, Math.min(pw, Math.round(aw * (L.m ? 0.6 : W <= 1100 ? 0.56 : 0.44)), 560));
-        const ph = Math.round(pw * 1.25);
-        const yt0 = PH_TOP * ph, yb0 = PH_BOT * ph;
-        const s = (yb0 - yt0) / (TOP * Math.cos(6 * D2R));
-        const mR = RING_R * s;                              // the model's half-width on screen (turntable)
-        const gap = L.m ? 14 : Math.round(clamp(aw * 0.07, 48, 110));
+        const ah = r.y1 - r.y0, hAvail = Math.min(700, ah - capH - 8);
+        // left bound: the art column, or (tablets, narrow windows) 24 px right of the stepper's labels; right bound: the
+        // gutter less the ticks' overhang
+        const sr = L.m ? 0 : stepperRight();
+        const xL = sr ? Math.min(r.x0, Math.round(sr + 24)) : r.x0;
+        const xR = (L.sym ? r.x1 : W - L.gut) - TICK;
+        const aw = xR - xL;
         const dimW = 84;                                    // room for the 446.2 mm dimension left of the model
-        // compact (phones, tablets): photo flush right, the model centred in what is left, no dimension line
-        const compact = L.m || dimW + 2 * mR + gap + pw > aw;
-        const x = compact ? r.x1 - pw : Math.round(r.x0 + (aw - (dimW + 2 * mR + gap + pw)) / 2 + dimW + 2 * mR + gap);
-        const mx = compact ? Math.round((r.x0 + x - gap) / 2) : x - gap - mR;
+        const gapN = Math.round(clamp(aw * 0.07, 48, 110)), gapC = L.m ? 14 : 32;
+        // photo width for a frame of aspect a (h / w), the model beside it with half-width R mm (+ `lead` px before it)
+        const pwFor = (a, R, gap, lead) => Math.min(hAvail / a, Math.floor((aw - lead - gap) / (1 + 2 * R * KH * a)));
+        // with the turntable and the dimension line …
+        const pwN = pwFor(1.25, RING_R, gapN, dimW);
+        // … or compact (phones, tablets): the model without its turntable, right beside the photo
+        const pwC = pwFor(1.25, maxRadius(), gapC, 0);
+        const compact = L.m || pwN < 0.9 * pwC;
+        // compact and width-bound: a taller 2:3 frame (it crops only wall from the photo's sides) when that makes the
+        // photo, and the robot in it, clearly bigger
+        let a = 1.25, pw = compact ? pwC : pwN;
+        if (compact) { const p2 = pwFor(1.5, maxRadius(), gapC, 0); if (1.5 * p2 > 1.06 * 1.25 * pwC) { a = 1.5; pw = p2; } }
+        pw = Math.max(120, Math.floor(pw));
+        const ph = Math.round(pw * a);
+        const yt0 = PH_TOP * ph, yb0 = PH_BOT * ph;
+        const s = KH * ph;
+        const mR = (compact ? maxRadius() : RING_R) * s;    // the model's half-width on screen
+        const gap = compact ? gapC : gapN;
+        const lead = compact ? 0 : dimW;
+        const total = lead + 2 * mR + gap + pw;
+        // the pair is centred on the viewport's axis (the headline's), kept between the bounds
+        const x0 = clamp(W / 2 - total / 2, xL, Math.max(xL, xR - total));
+        const x = Math.round(x0 + lead + 2 * mR + gap);
+        const mx = Math.round(x - gap - mR);
         const totalH = ph + capH;
         const y = Math.round(clamp((r.y0 + r.y1) / 2 - totalH / 2, r.y0, Math.max(r.y0, r.y1 - totalH)));
-        L.hand = { x, y, w: pw, h: ph, s, mx, mR, yt: y + yt0, yb: y + yb0, dim: !compact };
         pHand.style.width = pw + 'px';
         frHand.style.height = ph + 'px';
         pHand.style.transform = `translate(${Math.round(x)}px, ${y}px)`;
+        // "CAD MODEL" sits on the photo caption's measured baseline
+        let capY = y + ph + 25;
+        try { const b = capBL.getBoundingClientRect(), sr2 = stage.getBoundingClientRect(); if (b.bottom) capY = Math.round(b.bottom - sr2.top); } catch (e) { /* ok */ }
+        L.hand = { x, y, w: pw, h: ph, s, mx, mR, yt: y + yt0, yb: y + yb0, dim: !compact, capY };
       }
 
       /* ---------------------------------------------------------------- photo */
@@ -701,7 +808,8 @@
         } else if (img.complete && img.naturalWidth) img.classList.add('is-in');
       }
       // warm the photo's cache once the model is up, so the last step never waits for it
-      function preloadPhoto() { try { const im = new Image(); im.decoding = 'async'; im.src = IMG + PHOTO.id + '.jpg'; } catch (e) { /* ok */ } }
+      // (through the step's own hidden <img>, so the photo is fetched and decoded once; stepEnter replays its wipe)
+      function preloadPhoto() { try { if (!imgHand.getAttribute('src')) ensureImg(imgHand, PHOTO.id); } catch (e) { /* ok */ } }
 
       /* ---------------------------------------------------------------- SVG overlay (retained, keyed per frame) */
       const pool = new Map();
@@ -744,13 +852,16 @@
       }
       // Text is flat ink (or accent) with no stroke; an opaque white plate sits under it so a label that lands on a
       // line or on the drawing stays crisp (the plate breaks the line, as on a drawing sheet).
-      function tx(key, x, y, str, cls, anchor, op) {
+      // (plateOp: the plate's own opacity, when it must stay solid while the text fades, so no line shows through a
+      // half-faded label)
+      function tx(key, x, y, str, cls, anchor, op, plateOp) {
         const o = op == null ? '1' : String(Math.round(op * 100) / 100);
+        const po = plateOp == null ? o : String(Math.round(plateOp * 100) / 100);
         const a = anchor || 'start', w = tw(str) + 8;
         const x0 = a === 'middle' ? x - w / 2 : a === 'end' ? x - w + 4 : x - 4;
         const p = node(key + '_p', 'rect', gPl);
         at(p, 'x', rr(x0)); at(p, 'y', rr(y - 11)); at(p, 'width', rr(w)); at(p, 'height', '15');
-        at(p, 'class', 'pl'); at(p, 'opacity', o);
+        at(p, 'class', 'pl'); at(p, 'opacity', po);
         const n = node(key, 'text', gTx);
         if (n._t !== str) { n._t = str; n.textContent = str; }
         at(n, 'x', rr(x)); at(n, 'y', rr(y)); at(n, 'text-anchor', a);
@@ -791,8 +902,13 @@
         }
         if (kt > 0 && label) {
           const pos = o.labelAt || 'on';
-          if (pos === 'on') tx(key + 'l', mx, my + 4, label, o.tcls || '', 'middle', op * kt);
-          else {
+          if (pos === 'on') {
+            // The value only while the line reads as a dimension: it goes (the line stays, faded) as the edge turns
+            // end-on, or once the line is too short to show on both sides of it. Its plate stays solid while it
+            // fades, so the line never runs through the digits.
+            const lv = kt * sstep((op - 0.6) / 0.25) * sstep((len - tw(label) - 16) / 10);
+            if (lv > 0.01) tx(key + 'l', mx, my + 4, label, o.tcls || '', 'middle', lv, Math.min(1, lv * 4));
+          } else {
             // beside the line, away from the object (screen direction of `dir`)
             const q = projP(V, at3(A, mm + 10 / V.s)), sx = Math.sign(q.x - a.x) || 1;
             tx(key + 'l', mx + sx * 7, my + 4, label, o.tcls || '', sx > 0 ? 'start' : 'end', op * kt);
@@ -802,7 +918,7 @@
 
       // Screen-space dimension for the orthographic sheet: vertical (between the y of A and B at x = xl) or horizontal
       // (between the x of A and B at y = yl), with extension lines from the features.
-      function dimV(key, V, A, B, xl, label, k, side) {
+      function dimV(key, V, A, B, xl, label, k, side, beside) {
         if (k <= 0) return;
         const a = projP(V, A), b = projP(V, B), x = cr(xl), s = side || Math.sign(xl - a.x) || 1;
         const ke = sstep(k / 0.4), kd = sstep((k - 0.25) / 0.6), kt = sstep((k - 0.6) / 0.4);
@@ -815,7 +931,7 @@
           if (kd > 0.98) { ln(key + 'ta', x - 4, ya + 4, x + 4, ya - 4); ln(key + 'tb', x - 4, yb + 4, x + 4, yb - 4); }
         }
         if (kt > 0) {
-          if (Math.abs(yb - ya) > 34) tx(key + 'l', x, my + 4, label, '', 'middle', kt);
+          if (Math.abs(yb - ya) > 34 && !beside) tx(key + 'l', x, my + 4, label, '', 'middle', kt);
           else tx(key + 'l', x + s * 9, my + 4, label, '', s > 0 ? 'start' : 'end', kt);
         }
       }
@@ -833,15 +949,52 @@
         }
         if (kt > 0 && label) {
           if (Math.abs(xb - xa) > tw(label) + 14) tx(key + 'l', mx, y + 4, label, '', 'middle', kt);
-          else tx(key + 'l', mx, y + s * 13 + (s > 0 ? 4 : 0), label, '', 'middle', kt);
+          // (too short for its value: the value goes just past the right-hand tick, on the line's row, not under it
+          // where the view's caption sits)
+          else tx(key + 'l', Math.max(xa, xb) + 9, y + 4, label, '', 'start', kt);
         }
+      }
+
+      // A leader's anchor on a point of part i that the camera can actually see. Candidates run from the part's centre
+      // toward its screen-left (side −1) or screen-right (side +1) edge by the fractions fs, each at three heights; each
+      // is tested by picking (≤ a few ray casts per frame, spread over frames) and the first that hits part i itself is
+      // kept as a point on the part, so the leader stays on it as the part moves. Re-checked every couple of seconds.
+      const ANC = {};
+      let ancBudget = 0, ancGen = 0;
+      function anchorOf(key, i, side, fs) {
+        const V = V1, b = meta.parts[i].bbox, c = centerOf(i);
+        let A = ANC[key];
+        if (!A || A.gen !== ancGen) A = ANC[key] = { gen: ancGen, n: 0, lp: null, f: 0 };
+        A.f++;
+        if (A.lp) {
+          const q = projP(V, wp(i, A.lp));
+          // re-check now and then (the camera sways; a moving part can pass in front)
+          if (A.f % 120 === 0 && ancBudget > 0 && G.ready) { ancBudget--; if (pickAt(q.x, q.y) !== i) { A.lp = null; A.n = 0; } }
+          if (A.lp) return { x: q.x, y: q.y };
+        }
+        let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+        for (const X of [b.min[0], b.max[0]]) for (const Y of [b.min[1], b.max[1]]) for (const Z of [b.min[2], b.max[2]]) {
+          const q = projP(V, wp(i, [X, Y, Z]));
+          x0 = Math.min(x0, q.x); x1 = Math.max(x1, q.x); y0 = Math.min(y0, q.y); y1 = Math.max(y1, q.y);
+        }
+        const cc = projP(V, wp(i, c)), ex = side > 0 ? x1 : x0, hy = (y1 - y0) / 2;
+        const cand = n => { const f = fs[Math.floor(n / 3)], dy = [0, -0.3, 0.3][n % 3]; return { x: lerp(cc.x, ex, f), y: cc.y + dy * hy }; };
+        const N = fs.length * 3;
+        while (A.n < N && ancBudget > 0 && G.ready) {
+          ancBudget--;
+          const p = cand(A.n++), o = {};
+          if (pickAt(p.x, p.y, o) === i && o.v === 1) { A.lp = o.lp; return p; }
+        }
+        return cand(0);
       }
 
       // Leader labels: anchors (screen) sorted by y, spread to a minimum gap, drawn as a square + dashed elbow + text
       const leaderY = {};
       function leaders(key, items, colX, align, k, lh) {
         lh = lh || 30;
-        const list = items.filter(it => it.a).sort((p, q) => p.a.y - q.a.y);
+        // (it.ly, when given, is where the label row wants to be; the leader still starts at the live anchor it.a)
+        const ly = it => (it.ly == null ? it.a.y : it.ly);
+        const list = items.filter(it => it.a).sort((p, q) => ly(p) - ly(q));
         if (!list.length) return;
         // spread: forward pass then backward pass within [L.top, L.bottom]; when the column is too short for the
         // stack, tighten the gap and drop the size lines (never let a label climb into the headline)
@@ -851,7 +1004,7 @@
           lh = (yBot - yTop) / (list.length - 1);
           if (lh < 31) { subs = false; lh = Math.max(lh, 16); }
         }
-        const y = list.map(it => it.a.y), n = y.length;
+        const y = list.map(ly), n = y.length;
         y[0] = Math.max(y[0], yTop);
         for (let i = 1; i < n; i++) y[i] = Math.max(y[i], y[i - 1] + lh);
         if (y[n - 1] > yBot) {
@@ -869,8 +1022,11 @@
           const cls = it.acc ? 'a' : '';
           const sgn = align === 'end' ? -1 : 1;
           const ex = colX - sgn * 10;
-          sq(kk + 'q', it.a.x, it.a.y, 4, it.acc ? 'fa' : 'f', ki);
-          pl(kk + 'p', [[it.a.x, it.a.y], [lerp(it.a.x, ex, ki), lerp(it.a.y, yy - 4, ki)], [lerp(it.a.x, colX - sgn * 2, ki), lerp(it.a.y, yy - 4, ki)]], 'd ' + (it.acc ? 'a' : 'g'), ki);
+          sq(kk + 'q', it.a.x, it.a.y, 5, it.acc ? 'fa lq' : 'f lq', ki);
+          // (it.up: straight up to the label's row, then across: one bend, clear of whatever sits beside the part)
+          const P = it.up ? [[it.a.x, it.a.y], [it.a.x, lerp(it.a.y, yy - 4, ki)], [lerp(it.a.x, colX - sgn * 2, ki), lerp(it.a.y, yy - 4, ki)]]
+            : [[it.a.x, it.a.y], [lerp(it.a.x, ex, ki), lerp(it.a.y, yy - 4, ki)], [lerp(it.a.x, colX - sgn * 2, ki), lerp(it.a.y, yy - 4, ki)]];
+          pl(kk + 'p', P, 'd ' + (it.acc ? 'a' : 'g'), ki);
           tx(kk + 't', colX, yy, it.name, it.acc ? 'a' : '', align, sstep((ki - 0.4) / 0.6));
           if (it.sub && subs) tx(kk + 's', colX, yy + 15, it.sub, 's', align, sstep((ki - 0.5) / 0.5));
         });
@@ -925,17 +1081,20 @@
         });
       }
       function fetchJSON(url) { return fetch(url).then(r => { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }); }
+      // (total(): the byte length from biped.json once it has landed, else the response's own length when it is not
+      // compressed; the two downloads run side by side)
       async function fetchBin(url, total, onProg) {
         const r = await fetch(url);
         if (!r.ok) throw new Error(url + ' ' + r.status);
         if (!r.body || !r.body.getReader) return r.arrayBuffer();
+        const cl = r.headers.get('content-encoding') ? 0 : +r.headers.get('content-length') || 0;
         const rd = r.body.getReader(), chunks = [];
         let got = 0;
         for (;;) {
           const { done, value } = await rd.read();
           if (done) break;
           chunks.push(value); got += value.length;
-          onProg(Math.min(1, got / total));
+          onProg(Math.min(1, got / (total() || cl || 1.2e6)));
         }
         const out = new Uint8Array(got);
         let o = 0;
@@ -944,14 +1103,16 @@
       }
       let prog = { bin: 0, three: 0 };
       function showProgress(phase) {
+        if (G.failed || G.ready) return;
         const p = Math.round((prog.bin * 0.86 + prog.three * 0.14) * 100);
         loadEl.textContent = phase || `loading model · ${p}%`;
       }
       function placeLoad() {
-        if (!meta) { loadEl.style.left = Math.round((L.left + W - L.gut) / 2) + 'px'; loadEl.style.top = Math.round((L.top + L.bottom) / 2) + 'px'; return; }
+        // (before the model's size is known: where it will sit, under the robot's feet)
+        if (!meta) { const r = artRect(false); loadEl.style.left = Math.round((r.x0 + r.x1) / 2) + 'px'; loadEl.style.top = Math.round(L.bottom - 4) + 'px'; return; }
         const g = proj(V1, -12, 0, 0);
         loadEl.style.left = Math.round(g.x) + 'px';
-        loadEl.style.top = Math.round(Math.min(L.bottom + 20, g.y + 28)) + 'px';
+        loadEl.style.top = Math.round(Math.min(L.bottom - 4, g.y + 28)) + 'px';   // (above core's hint row)
       }
 
       function startLoad() {
@@ -960,6 +1121,9 @@
         const p2d = fetchJSON(BASE + 'biped-2d.json').catch(() => null);
         const pThree = loadScript(THREE_SRC, () => !!window.THREE).then(() => { prog.three = 1; showProgress(); });
         const pLoader = loadScript(BASE + 'biped-loader.js', () => !!(window.Site && window.Site.biped));
+        const pBin = fetchBin(BASE + 'biped.bin', () => (meta ? meta.binary.byteLength : 0), f => { prog.bin = f; showProgress(); });
+        // (any can fail before Promise.all below is attached: the failure is handled there, not unhandled here)
+        pThree.catch(() => {}); pLoader.catch(() => {}); pBin.catch(() => {});
         pMeta.then(m => {
           meta = m; NP = m.parts.length;
           m.parts.forEach((p, i) => { PI[p.id] = i; });
@@ -969,8 +1133,7 @@
           placeLoad();
           // the blueprint only if the 3D model is not already close
           p2d.then(j => { d2 = j; setTimeout(() => { if (!G.ready) drawBlueprint(); }, Math.max(0, 220 - (performance.now() - tLoad))); });
-          const bin = fetchBin(BASE + 'biped.bin', m.binary.byteLength, f => { prog.bin = f; showProgress(); });
-          return Promise.all([bin, pThree, pLoader]);
+          return Promise.all([pBin, pThree, pLoader]);
         }).then(([buf]) => {
           model = window.Site.biped.decode(meta, buf);
           showProgress('preparing model');
@@ -978,6 +1141,7 @@
         }).then(ok => {
           if (!ok) throw new Error('WebGL unavailable');
           G.ready = true;
+          bindContextLoss();
           loadEl.style.opacity = '0';
           frame(performance.now() / 1000, 0, true);
           glCanvas.classList.add('is-on');
@@ -992,7 +1156,43 @@
           if (!STILL) preloadPhoto();
           loadEl.textContent = '3D view unavailable · showing the front drawing';
           if (d2) drawBlueprint();
+          // (said once; then out of the way of the captions and core's hint, with the drawing standing in)
+          if (!STILL) setTimeout(() => { loadEl.style.opacity = '0'; }, 4500);
           if (STILL) { window.__robotReady = true; }
+        });
+      }
+
+      // WebGL context loss (iOS backgrounding, a GPU reset): show the front drawing until the context comes back, then
+      // restore the white clear colour (three.js resets it to black) and the size, and draw again
+      function bindContextLoss() {
+        if (G.ctxBound || STILL) return;
+        G.ctxBound = true;
+        glCanvas.addEventListener('webglcontextlost', e => {
+          e.preventDefault();
+          if (!G.ready) return;
+          G.ready = false; G.lost = true;
+          glCanvas.classList.remove('is-on');
+          placePanels();                            // (no live joint readouts beside a drawing that does not move)
+          hover = null;
+          endOv();                                  // (no dimension lines hanging over an empty canvas)
+          bpDrawn = false; gBP.textContent = ''; gBP.style.opacity = '';
+          drawBlueprint();
+        });
+        glCanvas.addEventListener('webglcontextrestored', () => {
+          if (!G.lost) return;
+          G.lost = false;
+          const r = G.renderer;
+          r.setClearColor(0xffffff, 1);
+          r.autoClear = false;
+          r.setPixelRatio(G.dpr);
+          r.setSize(W, H);
+          G.res.value.set(W * G.dpr, H * G.dpr);
+          G.ready = true;
+          placePanels();
+          frame(performance.now() / 1000, 0, true);
+          glCanvas.classList.add('is-on');
+          if (bpDrawn) gBP.style.opacity = '0';
+          setTimeout(() => { if (G.ready) { gBP.textContent = ''; bpDrawn = false; } }, 900);
         });
       }
 
@@ -1002,7 +1202,7 @@
         const T3 = window.THREE;
         let renderer;
         try {
-          renderer = new T3.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: false, preserveDrawingBuffer: STILL, powerPreference: 'high-performance' });
+          renderer = new T3.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: false, preserveDrawingBuffer: STILL, powerPreference: 'default' });
         } catch (e) { return false; }
         if (!renderer.getContext()) return false;
         renderer.setClearColor(0xffffff, 1);
@@ -1036,6 +1236,7 @@
           geo.setAttribute('normal', new T3.BufferAttribute(face.nor, 3));
           geo.setAttribute('aCol', new T3.BufferAttribute(face.col, 3));
           geo.computeBoundingSphere();
+          geo.computeBoundingBox();   // (lets a pick ray skip a part's triangles unless it crosses the part's box)
           const fu = { uAcc: { value: acc }, uTint: { value: 0 }, uFade: { value: 0 }, uL: { value: light } };
           const fm = new T3.ShaderMaterial({ uniforms: fu, vertexShader: FACE_VS, fragmentShader: FACE_FS, side: T3.DoubleSide,
             polygonOffset: true, polygonOffsetFactor: 1.2, polygonOffsetUnits: 1.5 });
@@ -1074,9 +1275,10 @@
         }
         {
           const P = [];
-          // a floor of + marks, 40 mm apart, that scrolls with the stance foot
-          for (let x = -420; x < 420; x += 40) for (let y = -120; y <= 160; y += 40) P.push(x - 5, y, 0, x + 5, y, 0, x, y - 5, 0, x, y + 5, 0);
-          G.floorU = { uColor: { value: new T3.Color(0.62, 0.62, 0.62) }, uOp: { value: 0 }, uScroll: { value: 0 }, uRes: res };
+          // a floor of hairline cross-ties, 40 mm apart across the feet's track, that scrolls with the stance foot (seen
+          // from 9° above, + marks foreshortened into grey squiggles; ties stay clean lines)
+          for (let x = -420; x < 420; x += 40) P.push(x, -96, 0, x, 110, 0);
+          G.floorU = { uColor: { value: new T3.Color(0.72, 0.72, 0.72) }, uOp: { value: 0 }, uScroll: { value: 0 }, uRes: res };
           const geo = new T3.BufferGeometry();
           geo.setAttribute('position', new T3.BufferAttribute(new Float32Array(P), 3));
           G.floor = G.passes.map(([ox, oy]) => {
@@ -1188,17 +1390,27 @@
       }
 
       /* ---------------------------------------------------------------- pose */
-      let mats = null, rootShift = 0;
-      function computePose() {
+      let mats = null, rootShift = 0, restMats = null;
+      function poseMats(ang) {
         const B = window.Site.biped;
-        if (!B || !model) return;
-        let m0 = B.pose(model, CU.ang);
-        rootShift = B.groundShift(model, m0);
-        if (Math.abs(rootShift) > 0.01) {
-          const R = B.mat4.ident(); R[14] = rootShift;
-          m0 = B.pose(model, CU.ang, { root: R });
+        let m0 = B.pose(model, ang);
+        const sh = B.groundShift(model, m0);
+        if (Math.abs(sh) > 0.01) {
+          const R = B.mat4.ident(); R[14] = sh;
+          m0 = B.pose(model, ang, { root: R });
         }
-        mats = m0;
+        return { m: m0, sh };
+      }
+      function computePose() {
+        if (!window.Site.biped || !model) return;
+        const p = poseMats(CU.ang);
+        mats = p.m; rootShift = p.sh;
+      }
+      // a joint's pivot in the rest pose (all angles 0)
+      function restJoint(jid) {
+        if (!restMats) { const z = {}; JOINTS.forEach(j => { z[j] = 0; }); restMats = poseMats(z).m; }
+        const j = model.joints[jid];
+        return mulP(restMats[j.parent], j.pivot);
       }
       const mulP = (M, p) => [M[0] * p[0] + M[4] * p[1] + M[8] * p[2] + M[12], M[1] * p[0] + M[5] * p[1] + M[9] * p[2] + M[13], M[2] * p[0] + M[6] * p[1] + M[10] * p[2] + M[14]];
       const mulD = (M, p) => [M[0] * p[0] + M[4] * p[1] + M[8] * p[2], M[1] * p[0] + M[5] * p[1] + M[9] * p[2], M[2] * p[0] + M[6] * p[1] + M[10] * p[2]];
@@ -1207,6 +1419,13 @@
         const P = meta.parts[i], q = mats ? mulP(mats[P.link], p) : p.slice(), e = CU.ex[i] || 0, x = P.explode;
         return [q[0] + x[0] * e, q[1] + x[1] * e, q[2] + x[2] * e];
       }
+      // screen y of the top of part i's (posed, exploded) bounding box in view V1
+      function topOf(i) {
+        const b = meta.parts[i].bbox;
+        let y = 1e9;
+        for (const X of [b.min[0], b.max[0]]) for (const Y of [b.min[1], b.max[1]]) for (const Z of [b.min[2], b.max[2]]) y = Math.min(y, projP(V1, wp(i, [X, Y, Z])).y);
+        return y;
+      }
       const centerOf = i => { const b = meta.parts[i].bbox; return [(b.min[0] + b.max[0]) / 2, (b.min[1] + b.max[1]) / 2, (b.min[2] + b.max[2]) / 2]; };
       function jointWorld(jid) {
         const j = model.joints[jid], M = mats[j.parent];
@@ -1214,7 +1433,15 @@
       }
 
       /* ---------------------------------------------------------------- sound */
-      let soundOn = false, fan = null;
+      // The bed: a low grain cloud (D3–A4, the site's shared texture) over the electronics' fan, level-matched to the
+      // other scenes' opening steps (an analyser on the master, 1440 × 900: Assembled −27.7 dB RMS, lpwm's opening −27.6;
+      // the other steps −28.7 … −32.7). The steps with their own event sounds (snaps, servos, footsteps) duck it; the two turntable
+      // steps add sparse clock-quantised foley: a tuned tick on most other beats and, every two bars, the turntable
+      // servo nudging.
+      let soundOn = false, fan = null, bed = null, offClock = null;
+      //            [bed gain, fan speed, fan gain]
+      const MIX = { assembled: [1.7, 0.3, 0.75], parts: [1.3, 0.22, 0.45], brain: [1.1, 0.45, 0.9], joints: [0.9, 0.22, 0.4],
+        dims: [1.25, 0.22, 0.5], walk: [0.35, 0.22, 0.3], hand: [1.7, 0.3, 0.75] };
       const lastSfx = {};
       function sfx(name, a, b, gap) {
         if (!soundOn || STILL) return;
@@ -1229,11 +1456,33 @@
         } catch (e) { /* sound must never break the page */ }
       }
       function uiSfx(name, o) { if (!soundOn || STILL) return; try { const au = A(); au && au.ui && au.ui[name] && au.ui[name](o); } catch (e) { /* ok */ } }
-      function sfxRelay() { sfx('relay', { size: 0.3, gain: 0.55 }, null, 120); }
       function fanLevel(id) {
-        if (!fan) return;
-        const hot = id === 'brain';
-        try { fan.set({ speed: hot ? 0.42 : 0.22, gain: hot ? 0.3 : 0.12 }, 1.6); } catch (e) { /* ok */ }
+        const m = MIX[id] || MIX.assembled;
+        if (fan) try { fan.set({ speed: m[1], gain: m[2] }, 1.6); } catch (e) { /* ok */ }
+        if (bed) try { bed.set({ gain: m[0] }, 1.4); } catch (e) { /* ok */ }
+      }
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+      function onClock(step, time) {
+        if (!soundOn || S.paused) return;
+        const id = STEPS[S.step].id, au = A();
+        if ((id !== 'assembled' && id !== 'hand') || !au || !au.degree) return;
+        const r = Math.random;
+        if (step % 8 === 0 && r() < 0.62) sfx('tick', au.degree(pick([0, 1, 2, 3, 4]), 1), { when: time, gain: 0.16 + r() * 0.08, pan: (r() * 2 - 1) * 0.55 });
+        if (step % 32 === 20) sfx('servo', { when: time, from: 50 + pick([0, 2]), to: 55, dur: 0.34, load: 0.25, gain: 0.3 + r() * 0.08 });
+      }
+      function startBed() {
+        stopBed();
+        const au = A(), bus = api.bus();
+        if (!au || !bus) return;
+        const m = MIX[STEPS[S.step].id] || MIX.assembled, d = (i, o) => au.degree(i, o);
+        try { fan = au.fan({ speed: m[1], gain: m[2], attack: 3, dest: bus }); } catch (e) { fan = null; }
+        try { bed = au.granular({ density: 2.4, pitch: [d(0, -1), d(2, -1), d(4, -1), d(0, 0), d(3, 0)], dur: 0.1, spread: 0.9, bright: 0.1, octave: 0, jitter: 0.8, detune: 6, gain: m[0], attack: 1.6, dest: bus }); } catch (e) { bed = null; }
+        try { if (au.clock && typeof au.clock.on === 'function') offClock = au.clock.on(onClock); } catch (e) { offClock = null; }
+      }
+      function stopBed() {
+        if (offClock) { try { offClock(); } catch (e) { /* ok */ } offClock = null; }
+        if (fan) { try { fan.stop(0.5); } catch (e) { /* ok */ } fan = null; }
+        if (bed) { try { bed.stop(0.8); } catch (e) { /* ok */ } bed = null; }
       }
 
       /* ---------------------------------------------------------------- steps */
@@ -1249,6 +1498,8 @@
         S.orbitDecay = true;
         S.stanceX = null; S.stance = null; S.lastJointPhase = -1; S.lastDock = 0; S.chimed = false; S.lifted = false; S.dimsShown = 0;
         S.keyN = 0; S.keysDone = false; S.dimsSide = undefined; S.dimsT0 = 0; S.jActive = null; S.busN = -1;
+        hover = null;   // (a label pinned on the last step would float over this one)
+        ancGen++;
         for (let k = 0; k < NP; k++) TG.ex[k] = 0;
         zeroAng(); focus(null);
         TG.ring = 0; TG.floor = 0;
@@ -1280,12 +1531,19 @@
         if (fromUser) touch();
         if (!STILL) {
           stepper.set(i);
-          const st = STEPS[i];
-          api.headline(st.head, L.m ? st.ms || st.sub : st.sub, { key: st.id + (L.m ? ':m' : '') });
-          api.caption(st.cap);
+          stepText();
         }
         if (changed) stepEnter(i);
         updHead(true);
+      }
+      // the step's headline (phones get the short sub) and caption (touch screens: "tap", not "hover")
+      function stepText() {
+        const st = STEPS[S.step];
+        L.textM = L.m; L.textT = L.touch;
+        // (touch tablets ≥ 800 px get the full sub with "tap" for "hover")
+    const sub = L.m ? st.ms || st.sub : L.touch && st.subT ? st.subT : st.sub;
+    api.headline(st.head, sub, { key: st.id + (L.m ? ':m' : L.touch ? ':t' : '') });
+        api.caption(L.touch && st.capT ? st.capT : st.cap);
       }
       function touch() { S.lastInteract = performance.now() / 1000; }
 
@@ -1325,7 +1583,7 @@
             }
           }
         } else if (id === 'brain') {
-          T1.az = -36 + (REDUCED ? 0 : 6 * Math.sin(t * 0.3));
+          T1.az = BRAIN_AZ + (REDUCED ? 0 : 6 * Math.sin(t * 0.3));
           const lift = REDUCED ? 1 : eio((t - 0.5) / 1.3);
           for (const id in BRAIN_LIFT) TG.ex[PI[id]] = BRAIN_LIFT[id] * lift;
           if (!S.lifted && t > 0.5 && !REDUCED) { S.lifted = true; sfx('arm', { dur: 1.1, to: 57, from: 45, gain: 0.35 }); }
@@ -1355,7 +1613,7 @@
       const JSEQ = [
         { j: 'hip_yaw', m: 59, f: u => 15 * Math.sin(2 * Math.PI * u) },
         { j: 'hip_pitch', m: 52, f: u => { const s = Math.sin(2 * Math.PI * u); return s >= 0 ? -30 * s : -25 * s; } },
-        { j: 'knee', m: 57, f: u => 60 * Math.sin(Math.PI * u) },
+        { j: 'knee', m: 57, f: u => 45 * Math.sin(Math.PI * u) },
         { j: 'ankle', m: 62, f: u => 30 * Math.sin(2 * Math.PI * u) },
         { j: 'squat', m: 50, f: u => 50 * Math.sin(Math.PI * u) },
       ];
@@ -1392,8 +1650,8 @@
       function drawOverlay(t) {
         if (!meta || !mats) { endOv(); return; }
         const id = STILL ? 'still' : STEPS[S.step].id;
-        const k = REDUCED ? 1 : 1;
-        void k;
+        S.hvLabel = false;
+        ancBudget = STILL ? 1e4 : 3;
         if (id === 'assembled') drawAssembled(t);
         else if (id === 'parts') drawParts(REDUCED ? 5 : t);
         else if (id === 'brain') drawBrain(REDUCED ? 5 : t);
@@ -1413,11 +1671,14 @@
         const g = proj(V, V.T[0], 0, 0), tp = proj(V, V.T[0], 0, TOP);
         const x = V.cx + V.s * R + (L.m ? 22 : 34);
         dimVraw('h', x, g.y, tp.y, `446.2${NB}mm`, k);
-        // width and depth on the torso's top edges, whichever face the camera
-        const a = V.az * D2R, off = L.m ? 34 : 50;
+        // width and depth on the torso's top edges, whichever face the camera, drawn above the whole model: the
+        // extension lines start clear of the Pi and the battery (their tops are 20 mm over the rim, and the Pi's ports
+        // sit further back, so they look higher still) and the dimension lines run over empty paper
+        const a = V.az * D2R;
+        const gap = (TOP - TORSO.z1 + 20) * V.s, off = gap + (L.m ? 16 : 22);
         const xe = Math.cos(a) >= 0 ? TORSO.x1 : TORSO.x0, ye = Math.sin(a) >= 0 ? TORSO.y1 : TORSO.y0;
-        dim3('w', V, [xe, TORSO.y0, TORSO.z1], [xe, TORSO.y1, TORSO.z1], [0, 0, 1], off, '165', k2);
-        dim3('dp', V, [TORSO.x0, ye, TORSO.z1], [TORSO.x1, ye, TORSO.z1], [0, 0, 1], off, '160', k2);
+        dim3('w', V, [xe, TORSO.y0, TORSO.z1], [xe, TORSO.y1, TORSO.z1], [0, 0, 1], off, '165', k2, { gap });
+        dim3('dp', V, [TORSO.x0, ye, TORSO.z1], [TORSO.x1, ye, TORSO.z1], [0, 0, 1], off, '160', k2, { gap });
       }
       // vertical dimension with short horizontal extension ticks toward the robot
       function dimVraw(key, x, y0, y1, label, k, dir) {
@@ -1430,55 +1691,56 @@
           ln(key + 'd', X, lerp(my, ya, kd), X, lerp(my, yb, kd));
           if (kd > 0.98) { ln(key + 'ta', X - 4, ya + 4, X + 4, ya - 4); ln(key + 'tb', X - 4, yb + 4, X + 4, yb - 4); }
         }
-        if (kt > 0) {
-          if (L.m) tx(key + 'l', X, yb - 10, label, '', 'middle', kt);
-          else tx(key + 'l', X, my + 4, label, '', 'middle', kt);
-        }
+        // the value on the line at mid-height, on its white plate (the line clears the legs there)
+        if (kt > 0) tx(key + 'l', X, my + 4, label, '', 'middle', kt);
       }
       let maxR = 0;
       function maxRadius() {
         if (maxR) return maxR;
+        if (!meta) return 121;
         const P = pts();
         for (let i = 0; i < P.length; i += 3) maxR = Math.max(maxR, Math.hypot(P[i] + 12, P[i + 1]));
         return maxR;
       }
 
+      // Every part: one label per design, with its count (1+1+1+1+2+2+8+8+2+2+2 = the 30 parts); `m` matches the parts
+      // a label stands for (hovering any of them turns that label blue instead of opening a card)
       const PART_LABELS = [
-        { id: 'pi', name: 'Raspberry Pi', sub: `85 × 56${NB}mm board` },
-        { id: 'battery', name: 'Battery pack', sub: `109.5 × 63 × 24.1${NB}mm` },
-        { id: 'deck', name: 'Deck', sub: `3.5${NB}mm plate` },
-        { id: 'torso_frame', name: 'Torso frame', sub: `165 × 160 × 80${NB}mm` },
-        { id: 'servo_hip_yaw_L', name: 'Hip-yaw servo', sub: 'LX-16A, one per leg' },
-        { id: 'yoke_L', name: 'Hip yoke', sub: `56.5 × 56.5 × 42.5${NB}mm` },
-        { id: 'servo_hip_pitch_L', name: 'Hip-pitch servo', sub: 'LX-16A' },
-        { id: 'thigh_L', name: 'Thigh', sub: `Ø59.1 × 121.4${NB}mm`, acc: true },
-        { id: 'servo_knee_L', name: 'Knee servo', sub: 'LX-16A' },
-        { id: 'shin_L', name: 'Shin', sub: 'same part as the thigh', acc: true },
-        { id: 'servo_ankle_L', name: 'Ankle servo', sub: 'LX-16A' },
-        { id: 'foot_L', name: 'Foot', sub: `77 × 55 × 57.1${NB}mm` },
+        { id: 'pi', m: /^pi$/, name: 'Raspberry Pi', sub: `85 × 56${NB}mm board` },
+        { id: 'battery', m: /^battery$/, name: 'Battery pack', sub: `109.5 × 63 × 24.1${NB}mm` },
+        { id: 'deck', m: /^deck$/, name: 'Deck', sub: `3.5${NB}mm plate` },
+        { id: 'torso_frame', m: /^torso_frame$/, name: 'Torso frame', sub: `165 × 160 × 80${NB}mm` },
+        { id: 'buck', m: /^(buck|busboard)$/, name: 'Converter, bus board', sub: 'one each, in the torso' },
+        { id: 'yoke_L', m: /^yoke_/, name: `Hip yoke ×${NB}2`, sub: `56.5 × 56.5 × 42.5${NB}mm` },
+        { id: 'servo_hip_pitch_L', m: /^servo_/, name: `LX-16A servo ×${NB}8`, sub: `four per leg, 52${NB}g each` },
+        { id: 'horn_knee_L', m: /^horn_/, name: `Servo horn ×${NB}8`, sub: 'one per servo' },
+        { id: 'thigh_L', m: /^thigh_/, name: `Thigh ×${NB}2`, sub: `Ø59.1 × 121.4${NB}mm`, acc: true },
+        { id: 'shin_L', m: /^shin_/, name: `Shin ×${NB}2`, sub: 'same part as the thigh', acc: true },
+        { id: 'foot_L', m: /^foot_/, name: `Foot ×${NB}2`, sub: `77 × 55 × 57.1${NB}mm` },
       ];
-      const PART_LABELS_M = new Set(['pi', 'battery', 'torso_frame', 'yoke_L', 'thigh_L', 'shin_L', 'foot_L']);
+      // (phones show every label too, one line each, so the counts still add up to 30; a tapped part opens its size card)
       function drawParts(t, still) {
         const k = still ? 1 : clamp((t - 2.3) / 1.2, 0, 1) * (1 - clamp((t - 9.1) / 0.4, 0, 1));
         if (k <= 0) return;
         const items = [];
+        const hvId = hover && hover.i != null && k > 0.5 ? meta.parts[hover.i].id : null;
         PART_LABELS.forEach((d, j) => {
-          if (L.m && !still && !PART_LABELS_M.has(d.id)) return;
           const i = PI[d.id];
           if (i == null) return;
-          const b = meta.parts[i].bbox;
-          // anchor on the part's right-hand side (in view), at its centre height
-          const c = centerOf(i);
-          const cands = [[b.max[0], b.max[1], c[2]], [b.min[0], b.max[1], c[2]], [c[0], b.max[1], c[2]]];
-          let best = null;
-          for (const q of cands) { const s = projP(V1, wp(i, q)); if (!best || s.x > best.x) best = s; }
-          const cc = projP(V1, wp(i, c));
-          const a = { x: lerp(cc.x, best.x, 0.72), y: cc.y };
-          items.push({ id: d.id, a, name: d.name, sub: L.m ? '' : d.sub, acc: d.acc, delay: still ? 0 : j * 0.045 });
+          // on a visible point of the part, toward its right-hand side (the Pi's right edge, for one, is behind the
+          // battery: its leader starts on the Pi's left half and climbs above the battery before it turns right)
+          const isPi = d.id === 'pi';
+          const a = isPi ? anchorOf('plpi', i, -1, [0.45, 0.25, 0.65]) : anchorOf('pl' + d.id, i, 1, [0.72, 0.5, 0.3, 0.1]);
+          const on = !!(hvId && d.m.test(hvId) && !still);
+          if (on && !L.m) S.hvLabel = true;
+          const it = { id: d.id, a, name: d.name, sub: L.m ? '' : d.sub, acc: d.acc || on, delay: still ? 0 : j * 0.045 };
+          if (isPi && PI.battery != null) { it.up = true; it.ly = Math.min(a.y, topOf(PI.battery) - 12); }
+          items.push(it);
         });
         let colX = 0;
         items.forEach(it => { colX = Math.max(colX, it.a.x); });
-        colX = Math.min(colX + (L.m ? 22 : 46), W - L.gut - (L.m ? 96 : 190));
+        const nw = L.m ? items.reduce((m, it) => Math.max(m, tw(it.name)), 0) + 4 : 190;
+        colX = Math.min(colX + (L.m ? 22 : 46), W - L.gut - Math.max(L.m ? 96 : 190, nw));
         leaders('pl', items, colX, 'start', k, L.m ? 22 : 34);
         if (!still && !REDUCED && k > 0 && !S.keysDone) {
           const n = Math.floor(k / 0.07);
@@ -1489,15 +1751,20 @@
 
       // explode amounts for Brain & power: the Pi and battery lift 72 mm, the deck 38 mm (see parts[].explode)
       const BRAIN_LIFT = { pi: 0.48, battery: 0.48, deck: 0.38 };
+      // (splay: a min-area fit of each hip-yaw servo body in biped.bin is 45.0 × 25.0 mm at ±25.0°)
+      // left column: the parts left of the torso's centre at BRAIN_AZ; the rest on the right
       const BRAIN_LABELS = [
-        { id: 'pi', name: 'Raspberry Pi', sub: `85 × 56${NB}mm board`, acc: true },
-        { id: 'busboard', name: 'Servo bus board', sub: 'to all 8 servos', acc: true },
-        { id: 'buck', name: 'Step-down', sub: 'DC-DC converter' },
+        { id: 'pi', name: 'Raspberry Pi', sub: `85 × 56${NB}mm board`, acc: true, left: true },
+        { id: 'busboard', name: 'Servo bus board', sub: 'to all 8 servos', acc: true, left: true },
+        { id: 'buck', name: 'Step-down converter', sub: `61 × 27 × 23.5${NB}mm` },
         { id: 'battery', name: 'Battery pack', sub: 'switch + DC jack' },
         { id: 'deck', name: 'Deck', sub: `3.5${NB}mm plate` },
-        { id: 'servo_hip_yaw_R', name: 'Hip-yaw servos', sub: 'upright, splayed ±21°' },
+        { id: 'servo_hip_yaw_R', name: 'Hip-yaw servos', sub: 'upright, splayed ±25°', left: true },
         { id: 'torso_frame', name: 'Torso frame', sub: `165 × 160 × 80${NB}mm` },
       ];
+      // Brain & power looks in through the open front from the robot's front-left, so the bus board (back right, on
+      // the box floor) shows between the two hip-yaw servos
+      const BRAIN_AZ = 36;
       const labW = list => list.reduce((m, d) => Math.max(m, tw(d.name), tw(d.sub || '')), 0);
       const nameW = list => list.reduce((m, d) => Math.max(m, tw(d.name)), 0);
       function drawBrain(t) {
@@ -1507,10 +1774,10 @@
         BRAIN_LABELS.forEach((d, j) => {
           const i = PI[d.id];
           if (i == null) return;
-          const c = centerOf(i);
-          const a = projP(V1, wp(i, c));
+          // a visible point of the part, from its centre toward its label's side
+          const a = anchorOf('b' + d.id, i, d.left && !brainCol() ? -1 : 1, [0, 0.3, 0.55, 0.8]);
           const it = { id: d.id, a, name: d.name, sub: L.m ? '' : d.sub, acc: d.acc, delay: j * 0.06 };
-          (d.id === 'pi' || d.id === 'busboard' || d.id === 'buck' ? left : right).push(it);
+          (d.left ? left : right).push(it);
         });
         if (brainCol()) {
           leaders('bl', left.concat(right), W - L.gut - brainColW(), 'start', k, L.m ? 20 : 34);
@@ -1547,12 +1814,16 @@
             ci('jc' + j + sd, p.x, p.y, 4.5, on ? 'a' : '', op);
             ln('jx' + j + sd, p.x - 7, p.y, p.x + 7, p.y, on ? 'a' : '', op);
             ln('jy' + j + sd, p.x, p.y - 7, p.x, p.y + 7, on ? 'a' : '', op);
-            if (sd === 'R') labs.push({ id: j, a: { x: p.x, y: p.y }, name: JN[j], sub: '', acc: on });
+            if (sd === 'R') {
+              // the label column and the label rows come from the rest pose, so they hold still while the joints move
+              const r0 = projP(V1, restJoint(j + '_' + sd));
+              labs.push({ id: j, a: { x: p.x, y: p.y }, r0, ly: r0.y, name: JN[j], sub: '', acc: on });
+            }
           });
         });
         // labels to the left of the near leg
         let minX = 1e9;
-        labs.forEach(l => { minX = Math.min(minX, l.a.x); });
+        labs.forEach(l => { minX = Math.min(minX, l.r0.x); });
         const colX = Math.max(L.left + (L.m ? 64 : 80), minX - (L.m ? 70 : 124));
         leaders('jl', labs, colX, 'end', kk, L.m ? 20 : 26);
         // chain dimensions on the far side of the right leg: hip pitch → knee → ankle → sole
@@ -1582,6 +1853,7 @@
         if (L.dimsAlt) views.push({ V: V1, kind: S.dimsSide ? 'side' : 'front', t0: S.dimsT0 || 0 });
         else { views.push({ V: V1, kind: 'front', t0: 0 }); if (CU.dual > 0.6) views.push({ V: V2, kind: 'side', t0: 0 }); }
         let n = 0;
+        const capEdge = {};
         for (const { V, kind, t0 } of views) {
           const q = i => pr(i) * (L.dimsAlt ? clamp((t - t0) / 0.6, 0, 1) : 1);
           const g0 = proj(V, 0, 0, 0);
@@ -1589,7 +1861,9 @@
           const gx1 = proj(V, kind === 'front' ? 0 : 75, kind === 'front' ? 100 : 0, 0).x;
           ln(kind + 'gnd', gx0 - 16, cr(g0.y), gx1 + 16, cr(g0.y), 'g');
           const lab = proj(V, 0, 0, 0);
-          tx(kind + 'cap', (gx0 + gx1) / 2, lab.y + (L.m ? 44 : 48), kind === 'front' ? 'FRONT' : 'SIDE · RIGHT', 'cap', 'middle', q(0));
+          const capS = kind === 'front' ? 'FRONT' : 'SIDE · RIGHT', capX = (gx0 + gx1) / 2;
+          tx(kind + 'cap', capX, lab.y + (L.m ? 44 : 48), capS, 'cap', 'middle', q(0));
+          capEdge[kind] = kind === 'front' ? capX + tw(capS) / 2 : capX - tw(capS) / 2;
           if (kind === 'front') {
             const pi = meta.parts[PI.pi].bbox, fR = meta.parts[PI.foot_R].bbox, fL = meta.parts[PI.foot_L].bbox;
             const xl = proj(V, 0, TORSO.y0, 0).x - (L.m ? 26 : 34);
@@ -1607,8 +1881,18 @@
             }
             const hy = proj(V, 0, 0, 318).y;
             dimH('fs', V, [0, -41.37, 318], [0, 41.37, 318], hy, '', q(4));
-            // (the value sits in the gap between the two hip yokes, under the line)
-            if (q(4) > 0.6) tx('fsl', proj(V, 0, 13, 0).x, hy + 15, '82.7', '', 'middle', sstep((q(4) - 0.6) / 0.4));
+            // The value sits under the line, centred in the white gap between the two hip-pitch servos (≈ 37 mm), clear
+            // of both. Where that gap is narrower than the value (phones), the line runs on past the right leg and the
+            // value stands outside it, as on a drawing when a dimension is too tight for its text.
+            if (q(4) > 0.6) {
+              const kv = sstep((q(4) - 0.6) / 0.4);
+              if (37 * V.s >= tw('82.7') + 14) tx('fsl', proj(V, 0, -1.5, 0).x, hy + 15, '82.7', '', 'middle', kv);
+              else {
+                const xe = proj(V, 0, 41.37, 0).x, xo = proj(V, 0, 74, 0).x + 4;
+                ln('fsx', xe, cr(hy), lerp(xe, xo, kv), cr(hy), '', kv);
+                tx('fsl', xo + 6, hy + 4, '82.7', '', 'start', kv);
+              }
+            }
           } else {
             const fR = meta.parts[PI.foot_R].bbox;
             const yt = proj(V, 0, 0, TOP).y - (L.m ? 18 : 24);
@@ -1620,7 +1904,8 @@
             dimV('s2', V, [fx, 0, kn], [fx, 0, an], xr, '127.0', q(2), 1);
             dimV('s3', V, [fx, 0, an], [fR.max[0], 0, 0], xr, '46.4', q(3), 1);
             const xl = proj(V, -20.2, 0, 0).x - (L.m ? 20 : 30);
-            dimV('s0', V, [-30, 0, hp], [-20.2, 0, 0], xl, '300.4', q(4), -1);
+            // (its value beside the line, on the open paper under the torso, not on a plate over the shin)
+            dimV('s0', V, [-30, 0, hp], [-20.2, 0, 0], xl, '300.4', q(4), -1, true);
             const yb = g0.y + (L.m ? 18 : 22);
             dimH('sf', V, [fR.min[0], 0, 0], [fR.max[0], 0, 0], yb, '77', q(5));
             // pivots
@@ -1638,25 +1923,31 @@
           const c = Math.floor((t - 0.7) / 0.3) + 1;
           if (c > (S.dimsShown || 0) && c <= 7 && t > 0.9) { S.dimsShown = c; sfx('compile', { progress: c / 7, gain: 0.55 }, null, 70); }
         }
-        // scale bar (desktop): 100 mm
-        if (!L.m && CU.dual > 0.6) {
-          const s = V1.s, x0 = L.split - 50 * s, y = proj(V1, 0, 0, 0).y + 48;
+        // scale bar (desktop): 100 mm, between the two view captions: its value beside it when that fits, else above it
+        if (!L.m && CU.dual > 0.6 && capEdge.front != null && capEdge.side != null) {
+          const s = V1.s, bw = 100 * s, y = proj(V1, 0, 0, 0).y + 48, lab = `100${NB}mm`;
+          const a0 = capEdge.front + 16, a1 = capEdge.side - 16;
           const k = pr(6);
-          if (k > 0) {
-            ln('sb', cr(x0), cr(y), cr(x0 + 100 * s), cr(y), '', k);
+          const beside = bw + 8 + tw(lab) <= a1 - a0;
+          if (k > 0 && (beside || bw <= a1 - a0)) {
+            const x0 = beside ? (a0 + a1) / 2 - (bw + 8 + tw(lab)) / 2 : (a0 + a1) / 2 - bw / 2;
+            ln('sb', cr(x0), cr(y), cr(x0 + bw), cr(y), '', k);
             for (let m = 0; m <= 100; m += 50) ln('sbt' + m, cr(x0 + m * s), cr(y) - (m === 50 ? 3 : 5), cr(x0 + m * s), cr(y) + (m === 50 ? 3 : 5), '', k);
-            tx('sbl', x0 + 100 * s + 8, y + 4, `100${NB}mm`, 's', 'start', k);
+            if (beside) tx('sbl', x0 + bw + 8, y + 4, lab, 's', 'start', k);
+            else tx('sbl', x0 + bw / 2, y - 10, lab, 's', 'middle', k);
           }
         }
         void n;
       }
 
       function drawWalk() {
-        // both soles in blue: they stay level through the whole stride
+        // the stance foot's sole in blue (level on the floor); the swinging foot's in light grey, so it never reads as a
+        // blue line drawn through the other foot
         for (const sd of ['R', 'L']) {
           const i = PI['foot_' + sd], b = meta.parts[i].bbox;
           const a = projP(V1, wp(i, [b.min[0], b.min[1] + 3, b.min[2]])), c = projP(V1, wp(i, [b.max[0], b.min[1] + 3, b.min[2]]));
-          ln('sole' + sd, a.x, a.y, c.x, c.y, 'a');
+          const st = (S.stance || 'R') === sd;
+          ln('sole' + sd, a.x, a.y, c.x, c.y, st ? 'a' : 'l', st ? 1 : 0.4);
         }
         // ankle pivot marker (right leg)
         const an = projP(V1, jointWorld('ankle_R').p);
@@ -1671,42 +1962,82 @@
         if (!hd) return;
         const k = clamp((t - 1.1) / 1.4, 0, 1);
         if (k <= 0) return;
-        const x0 = hd.mx + hd.mR + 8, x1 = hd.x - 12, kg = sstep(k);
+        // (compact: the model stands right beside the photo, so the guides start at its far side, like extension lines)
+        const x0 = hd.dim ? hd.mx + hd.mR + 8 : hd.mx - hd.mR, x1 = hd.x - 12, kg = sstep(k);
         for (const [key, y] of [['hgt', hd.yt], ['hgb', hd.yb]]) {
           ln(key, cr(x0), cr(y), cr(lerp(x0, x1, kg)), cr(y), 'g d');
           sq(key + 'q', x1 + 5, cr(y), 3, 'f', sstep((k - 0.7) / 0.3));
         }
         if (hd.dim) dimVraw('hdm', hd.mx - hd.mR - 30, hd.yb, hd.yt, `446.2${NB}mm`, clamp((t - 1.6) / 1.4, 0, 1), 1);
-        // its caption on the photo caption's baseline
-        tx('hcap', hd.mx, hd.y + hd.h + 25, 'CAD MODEL', 'cap', 'middle', sstep((k - 0.3) / 0.7));
+        // its caption on the photo caption's baseline; phones: above the model (the two captions would run together
+        // on one baseline there, the model being narrower than its caption)
+        if (L.m) tx('hcap', hd.mx, hd.yt - 16, 'CAD MODEL', 'cap', 'middle', sstep((k - 0.3) / 0.7));
+        else tx('hcap', hd.mx, hd.capY, 'CAD MODEL', 'cap', 'middle', sstep((k - 0.3) / 0.7));
       }
 
+      // the size line, broken at " · " into lines no wider than maxW (size first)
+      function wrapDots(str, maxW) {
+        if (!str) return [];
+        const out = [];
+        let cur = '';
+        for (const seg of str.split(' · ')) {
+          const next = cur ? cur + ' · ' + seg : seg;
+          if (cur && tw(next) > maxW) { out.push(cur); cur = seg; } else cur = next;
+        }
+        if (cur) out.push(cur);
+        return out;
+      }
       function drawHover() {
         const h = hover;
-        if (!h || h.i == null) return;
+        if (!h || h.i == null || S.hvLabel) return;
         const p = meta.parts[h.i];
         const [name, sub] = partInfo(p);
-        const x = h.x, y = h.y;
-        const w = Math.max(tw(name), tw(sub));
-        let dir = 1;
-        if (x + 26 + w > W - 20) dir = -1;
-        const lx = x + dir * 22, ly = y - 22;
-        const x0 = lx + dir * 12, an = dir > 0 ? 'start' : 'end';
+        let x = h.x, y = h.y;
+        // a pinned (tapped) label follows the point it was pinned to as the robot turns
+        if (h.pinned && h.lp) { const q = projP(h.v === 2 ? V2 : V1, wp(h.i, h.lp)); x = q.x; y = q.y; }
+        const lines = [name].concat(wrapDots(sub, L.m ? Math.min(250, W - 2 * L.gut - 12) : 420));
+        const w = lines.reduce((m, s) => Math.max(m, tw(s)), 0);
+        const bw = w + 12, bh = 20 + 15 * (lines.length - 1);
+        // beside the point (right, or left when that runs off the screen), then clamped inside the gutters
+        const dir = x + 34 + bw > W - L.gut ? -1 : 1;
+        const lx = x + dir * 22;
+        let ly = y - 22;
+        const yMin = (L.m ? L.top : 70) + 11, yMax = H - (L.m ? 104 : 76) - bh + 11;
+        if (ly < yMin) ly = Math.min(y + 30, yMax); else if (ly > yMax) ly = yMax;
+        const bx = clamp(dir > 0 ? lx + 6 : lx - 6 - bw, L.gut - 6, W - L.gut - bw + 6);
+        let by = ly - 11;
+        let path;
+        if (x > bx - 10 && x < bx + bw + 10) {
+          // too wide to sit beside the point (phones): the card goes above it (below, near the top), leader straight up / down
+          by = y - 20 - bh;
+          if (by < yMin - 11) by = Math.min(y + 20, yMax - 11);
+          ly = by + 11;
+          path = [[x, y], [x, by > y ? by : by + bh]];
+        } else {
+          // leader: from the point to the card's near edge, along the first line
+          path = [[x, y], [lx, ly], [dir > 0 ? Math.max(bx, lx) : Math.min(bx + bw, lx), ly]];
+        }
         // an opaque white card (on top of the leaders) with the name in accent and the size in grey
         const bg = node('hvbg', 'rect', gHv);
-        at(bg, 'x', rr(dir > 0 ? x0 - 6 : x0 - w - 6)); at(bg, 'y', rr(ly - 11)); at(bg, 'width', rr(w + 12));
-        at(bg, 'height', sub ? '35' : '20'); at(bg, 'class', 'pl');
+        at(bg, 'x', rr(bx)); at(bg, 'y', rr(by)); at(bg, 'width', rr(bw)); at(bg, 'height', String(bh)); at(bg, 'class', 'pl');
         const q = node('hvq', 'rect', gHv);
         at(q, 'x', rr(x - 2.5)); at(q, 'y', rr(y - 2.5)); at(q, 'width', '5'); at(q, 'height', '5'); at(q, 'class', 'fa');
         const l = node('hvl', 'polyline', gHv);
-        at(l, 'points', [[x, y], [lx, ly], [lx + dir * 8, ly]].map(p => rr(p[0]) + ',' + rr(p[1])).join(' ')); at(l, 'class', 'a');
-        const t1 = node('hvt', 'text', gHv);
-        if (t1._t !== name) { t1._t = name; t1.textContent = name; }
-        at(t1, 'x', rr(x0)); at(t1, 'y', rr(ly + 4)); at(t1, 'text-anchor', an); at(t1, 'class', 'a');
-        if (sub) {
-          const t2 = node('hvs', 'text', gHv);
-          if (t2._t !== sub) { t2._t = sub; t2.textContent = sub; }
-          at(t2, 'x', rr(x0)); at(t2, 'y', rr(ly + 19)); at(t2, 'text-anchor', an); at(t2, 'class', 's');
+        at(l, 'points', path.map(p => rr(p[0]) + ',' + rr(p[1])).join(' ')); at(l, 'class', 'a');
+        lines.forEach((s, j) => {
+          const t = node('hvt' + j, 'text', gHv);
+          if (t._t !== s) { t._t = s; t.textContent = s; }
+          at(t, 'x', rr(bx + 6)); at(t, 'y', rr(ly + 4 + 15 * j)); at(t, 'text-anchor', 'start'); at(t, 'class', j ? 's' : 'a');
+        });
+        // labels the card lands on are hidden while it shows (no half-covered glyphs peeking out from under it)
+        const m = 5, cx0 = bx - m, cx1 = bx + bw + m, cy0 = by - m, cy1 = by + bh + m;
+        for (const pk of used) {
+          if (pk.slice(0, 5) !== 'rect:' || pk.slice(-2) !== '_p') continue;
+          const pn = pool.get(pk), a = pn._a;
+          const px0 = +a.x, py0 = +a.y, px1 = px0 + +a.width, py1 = py0 + +a.height;
+          if (px1 < cx0 || px0 > cx1 || py1 < cy0 || py0 > cy1) continue;
+          const tn = pool.get('text:' + pk.slice(5, -2));
+          for (const n of [pn, tn]) if (n && !n._hid) { n.style.display = 'none'; n._hid = true; }
         }
       }
 
@@ -1791,11 +2122,35 @@
         }
       }
 
-      let lastT = 0;
+      // Render only when something on the canvas changed (the camera, a part's pose / explode / fade / tint, the ring,
+      // the floor, the hover): a paused or settled drawing costs no GPU time.
+      const sigBuf = new Float64Array(256), sigLast = new Float64Array(256);
+      let sigN = 0, forceRender = true;
+      function canvasChanged() {
+        let n = 0;
+        const put = v => { if (n < 256) sigBuf[n++] = v; };
+        for (const V of [V1, V2]) { put(V.az); put(V.el); put(V.s); put(V.cx); put(V.cy); }
+        put(CU.dual); put(CU.ring); put(CU.floor); put(G.floorU ? G.floorU.uScroll.value : 0);
+        put(W); put(H); put(L.clipB || 0); put(L.split || 0); put(hover ? hover.i : -1);
+        for (let i = 0; i < NP; i++) { put(CU.ex[i]); put(CU.fade[i]); put(CU.tint[i]); }
+        for (const j of JOINTS) put(CU.ang[j]);
+        let diff = forceRender || n !== sigN;
+        for (let k = 0; !diff && k < n; k++) if (Math.abs(sigBuf[k] - sigLast[k]) > 1e-4) diff = true;
+        if (diff) { sigLast.set(sigBuf.subarray(0, n)); sigN = n; }
+        forceRender = false;
+        return diff;
+      }
+
+      let frameN = 0;
       function frame(t, dt, force) {
         if (!meta) return;
+        if (force) forceRender = true;
+        // phones: re-lay out once core's sound invite goes away (the first tap), so the art uses that room again
+        if (!STILL && L.m && ++frameN % 20 === 0 && inviteUp() !== L.invite) refit();
         if (!STILL && S.entered) {
-          if (!S.paused) S.t += dt;
+          const sid = STEPS[S.step].id;
+          // (phones show Dimensions one view at a time: a paused visitor gets the finished front view)
+          if (!S.paused || S.t < (sid === 'dims' && L.dimsAlt ? 5 : SETTLE[sid])) S.t += dt;
           // autoplay
           const st = STEPS[S.step];
           if (!REDUCED && !S.paused && S.t > st.dur && performance.now() / 1000 - S.lastInteract > 6 && !(hover && pointer.in) && !pointer.down) {
@@ -1808,8 +2163,7 @@
         if (G.ready && model) {
           computePose();
           walkFloor();
-          applyParts();
-          render();
+          if (canvasChanged()) { applyParts(); render(); }
         } else if (model || meta) {
           placeBlueprint();
           placeLoad();
@@ -1819,8 +2173,7 @@
         if (G.ready && pointer.in && !pointer.down && !(hover && hover.pinned) && (S.pickN = (S.pickN || 0) + 1) % 12 === 0) schedulePick();
         updHead(false);
         updReadouts();
-        void t; void force;
-        lastT = t;
+        void t;
       }
       // walk: the floor moves with the stance foot; a footstep sound when the stance changes
       function walkFloor() {
@@ -1842,9 +2195,13 @@
       const pad2 = n => String(n).padStart(2, '0');
       const stepLabel = i => `${pad2(i + 1)} / ${pad2(STEPS.length)} · ${STEPS[i].label}`;
       let headK = -1, headTxt = '';
+      // 801–1100 px: the headline box is at least 420 px wide and can reach under the step header; there the header
+      // drops the step name (the stepper beside the art shows it) rather than run into the headline's first line
+      function headFits(txt) { return !L.hlRight || L.hlRight + 14 <= W - 40 - tw(txt); }
       function updHead(force) {
         if (STILL) return;
-        const txt = stepLabel(S.step);
+        const full = stepLabel(S.step);
+        const txt = L.m || headFits(full) ? full : `${pad2(S.step + 1)} / ${pad2(STEPS.length)}`;
         const stt = S.paused ? 'paused · [space]' : REDUCED ? '↑ ↓ to step' : 'autoplay';
         if (force || txt + stt !== headTxt) {
           headTxt = txt + stt;
@@ -1891,8 +2248,9 @@
         if (show) { BUS.pk.setAttribute('x', (px - 3).toFixed(1)); BUS.pk.setAttribute('y', (py - 3).toFixed(1)); }
       }
       function setRow(row, v) { const s = fmt(v) + '°'; if (row.last !== s) { row.last = s; row.v.textContent = s; } }
+      const r1 = v => Math.round(v * 10) / 10;
       function updReadouts() {
-        if (STILL || !meta) return;
+        if (STILL || !meta || G.lost) return;
         const id = STEPS[S.step].id;
         if (id === 'joints' && L.side) {
           for (const j of ['hip_yaw', 'hip_pitch', 'knee', 'ankle']) {
@@ -1901,17 +2259,23 @@
             if (jRows[j].on !== on) { jRows[j].on = on; jRows[j].r.classList.toggle('is-on', on); }
           }
         }
-        if (id === 'brain' && L.side) busFrame(S.t);
+        if (id === 'brain' && !brainCol()) busFrame(S.t);
         if (id === 'walk' && L.side) {
-          const h = CU.ang.hip_pitch_R, k = CU.ang.knee_R, a = CU.ang.ankle_R;
+          // the rows are rounded first and the ankle is worked out from the rounded values, so the check line adds up
+          // (the gait keeps ankle = −(hip + knee) exactly)
+          const h = r1(CU.ang.hip_pitch_R), k = r1(CU.ang.knee_R), a = r1(-(h + k));
           setRow(wRows.hip_pitch, h); setRow(wRows.knee, k); setRow(wRows.ankle, a);
-          const s = `ankle = −(${fmt(h)} ${k >= 0 ? '+' : '−'} ${Math.abs(k).toFixed(1)}) = <b>${fmt(a)}°</b>`;
+          const eq = `−(${fmt(h)} ${k >= 0 ? '+' : '−'} ${Math.abs(k).toFixed(1)}) = `;
+          const pre = tw('ankle = ' + eq + '+00.0°') <= L.panelW ? 'ankle = ' : '';
+          const s = `${pre}${eq}<b>${fmt(a)}°</b>`;
           if (wCheck._s !== s) { wCheck._s = s; wCheck.innerHTML = s; }
         }
       }
 
       /* ---------------------------------------------------------------- interaction */
-      function pickAt(x, y) {
+      // the part under screen point (x, y); `out` (optional) receives the hit point in the part's own rest frame (lp)
+      // and the view it was picked in, so a pinned label can follow that point as the robot turns
+      function pickAt(x, y, out) {
         if (!G.ready) return null;
         let cam = G.cam;
         if (CU.dual > 0.5 && x > (L.split || W / 2)) cam = G.cam2;
@@ -1921,6 +2285,10 @@
         for (const hh of hits) {
           const i = hh.object.userData.i;
           if (CU.fade[i] > 0.6 || !hh.object.visible) continue;
+          if (out) {
+            const q = hh.object.worldToLocal(hh.point.clone());
+            out.lp = [q.x, q.y, q.z]; out.v = cam === G.cam2 ? 2 : 1;
+          }
           return i;
         }
         return null;
@@ -1934,7 +2302,9 @@
           const i = pickAt(pointer.x, pointer.y);
           const prev = hover ? hover.i : null;
           hover = i == null ? null : { i, x: pointer.x, y: pointer.y };
-          if (i != null && i !== prev) uiSfx('hover', { gain: 0.6 });
+          // (rate-limited: a sweep across the model is a few clicks, not a buzz)
+          const now = performance.now();
+          if (i != null && i !== prev && now - (S.lastHoverSfx || 0) >= 90) { S.lastHoverSfx = now; uiSfx('hover', { gain: 0.6 }); }
         });
       }
       const orbitable = () => STEPS[S.step].id !== 'dims';
@@ -1957,7 +2327,7 @@
             if (STEPS[S.step].id === 'assembled') { S.spin = pointer.spin0 - dx * 0.45; S.orbitAz = pointer.az0; }
             else S.orbitAz = pointer.az0 - dx * 0.45;
             S.orbitEl = clamp(pointer.el0 + dy * 0.3, -20, 60);
-            if (hover && !hover.pinned) hover = null;
+            hover = null;   // (a pinned label too: the part it named is moving away)
             touch();
           }
           return;
@@ -1971,8 +2341,9 @@
         try { glCanvas.releasePointerCapture(e.pointerId); } catch (_) { /* ok */ }
         if (pointer.moved <= 4 && e.type === 'pointerup') {
           // tap / click: pin the part's label (touch), or clear it
-          const i = pickAt(pointer.x, pointer.y);
-          if (i != null) { hover = { i, x: pointer.x, y: pointer.y, pinned: pointer.type !== 'mouse' }; uiSfx('select', { gain: 0.6 }); }
+          const o = {};
+          const i = pickAt(pointer.x, pointer.y, o);
+          if (i != null) { hover = { i, x: pointer.x, y: pointer.y, pinned: pointer.type !== 'mouse', lp: o.lp, v: o.v }; uiSfx('select', { gain: 0.6 }); }
           else hover = null;
         }
         touch();
@@ -1992,6 +2363,7 @@
         S.paused = !S.paused;
         touch();
         api.hint(S.paused ? 'Paused' : 'Playing', 1100);
+        S.hintAt = performance.now();
         updHead(true);
       }
 
@@ -2007,6 +2379,9 @@
         api.onResize(() => {
           layout();
           if (G.ready) { G.renderer.setSize(W, H); G.res.value.set(W * G.dpr, H * G.dpr); }
+          forceRender = true;
+          // across the 800 px breakpoint the headline's sub (full / short) and the caption change with it
+          if (S.entered && api.isActive() && (L.textM !== L.m || L.textT !== L.touch)) stepText();
           refit();
           placeBlueprint(); placeLoad();
         });
@@ -2039,20 +2414,19 @@
           if (STILL) return;
           S.entered = false;
           S.paused = false;
+          api.hint('');   // (a timed hint from the scene before, e.g. lpwm's, would outlive it here)
           goStep(0, false);
           S.lastInteract = -1e9;
-          if (!S.hintShown && !L.m && W > 1100) { S.hintShown = true; setTimeout(() => { if (api.isActive()) api.hint('Drag to turn the robot · hover a part for its size', 4200); }, 2600); }
+          // (no extra centre hint: the headline's sub and the caption already say "drag to turn, hover a part")
         },
         exit() {
+          if (performance.now() - (S.hintAt || -1e9) < 1300) api.hint('');   // (our Paused / Playing hint stays with us)
           pointer.down = false; pointer.in = false; hover = null;
           el.classList.remove('is-dragging');
         },
         sound(on) {
           soundOn = !!on;
-          const au = A();
-          if (on && au && !STILL) {
-            try { fan = au.fan({ speed: 0.22, gain: 0.12, attack: 3, dest: api.bus() }); fanLevel(STEPS[S.step].id); } catch (e) { fan = null; }
-          } else if (fan) { try { fan.stop(0.5); } catch (e) { /* ok */ } fan = null; }
+          if (on && !STILL) startBed(); else stopBed();
         },
         key(e) {
           if (STILL) return false;
