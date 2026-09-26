@@ -8,9 +8,10 @@
  * So the film shows the work, never him posing (his face appears once: the biped photo); "the same life" is the
  * builders from the biographies he has read (BUILDERS: portraits flip through one frame, then stand together at
  * "ignore them", where his press list used to be); bar 41 is Archimedes' lever, not a tally of his projects; and the
- * film ends on his own line, "I strive, asymptotically, to become one of these builders.", with its asymptote.
- * The film's grammar (block cursor on 16ths, hex dumps, node grids) nods to Paradigm's Fourth Fund film;
- * it is credited at the end of the film and under the poem.
+ * film ends on his own line ("I hope I can live a similar life, the life of a builder, and approach it
+ * asymptotically.") with its asymptote.
+ * The film's grammar (block cursor on 16ths, hex dumps, node grids) nods to Paradigm's Fourth Fund film; the credit
+ * at the end of the film and under the poem is simply "Design inspired by paradigm.xyz" (the owner's wording).
  * Bits & atoms (round 4): the film opens on a workbench, a terminal (bits) beside a hairline robot arm that
  * assembles a SkyWindFarm unit (atoms), and peaks in bar 42 on an assembly engine that builds six more, then
  * "system active" on the bar-43 downbeat (BENCH, ENG, bench(), engine()). Every one of their visual events is a
@@ -140,14 +141,16 @@
     ['we know the people who are crazy enough to think they can change the world'],
     ['are the ones who do.']];
   // The owner's own line after the poem, in his voice (roman, not the poem's italic): he is not one of the builders,
-  // he hopes to become one. "asymptotically" is a blue phrase on the page (its card: the curve and its asymptote).
-  const RAW_HUMBLE = ['I strive, ', E('asymptotically'), ', to become one of these builders.'];
+  // he hopes to live their life, and to approach it. "asymptotically" is a blue phrase on the page (its card: the curve
+  // and its asymptote).
+  const RAW_HUMBLE = ['I hope I can live a similar life, the life of a builder, and approach it ', E('asymptotically'), '.'];
   // Attribution. Film: one line in the end credits, followed by the Paradigm design credit. Page: the footnote under
   // the poem (why it was written), then the portraits' credits.
   const ATTRIBUTION = 'Inspired heavily by Apple’s Think Different, with my own changes; also Sequoia’s ethos and Dyson’s Against the Odds';
   const FOOTNOTE = ['I wrote this poem inspired heavily by Apple’s Think Different, with changes of my own; it also draws on Sequoia’s ethos and James Dyson’s Against the Odds.',
-    'I wrote it after reading many biographies and autobiographies. Everyone in them seemed to be living, intrinsically, the same life: the life of a lover, in love with their art. I hope I can live a similar life.'];
-  const CREDIT = { pre: 'Design inspired by ', link: 'paradigm.xyz', href: 'https://www.paradigm.xyz', post: ' · the film nods to Paradigm’s Fourth Fund film' };
+    // (the same sentences as the About page, me.html)
+    'I wrote it after reading many biographies and autobiographies. I feel that, intrinsically, they were all living a very similar life: the life of a lover who was autotelically in love with their art. I hope to pursue this same love in my own way.'];
+  const CREDIT = { pre: 'Design inspired by ', link: 'paradigm.xyz', href: 'https://www.paradigm.xyz', post: '' };
   const CREDIT_TEXT = CREDIT.pre + CREDIT.link + CREDIT.post;
 
   const POEM = RAW.map((st, si) => st.map((ln, li) => segs(`p${si}.${li}`, ...ln)));
@@ -294,23 +297,22 @@
     { name: 'Max', label: 'Max', href: 'https://www.maxxiong.dev/' },
   ];
   // The builders "living the same life" (the owner's list, from the biographies he has read; Napoleon near the top),
-  // in order of birth: many generations, one life. Portraits: black and white 4:5 crops of free-licensed files from
-  // Wikimedia Commons (site/img/builders/; by / lic / page: the credits under the poem).
+  // in order of birth: many generations, one life. Portraits: black and white 4:5 crops of public-domain / free-licensed
+  // files from Wikimedia Commons (site/img/builders/; their credits: credits.html, linked from the page's foot).
   const BUILDERS = [
-    { id: 'napoleon', name: 'Napoleon Bonaparte', short: 'Napoleon', years: '1769–1821',
-      by: 'Jacques-Louis David, 1812', lic: 'public domain', page: 'https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Emperor_Napoleon_in_His_Study_at_the_Tuileries_-_Google_Art_Project_(3x4_close_cropped).jpg' },
-    { id: 'vanderbilt', name: 'Cornelius Vanderbilt', short: 'Vanderbilt', years: '1794–1877',
-      by: 'Mathew Brady’s studio, restored by Michel Vuijlsteke', lic: 'public domain', page: 'https://commons.wikimedia.org/wiki/File:Cornelius_Vanderbilt_Daguerrotype2_(cropped)(b).jpg' },
-    { id: 'churchill', name: 'Winston Churchill', short: 'Churchill', years: '1874–1965',
-      by: 'UK Central Office of Information, 1945', lic: 'public domain', page: 'https://commons.wikimedia.org/wiki/File:Winston_Churchill_C3519635.jpg' },
-    { id: 'grove', name: 'Andy Grove', short: 'Grove', years: '1936–2016',
-      by: 'Steve Jurvetson, 2009', lic: 'CC BY 2.0', licUrl: 'https://creativecommons.org/licenses/by/2.0/', page: 'https://commons.wikimedia.org/wiki/File:Intel_Inside_(3607903903)_(cropped).jpg' },
-    { id: 'chouinard', name: 'Yvon Chouinard', short: 'Chouinard', years: 'b. 1938',
-      by: 'Tom Frost', lic: 'CC BY-SA 3.0', licUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', page: 'https://commons.wikimedia.org/wiki/File:Yvon_Chouinard_by_Tom_Frost.jpg' },
-    { id: 'musk', name: 'Elon Musk', short: 'Musk', years: 'b. 1971',
-      by: 'Debbie Rowe / The Royal Society, 2018', lic: 'CC BY-SA 3.0', licUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', page: 'https://commons.wikimedia.org/wiki/File:Elon_Musk_Royal_Society_(crop2).jpg' },
-    { id: 'altman', name: 'Sam Altman', short: 'Altman', years: 'b. 1985',
-      by: 'TechCrunch, 2019', lic: 'CC BY 2.0', licUrl: 'https://creativecommons.org/licenses/by/2.0/', page: 'https://commons.wikimedia.org/wiki/File:Sam_Altman_TechCrunch_SF_2019_Day_2_Oct_3_(cropped)_(cropped).jpg' },
+    { id: 'napoleon', name: 'Napoleon Bonaparte', short: 'Napoleon', years: '1769–1821' },
+    { id: 'vanderbilt', name: 'Cornelius Vanderbilt', short: 'Vanderbilt', years: '1794–1877' },
+    { id: 'churchill', name: 'Winston Churchill', short: 'Churchill', years: '1874–1965' },
+    { id: 'disney', name: 'Walt Disney', short: 'Disney', years: '1901–1966' },
+    { id: 'walton', name: 'Sam Walton', short: 'Walton', years: '1918–1992' },
+    { id: 'walsh', name: 'Bill Walsh', short: 'Walsh', years: '1931–2007' },
+    { id: 'grove', name: 'Andy Grove', short: 'Grove', years: '1936–2016' },
+    { id: 'knight', name: 'Phil Knight', short: 'Knight', years: 'b. 1938' },
+    { id: 'chouinard', name: 'Yvon Chouinard', short: 'Chouinard', years: 'b. 1938' },
+    { id: 'krzyzewski', name: 'Mike Krzyzewski', short: 'Coach K', years: 'b. 1947' },
+    { id: 'jobs', name: 'Steve Jobs', short: 'Jobs', years: '1955–2011' },
+    { id: 'federer', name: 'Roger Federer', short: 'Federer', years: 'b. 1981' },
+    { id: 'messi', name: 'Lionel Messi', short: 'Messi', years: 'b. 1987' },
   ];
   BUILDERS.forEach(b => { b.src = `site/img/builders/${b.id}.jpg`; AR[b.src] = 4 / 5; FY[b.src] = 0.5; });
 
@@ -398,11 +400,11 @@
       { src: IMG.blinket, title: 'Blinket', meta: 'Hands-free internet for ALS: blinks and winks on a webcam', href: 'https://blinketmed.com/apps' }] },
     // The builders the poem is about (the owner's list: he hopes to become like them). 'the same life': their portraits
     // flip through one frame, the name and years changing with the face; 'ignore them': all of them at once.
-    'the same life': { mode: 'flip', builders: true, every: 4, title: `${BUILDERS[0].name} · ${BUILDERS[0].years}`, meta: 'One frame, seven lives · 1769\u00a0→\u00a0today' },
+    'the same life': { mode: 'flip', builders: true, every: 2, title: `${BUILDERS[0].name} · ${BUILDERS[0].years}`, meta: 'One frame, many lives · 1769\u00a0→\u00a0today' },
     'race unrelentingly toward creating value': { mode: 'jump', proj: ['skywindfarm', 'rectified-lpjepa'], cards: [
       { src: ph('aerial'), title: 'Energy · SkyWindFarm', meta: 'Flight test, 2024', href: SWF_HREF },
       { src: IMG.lpjepa, title: 'Intelligence · Rectified LpJEPA', meta: 'ICML 2026', href: 'https://arxiv.org/abs/2602.01456' }] },
-    'ignore them': { mode: 'mosaic', srcs: BUILDERS.map(b => b.src), cols: 4, rows: 2, cellAr: 4 / 5, title: 'Hard to ignore', meta: BUILDERS.map(b => b.short).join(' · ') },
+    'ignore them': { mode: 'mosaic', srcs: BUILDERS.map(b => b.src), cols: 5, rows: 3, cellAr: 4 / 5, w: 340, title: 'Hard to ignore', meta: BUILDERS.map(b => b.short).join(' · ') },
     // the owner's own line: the curve that approaches the builders and never quite reaches them
     'asymptotically': { mode: 'card', art: 'asymptote', title: 'Asymptotically', meta: 'Always approaching, never quite there', w: 300 },
     // (no trophies here: a quiet line drawing, Archimedes' lever lifting the world, as in the film's bar 41)
@@ -478,9 +480,10 @@
     [sq('gauss'), 'physics'], [sq('rowing'), 'rowing'], [sq('ridges'), 'hiking'], [sq('paintTable'), 'art']];
   const FILM_PHOTOS = [ph('aerial'), ph('tunnelF')].concat(CURIOUS.map(c => c[0]), BUILDERS.map(b => b.src));
   const NAME_T = NAMES.map((_, k) => (k < 6 ? lb(4, 1) + k * BEAT / 2 : lb(4, 4) + (k - 6) * S16));
-  // Bar 37: the builders flip through one frame, one per 8th from the downbeat; bar 40: all seven, one per 16th from
-  // beat 3 (times local to section 9). Bar 41: the lever's beam travels once the push lands (local to section 10).
-  const BLD_T = BUILDERS.map((_, k) => lb(1) + k * BEAT / 2), STRIP_T = lb(4, 3);
+  // Bar 37: the builders flip through one frame from the downbeat, Napoleon for an 8th, then one per 16th (the last
+  // is held); bar 40: all of them, one per 32nd from beat 3, all in by the bar's last 16th (times local to section 9).
+  // Bar 41: the lever's beam travels once the push lands (local to section 10).
+  const BLD_T = BUILDERS.map((_, k) => lb(1) + (k ? BEAT / 2 + (k - 1) * S16 : 0)), STRIP_T = lb(4, 3), STRIP_STEP = S16 / 2;
   const BLD_CAP = 'fig. 11 — the same life', BLD_EYEBROW = 'SOME OF THEM';
   const LEV = { t0: BEAT * 1.25, t1: BEAT * 3.25 }, LEV_CAP = 'fig. 12 — Archimedes’ lever';
   const GLITCHES = [[lb(9), 0.5], [lb(13), 0.45], [lb(16, 2), 0.8], [lb(17), 1], [lb(21), 1], [lb(29), 0.5], [lb(33), 0.7], [lb(37), 0.8], [lb(41), 1]];
@@ -2873,7 +2876,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         photo(img(b.src), x, y, w, h, { u: k ? 10 : lt - BLD_T[0], wipe: S16 * 1.2 });
         // over the frame: the figure's caption and the counter; under it: the name, the years (a second line if the two
         // would not fit side by side)
-        const cap = mw(monoF(12), BLD_CAP) + mw(monoF(11), '07 / 07') + 20 <= w + 8 ? BLD_CAP : BLD_CAP.split(' — ')[0];
+        const cap = mw(monoF(12), BLD_CAP) + mw(monoF(11), `${pad2(n)} / ${pad2(n)}`) + 20 <= w + 8 ? BLD_CAP : BLD_CAP.split(' — ')[0];
         label(cap, x - 4, y - 14, { color: T2, noKO: true });
         label(`${pad2(k + 1)} / ${pad2(n)}`, x + w + 4, y - 14, { align: 'right', size: 11, color: C.g500, noKO: true });
         const nw = mw(monoF(12), b.name), yw = mw(monoF(12), b.years), two = nw + yw + 16 > w + 8;
@@ -2883,19 +2886,19 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         const td = charTime(SP.s9a, SP.s9a.n - 2), sr = spanRect(a, 0);
         if (!G.mobile && sr && lt >= td) leader(sr, { x: x - 4, y: y - 4, w: w + 8, h: h + 8, a: 1 }, lt - td);
       }
-      // Bar 40 ("…ignore them."): the same seven together, one per 16th from beat 3, under a small eyebrow (where a
-      // list of the owner's press used to be). Desktop: one row; stacked: rows of four.
+      // Bar 40 ("…ignore them."): the same builders together, one per 32nd from beat 3, under a small eyebrow (where a
+      // list of the owner's press used to be), in rows: as many columns as give the largest faces in the room there is.
       function builderStrip(u, y0) {
         const { F, TX } = G, n = BUILDERS.length, mob = G.mobile, gap = mob ? 12 : 20, lab = 22;
-        const cols = mob && F.w < 560 ? 4 : n, rowsN = Math.ceil(n / cols);
-        let w = Math.min(mob ? 120 : 112, (F.w - 8 - (cols - 1) * gap) / cols);
-        w = Math.min(w, (F.y1 - 6 - y0 - rowsN * (lab + 12) - (rowsN - 1) * gap) / rowsN / 1.25);
+        const wAt = c => { const r = Math.ceil(n / c); return Math.min(mob ? 120 : 104, (F.w - 8 - (c - 1) * gap) / c, (F.y1 - (mob ? 6 : 22) - y0 - r * (lab + 12) - (r - 1) * gap) / r / 1.25); }; // (desktop: clear of the ticker)
+        const cols = [4, 5, 7, 13].reduce((b, c) => (wAt(c) > wAt(b) ? c : b), 7), rowsN = Math.ceil(n / cols);
+        const w = wAt(cols);
         if (w < 26 || u < 0) return;
         const h = w * 1.25, lw = z => Math.max(...BUILDERS.map(b => mw(monoF(z), b.short)));
         const lsz = [12, 11, 10].find(z => lw(z) <= w + gap - 8) || 10, stag = lw(lsz) > w + gap - 8; // (stag: every other label drops a line)
         tracked(BLD_EYEBROW, TX, y0 - 16);
         BUILDERS.forEach((b, i) => {
-          const ui = u - i * S16;
+          const ui = u - i * STRIP_STEP;
           if (ui < 0) return;
           const x = TX + 4 + (i % cols) * (w + gap), y = y0 + Math.floor(i / cols) * (h + lab + 12 + gap);
           photo(img(b.src), x, y, w, h, { u: ui, pop: true });
@@ -2906,7 +2909,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       }
 
       // S9 — The same life: the builders flip through one frame; energy × intelligence split; quote/disagree/glorify/
-      // vilify; "ignore them": the seven together
+      // vilify; "ignore them": the builders together
       SEC[9] = (lt, t) => {
         const { TX, TY, TW, sz, F } = G;
         if (lt < lb(2)) {
@@ -3090,7 +3093,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         const { TY, TX, sz, F } = G, cw = G.mobile ? F.w : F.w * 0.8, limit = creditsLayout().rule - 18;
         const at = (k, y) => { // at type scale k, from the first baseline y: every line's baseline and the block's bottom
           const size = Math.round(sz.M * k), xl = Math.round(sz.XL * k), hs = Math.round((G.mobile ? sz.S : sz.M * 0.8) * Math.max(0.85, k)), hf = serifF(hs);
-          const hw = Math.min(F.w, Math.max(mw(hf, 'I strive, asymptotically,'), mw(hf, 'to become one of these builders.')) + 2);
+          const hw = Math.min(F.w, Math.max(mw(hf, 'I hope I can live a similar life, the life of a builder,'), mw(hf, 'and approach it asymptotically.')) + 2);
           const Lc = lay(SP.s10c.segs, serifF(size, true), size, cw), Ld = lay(SP.s10d.segs, serifF(size, true), size, cw);
           const Le = lay(SP.s10e.segs, serifF(xl, true), xl, F.w), Lh = lay(SP.s10h.segs, hf, hs, hw);
           const yc = y, yd = yc + Lc.last + size * 1.5, ye = yd + Ld.last + size * 0.3 + xl * (k < 1 ? 1.05 : 1.4);
@@ -3331,7 +3334,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         add(7, lb(4), 'snap');
         NAME_T.forEach((t, i) => add(8, t, 'name', i));
         BLD_T.forEach((t, i) => add(9, t, 'bflip', i));
-        BUILDERS.forEach((_, i) => add(9, STRIP_T + i * S16, 'strip', i));
+        BUILDERS.forEach((_, i) => { if (i % 2 === 0) add(9, STRIP_T + i * STRIP_STEP, 'strip', i); }); // (a bit per 16th: the rate limit)
         add(10, LEV.t0, 'lever', 0, { dur: LEV.t1 - LEV.t0 }); add(10, LEV.t1, 'levered');
         for (let i = 0; i < HERMES_WORDS.length; i++) add(8, i * BEAT / 2, 'word', i);
         [lb(4, 2), lb(4, 3), lb(4, 4)].forEach((t, i) => add(5, t, 'energy', i));
@@ -3452,9 +3455,9 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           case 'shell': play('tick', D(e.p / 3, 0), { when, gain: 0.24, pan: pan, dest }); break;
           case 'hist': play('click', { when, gain: 0.12, freq: 1200 + ((e.p * 0.37) % 1) * 1300, pan, dest }); break;
           case 'name': play('tick', D(e.p, 0), { when, gain: 0.24, dest }); break;
-          // the builders: a soft grain per face as they flip through the frame, climbing a step per generation; the
+          // the builders: a soft grain on the first face, then a tick per face as they flip through the frame; the
           // strip at "ignore them": a quiet bit per portrait
-          case 'bflip': play('grain', D([0, 1, 2, 3, 4, 0, 2][e.p % 7], e.p >= 5 ? 1 : 0), { when, gain: 0.3, bright: 0.18, pan: -0.6 + (e.p % 7) * 0.2, dest }); break;
+          case 'bflip': if (e.p) play('tick', D(e.p % 5, e.p >= 10 ? 1 : 0), { when, gain: 0.24, pan: ((e.p % 6) / 5) - 0.5, dest }); else play('grain', D(0, 0), { when, gain: 0.32, bright: 0.18, dest }); break;
           case 'strip': play('bit', D(e.p % 5, 0), { when, gain: 0.15, pan: -0.45 + (e.p % 7) * 0.15, dest }); break;
           // the lever: the beam's travel (an arm glide), and the long end settling on the ground
           case 'lever': fx('arm', { when, dur: e.dur, to: 55, gain: 0.42, pan: 0.25, dest }); break;
@@ -3790,15 +3793,9 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       mp.append(H('span', { class: 'bd-cur', 'aria-hidden': 'true' }));
       me.append(mp); me.style.setProperty('--d', (dly += 0.035).toFixed(3) + 's');
       poem.append(me); stanzaEls.push(me);
-      // the footnote (why the poem was written), then the design credit and the portraits' credits, discreetly
+      // the footnote (why the poem was written), then the design credit, discreetly (the portraits' credits: credits.html)
       const credA = H('a', { href: CREDIT.href, target: '_blank', rel: 'noopener' }, CREDIT.link);
-      const credP = H('p', null, 'Portraits via Wikimedia Commons, cropped and set in black and white (the CC BY-SA ones under the same licence): ');
-      BUILDERS.forEach((b, i) => {
-        credP.append(i ? '; ' : '', H('a', { href: b.page, target: '_blank', rel: 'noopener' }, b.short), `, ${b.by}, `,
-          b.licUrl ? H('a', { href: b.licUrl, target: '_blank', rel: 'noopener' }, b.lic) : b.lic);
-      });
-      credP.append('.');
-      const attr = H('div', { class: 'bd-attr' }, ...FOOTNOTE.map(t => H('p', { text: t })), H('p', null, CREDIT.pre, credA, CREDIT.post), credP);
+      const attr = H('div', { class: 'bd-attr' }, ...FOOTNOTE.map(t => H('p', { text: t })), H('p', null, CREDIT.pre, credA, CREDIT.post));
       attr.querySelectorAll('a').forEach(a => { a.addEventListener('pointerenter', () => ui('hover')); a.addEventListener('click', () => ui('select')); });
       attr.style.setProperty('--d', (dly += 0.035).toFixed(3) + 's');
       poem.append(attr);
@@ -3902,7 +3899,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         ll.append(H('a', { href: s.href, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null }, H('span', { text: s.label })));
       });
       const ll2 = H('div', { class: 'bd-links bd-links--sub' },
-        H('a', { href: 'me.html' }, H('span', { text: 'About' }))); // (no "Read as text": this page is the poem as text)
+        H('a', { href: 'me.html' }, H('span', { text: 'About' })), H('a', { href: 'credits.html' }, H('span', { text: 'Credits' }))); // (no "Read as text": this page is the poem as text)
       secElse.append(ll, ll2);
       // friends' sites: just their names (no pointing arrows). (The owner's "get rid of this section about friends" was
       // the About page's list, gone in b28cd17; here only the arrows went.)
@@ -4066,9 +4063,9 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           let it = { src: cfg.src || null, ar: AR[cfg.src] || null, title: cfg.title, meta: cfg.meta, href: cfg.href || null, art: cfg.art || null }, w = cfg.w || 280;
           if (cfg.gen === 'code') { it.src = codeURL(); it.ar = 600 / 375; }
           if (cfg.mode === 'mosaic') {
-            // (a 3 × 3 of landscape cells by default; the builders: 4 × 2 portrait cells, the eighth left as paper)
+            // (a 3 × 3 of landscape cells by default; the builders: 5 × 3 portrait cells, the last two left as paper)
             const cols = cfg.cols || 3, rows = cfg.rows || 3, ch = 140, cwd = cfg.cellAr ? ch * cfg.cellAr : 200;
-            it = { mosaic: cfg.srcs, cols, rows, ar: (cols * cwd + (cols - 1) * 3) / (rows * ch + (rows - 1) * 3), title: cfg.title, meta: cfg.meta, href: cfg.href || null }; w = 320;
+            it = { mosaic: cfg.srcs, cols, rows, ar: (cols * cwd + (cols - 1) * 3) / (rows * ch + (rows - 1) * 3), title: cfg.title, meta: cfg.meta, href: cfg.href || null }; w = cfg.w || 320;
           }
           j = Object.assign({}, cfg, { mode: 'jump', single: true, cw: w, cards: [it] });
         }

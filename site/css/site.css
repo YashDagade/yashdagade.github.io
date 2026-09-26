@@ -97,7 +97,7 @@ button {
   pointer-events: auto;
 }
 
-/* the caret only appears while a click is typing the next phrase; it never shifts the centered name */
+/* the caret only appears while the next phrase is typing (the About page); it never shifts the centered name */
 .wordmark { cursor: pointer; user-select: none; -webkit-user-select: none; }
 .wordmark .wm-caret {
   position: absolute;
