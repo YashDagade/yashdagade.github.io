@@ -2,9 +2,13 @@
  *
  * Film mode: a 44-bar, 118 BPM music video of Yash's build poem. Lines type on with a block cursor on
  * the 16th-note grid, emphasized phrases ink to deep blue, and hairline vignettes of the work (LpWM sparse latent
- * rollout, Rectified LpJEPA histogram, Radial-VCReg burst, SkyWindFarm turbines in the sky, the robot's CAD render;
- * every "[n]" chip reads the live scene order: SN / readSN), Paradigm-film hex dumps / node grids and project photos
- * cut in on the beat.
+ * rollout, Rectified LpJEPA histogram, Radial-VCReg burst, SkyWindFarm turbines in the sky; every "[n]" chip reads
+ * the live scene order: SN / readSN), Paradigm-film hex dumps / node grids and project photos cut in on the beat.
+ * Humble framing (round 6, the owner's ask): the poem is about the builders he hopes to become like, not about him.
+ * So the film shows the work, never him posing (his face appears once: the biped photo); "the same life" is the
+ * builders from the biographies he has read (BUILDERS: portraits flip through one frame, then stand together at
+ * "ignore them", where his press list used to be); bar 41 is Archimedes' lever, not a tally of his projects; and the
+ * film ends on his own line, "I strive, asymptotically, to become one of these builders.", with its asymptote.
  * The film's grammar (block cursor on 16ths, hex dumps, node grids) nods to Paradigm's Fourth Fund film;
  * it is credited at the end of the film and under the poem.
  * Bits & atoms (round 4): the film opens on a workbench, a terminal (bits) beside a hairline robot arm that
@@ -16,13 +20,12 @@
  * The projects-by-year grouping of the index is called "Stints" (the owner's word).
  * Music is on by default: arriving by any gesture (key 5, arrows, index, menu, Find, a swipe) the film and the score
  * start together at 0:00; a direct link (no gesture yet) plays the film silently under a "Play with sound" pill.
- * The biped (the #robot page) appears as ONE photo (the owner's pick) closing the cold-open montage, as its CAD
- * line-art render (site/img/robot/renders/, exported by the robot page; guarded while missing) in the finale's panel
- * of the four scenes, in its Stints row (thumbnail + its scene chip → #robot) and, photo + render, on
- * "And they yearn to build".
- * Settled mode: the full poem in serif with hoverable phrases (project images + curated personal photos),
- * an index of every project with thumbnails (hover → image, click → link), socials, other pages, friends' sites and
- * the attribution lines. SkyWindFarm units and tethers are drawn with Site.art.swfUnit / swfTether
+ * The biped (the #robot page) appears as ONE photo (the owner's pick) closing the cold-open montage, in its Stints
+ * row (thumbnail + its scene chip → #robot) and, photo + its CAD line-art render (site/img/robot/renders/, exported by
+ * the robot page; guarded while missing), on "And they yearn to build".
+ * Settled mode: the full poem in serif with hoverable phrases (project images and build photos, the builders, two line
+ * drawings), the owner's line after it, an index of every project with thumbnails (hover → image, click → link),
+ * socials, other pages, friends' sites and the footnote (why the poem was written, credits). SkyWindFarm units and tethers are drawn with Site.art.swfUnit / swfTether
  * (exported by skywindfarm.js, so both scenes share one glyph); a local fallback draws them if it's missing.
  *
  * The soundtrack lives in build-score.js (window.Site.BuildScore). Integration contract used here:
@@ -51,7 +54,10 @@
   /* ================================================================== timing */
   const BPM = 118, BEAT = 60 / BPM, BAR = 4 * BEAT, S16 = BEAT / 4, BARS = 44, DUR = BARS * BAR; // 89.49 s
   const lb = (bar, beat = 1, s = 0) => (bar - 1) * BAR + (beat - 1) * BEAT + s * S16;
-  const SETTLE_AT = lb(44, 4); // bar 44 beat 4: the frame (credits held for a beat) dissolves into the interactive poem
+  // The end: "are the ones who do." lands on bar 44; on beat 4 (the score's rising "done" chime, HUMBLE_AT) the owner's
+  // own line lands under it and the closing lines step back; its curve draws on toward the dashed asymptote through
+  // the score's ring-out (the music ends at DUR), and a bar and a half later the frame dissolves into the page.
+  const HUMBLE_AT = lb(44, 4), SETTLE_AT = DUR + 1.5 * BAR;
   const RETURN_MS = 60000; // re-entering [5] within this long after the film settled opens the index; later, the film again
 
   const SECTIONS = [
@@ -130,17 +136,23 @@
     [['Because they ', E('change things'), '.']],
     [['They push the human race forward.']],
   ];
-  const RAW_CLOSING = [['While some may call them the crazy ones'],
-    ['we know that the people who are crazy enough to think they can change the world,'],
-    ['are the ones who do!']];
-  // Attribution: shown exactly as written in build.html (no trailing period), under the poem and at the
-  // end of the film, followed by the Paradigm design credit.
-  const ATTRIBUTION = 'Inspired by Think Different, Apple; Ethos of Sequoia; Against the Odds, James Dyson, and many other builders';
+  const RAW_CLOSING = [['While some may call them the crazy ones,'],
+    ['we know the people who are crazy enough to think they can change the world'],
+    ['are the ones who do.']];
+  // The owner's own line after the poem, in his voice (roman, not the poem's italic): he is not one of the builders,
+  // he hopes to become one. "asymptotically" is a blue phrase on the page (its card: the curve and its asymptote).
+  const RAW_HUMBLE = ['I strive, ', E('asymptotically'), ', to become one of these builders.'];
+  // Attribution. Film: one line in the end credits, followed by the Paradigm design credit. Page: the footnote under
+  // the poem (why it was written), then the portraits' credits.
+  const ATTRIBUTION = 'Inspired heavily by Apple’s Think Different, with my own changes; also Sequoia’s ethos and Dyson’s Against the Odds';
+  const FOOTNOTE = ['I wrote this poem inspired heavily by Apple’s Think Different, with changes of my own; it also draws on Sequoia’s ethos and James Dyson’s Against the Odds.',
+    'I wrote it after reading many biographies and autobiographies. Everyone in them seemed to be living, intrinsically, the same life: the life of a lover, in love with their art. I hope I can live a similar life.'];
   const CREDIT = { pre: 'Design inspired by ', link: 'paradigm.xyz', href: 'https://www.paradigm.xyz', post: ' · the film nods to Paradigm’s Fourth Fund film' };
   const CREDIT_TEXT = CREDIT.pre + CREDIT.link + CREDIT.post;
 
   const POEM = RAW.map((st, si) => st.map((ln, li) => segs(`p${si}.${li}`, ...ln)));
   const CLOSING = RAW_CLOSING.map((ln, li) => segs(`c${li}`, ...ln));
+  const HUMBLE = segs('humble', ...RAW_HUMBLE);
   const L = (si, li) => POEM[si][li];
   // first n characters of a line, as its own segs (used for clauses the film shows on their own)
   function clip(sg, n, id) {
@@ -151,14 +163,15 @@
   const NAMES = RAW[11][0][0].split(': ')[1].split(/(?<=\.)\s+/).map(Q);
 
   /* ================================================================== images */
+  // (no headshot: the owner's face appears once, in the biped photo. The poem is about the builders he hopes to
+  // become like, so the film shows the work and the builders, not him.)
   const IMG = {
-    yash: 'site/img/photos/portrait-headshot-2022.jpg', // the résumé headshot at full resolution (site/img/yash.jpg is 906 px)
     connectu: 'site/img/projects/connectu.jpg', eyeda: 'site/img/projects/eyeda-heatmap.jpg',
     hermes: 'site/img/projects/hermes.jpg', idw: 'site/img/projects/idontwannadie.jpg',
     blinket: 'site/img/projects/blinket.jpg',
     lpjepa: 'site/img/projects/lpjepa.jpg', radial: 'site/img/projects/radialvcreg.jpg',
     cp: 'site/img/projects/skywindfarm-cp.jpg',
-    cfd: 'site/img/swf/cfd-velocity-contour.jpg', render: 'site/img/swf/energy-unit-render.jpg',
+    cfd: 'site/img/swf/cfd-velocity-contour.jpg', render: 'site/img/swf/energy-unit-render.jpg', stability: 'site/img/swf/fig18-stability.jpg',
     poster: 'site/img/swf/isef-poster.jpg', flight: 'site/img/swf/prototype-flight.jpg',
     system: 'site/img/swf/system-diagram.jpg', sky: 'site/img/swf/units-in-sky.jpg', ground: 'site/img/swf/ground-station.jpg',
     // Arbor: the public sign-in page. site/img/projects/arbor.jpg (the app itself) still shows private project
@@ -178,7 +191,7 @@
     [IMG.radial, 291 / 300], [IMG.cp, 638 / 468], [IMG.cfd, 1334 / 649], [IMG.render, 1110 / 828], [IMG.poster, 862 / 542],
     [IMG.flight, 1400 / 786], [IMG.system, 1400 / 873], [IMG.sky, 1400 / 752], [IMG.ground, 1136 / 273], [IMG.arbor, 634 / 750],
     [IMG.optionGlass, 690 / 580], [IMG.simpl, 1200 / 675], [IMG.resq, 1200 / 725], [IMG.drift, 1.6], [IMG.wesifted, 1200 / 750],
-    [IMG.robot, 1120 / 1400], [IMG.robotSq, 1], [IMG.robotCad, 1200 / 1500], [IMG.blinket, 1200 / 721]]
+    [IMG.robot, 1120 / 1400], [IMG.robotSq, 1], [IMG.robotCad, 1200 / 1500], [IMG.blinket, 1200 / 721], [IMG.stability, 758 / 561]]
     .forEach(([s, a]) => { AR[s] = a; });
   // Source crops (px of the file): Arbor's public page is half sign-in form; only its left panel ("Follow the
   // question. Keep the discoveries." + the research tree) is shown. Canvas draws crop directly; <img> uses a
@@ -203,7 +216,8 @@
     { id: 'metal', f: 'swf-metal-flotation-board', year: 2023, ar: 0.75 },
     { id: 'bench', f: 'swf-electronics-bench', year: 2023, ar: 0.75 },
     { id: 'tunnelY', f: 'swf-wind-tunnel-yash', year: 2023, ar: 4 / 3 },
-    { id: 'laser', f: 'swf-laser-cutter', year: 2023, ar: 0.75, fy: 0.4 },
+    { id: 'tunnelC', f: 'swf-wind-tunnel-cluster', year: 2023, ar: 4 / 3 }, // (the cluster in the tunnel, no one in frame)
+    { id: 'tunnelF', f: 'swf-wind-tunnel-front-2023', year: 2023, ar: 4 / 3 }, // (the "Science fair" album: the cluster head-on)
     { id: 'atrium', f: 'swf-prototype-atrium', year: 2024, ar: 4 / 3 },
     { id: 'launch', f: 'swf-balloon-launch', year: 2024, ar: 0.75 },
     { id: 'aloft', f: 'swf-flight-ground', year: 2024, ar: 1, sqOnly: true },
@@ -211,13 +225,15 @@
     { id: 'pointing', f: 'swf-flight-selfie-pointing', year: 2024, ar: 0.75 },
     { id: 'aerial', f: 'swf-flight-aerial', year: 2024, ar: 1400 / 786 },
     { id: 'skyline', f: 'swf-flight-skyline', year: 2024, ar: 1400 / 790 },
-    { id: 'fair', f: 'fair-poster-suit-2024', year: 2024, ar: 1, sqOnly: true },
-    { id: 'fairDC', f: 'fair-dc-poster-2024', year: 2024, ar: 1, sqOnly: true },
+    { id: 'low', f: 'swf-flight-low-2024', year: 2024, ar: 1400 / 1049 }, // (the album: the prototype lifting off the field)
+    { id: 'high', f: 'swf-flight-high-2024', year: 2024, ar: 0.75 }, // (the album: the balloons high in a clear sky)
     { id: 'whiteboard', f: 'lab-whiteboard-room-2025', year: 2025, ar: 0.75 },
     { id: 'paint', f: 'paint-studio-2025', year: 2025, ar: 0.75, fy: 0.4 },
+    { id: 'paintTable', f: 'paint-table-2025', year: 2025, ar: 1, sqOnly: true }, // (the painting on the table, from paint)
     { id: 'rowing', f: 'rowing-sunrise-2025', year: 2025, ar: 0.75 },
     { id: 'gauss', f: 'notes-gauss-law-2026', year: 2026, ar: 1282 / 1394 },
     { id: 'summit', f: 'portrait-summit-2026', year: 2026, ar: 0.75 },
+    { id: 'ridges', f: 'hiking-ridges-2026', year: 2026, ar: 1, sqOnly: true }, // (the ridges beside him, from summit)
   ];
   const PH = {};
   PHOTOS.forEach(p => { PH[p.id] = p; });
@@ -226,7 +242,6 @@
   PHOTOS.forEach(p => { AR[ph(p.id)] = p.sqOnly ? 1 : p.ar; AR[sq(p.id)] = 1; });
   const FY = {}; // src → vertical focus for cover crops
   PHOTOS.forEach(p => { if (p.fy != null) { FY[ph(p.id)] = p.fy; FY[sq(p.id)] = p.fy; } });
-  IMG.yash && (FY[IMG.yash] = 0.3);
   FY[IMG.arbor] = 0.56; // (its crop, in landscape frames: the headline and the whole research tree)
   FY[IMG.robotSq] = 0.5; // (landscape crops of the robot photo: his face looking down and the robot in his hands)
   FY[IMG.robot] = 0.34; FY[IMG.robotCad] = 0.12; // (the phone sheet's landscape crops: face + robot; the torso + upper legs)
@@ -256,9 +271,9 @@
     { id: 'lotus', name: 'LOTUS', year: '2025', y0: 2025, field: 'Experiments', one: 'Generating Cas9 protein variants by flow matching in ESM-2 embedding space', idx: 'Cas9 variants via flow matching in ESM-2 space', href: 'https://github.com/YashDagade/Lotus', gen: 'title', meta: 'Flow matching · GitHub' },
     { id: 'wesifted', name: 'WeSifted', year: '2025', y0: 2025, field: 'Products', one: 'Free quarterly briefings on the federal bills and laws that matter to your business, plus a source-cited AI bill chat', idx: 'Federal bills and laws, briefed for your business · AI bill chat', href: 'https://www.wesifted.com/', img: IMG.wesifted, meta: 'Live · wesifted.com' },
     { id: 'echo', name: 'Echo', year: '2025', y0: 2025, field: 'Products', one: 'AI documentation and note-taking for therapists', idx: 'AI documentation and note-taking for therapists', href: null, gen: 'title', meta: 'Archived', arch: true },
-    { id: 'idontwannadie', name: 'idontwannadie.lol', year: '2024', y0: 2024, field: 'Safety', one: 'Safer-route maps built on 3.1M+ Minnesota crash records; PennApps XXV winner', idx: 'Safer routes from 3.1M+ MN crash records · PennApps XXV', href: 'https://idontwannadie.lol/', img: IMG.idw, meta: 'PennApps XXV', film: true },
+    { id: 'idontwannadie', name: 'idontwannadie.lol', year: '2024', y0: 2024, field: 'Safety', one: 'Safer-route maps built on 3.1M+ Minnesota crash records; built at PennApps XXV', idx: 'Safer routes from 3.1M+ MN crash records · PennApps XXV', href: 'https://idontwannadie.lol/', img: IMG.idw, meta: 'PennApps XXV', film: true },
     { id: 'skywindfarm', name: 'SkyWindFarm', year: '2022–24', y0: 2022, y1: 2024, field: 'Energy', one: 'Airborne wind energy: helium-lifted VAWT clusters that harvest high-altitude wind', idx: 'Helium-lifted turbine clusters harvesting high-altitude wind', href: 'https://youtu.be/Z6k2j59-ubo', video: 'https://youtu.be/Z6k2j59-ubo', img: IMG.flight, thumb: sq('aloft'), meta: 'Flight video · ISEF 2023 + 2024 · patent application' },
-    { id: 'eyeda', name: 'EyeDa', year: '2022', y0: 2022, field: 'Safety', one: 'Distracted-driving nonprofit + real-time detection device; led a 15-person team', idx: 'Distracted-driving nonprofit + detection device; led 15 people', href: 'https://shreyadixit.org/shreya-innovation-lab/', img: IMG.eyeda, meta: 'KARE11 · CBS · Star Tribune', film: true },
+    { id: 'eyeda', name: 'EyeDa', year: '2022', y0: 2022, field: 'Safety', one: 'Distracted-driving nonprofit + real-time detection device, built with a team of 15', idx: 'Distracted-driving nonprofit + detection device, with a team of 15', href: 'https://shreyadixit.org/shreya-innovation-lab/', img: IMG.eyeda, meta: 'Nonprofit · detection device', film: true },
   ];
   const PBY = {};
   PROJECTS.forEach(p => { PBY[p.id] = p; });
@@ -278,7 +293,26 @@
     { name: 'Brian', label: 'Brian', href: 'https://briankmason.com/' },
     { name: 'Max', label: 'Max', href: 'https://www.maxxiong.dev/' },
   ];
-  const PRESS = ['KARE11', 'CBS', 'Star Tribune', 'Fox 9', 'UMN ME', 'Duke Today'];
+  // The builders "living the same life" (the owner's list, from the biographies he has read; Napoleon near the top),
+  // in order of birth: many generations, one life. Portraits: black and white 4:5 crops of free-licensed files from
+  // Wikimedia Commons (site/img/builders/, credits in CREDITS_PORTRAITS, shown under the poem).
+  const BUILDERS = [
+    { id: 'napoleon', name: 'Napoleon Bonaparte', short: 'Napoleon', years: '1769–1821',
+      by: 'Jacques-Louis David, 1812', lic: 'public domain', page: 'https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Emperor_Napoleon_in_His_Study_at_the_Tuileries_-_Google_Art_Project_(3x4_close_cropped).jpg' },
+    { id: 'vanderbilt', name: 'Cornelius Vanderbilt', short: 'Vanderbilt', years: '1794–1877',
+      by: 'Mathew Brady’s studio, restored by Michel Vuijlsteke', lic: 'public domain', page: 'https://commons.wikimedia.org/wiki/File:Cornelius_Vanderbilt_Daguerrotype2_(cropped)(b).jpg' },
+    { id: 'churchill', name: 'Winston Churchill', short: 'Churchill', years: '1874–1965',
+      by: 'UK Central Office of Information, 1945', lic: 'public domain', page: 'https://commons.wikimedia.org/wiki/File:Winston_Churchill_C3519635.jpg' },
+    { id: 'grove', name: 'Andy Grove', short: 'Grove', years: '1936–2016',
+      by: 'Steve Jurvetson, 2009', lic: 'CC BY 2.0', licUrl: 'https://creativecommons.org/licenses/by/2.0/', page: 'https://commons.wikimedia.org/wiki/File:Intel_Inside_(3607903903)_(cropped).jpg' },
+    { id: 'chouinard', name: 'Yvon Chouinard', short: 'Chouinard', years: 'b. 1938',
+      by: 'Tom Frost', lic: 'CC BY-SA 3.0', licUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', page: 'https://commons.wikimedia.org/wiki/File:Yvon_Chouinard_by_Tom_Frost.jpg' },
+    { id: 'musk', name: 'Elon Musk', short: 'Musk', years: 'b. 1971',
+      by: 'Debbie Rowe / The Royal Society, 2018', lic: 'CC BY-SA 3.0', licUrl: 'https://creativecommons.org/licenses/by-sa/3.0/', page: 'https://commons.wikimedia.org/wiki/File:Elon_Musk_Royal_Society_(crop2).jpg' },
+    { id: 'altman', name: 'Sam Altman', short: 'Altman', years: 'b. 1985',
+      by: 'TechCrunch, 2019', lic: 'CC BY 2.0', licUrl: 'https://creativecommons.org/licenses/by/2.0/', page: 'https://commons.wikimedia.org/wiki/File:Sam_Altman_TechCrunch_SF_2019_Day_2_Oct_3_(cropped)_(cropped).jpg' },
+  ];
+  BUILDERS.forEach(b => { b.src = `site/img/builders/${b.id}.jpg`; AR[b.src] = 4 / 5; FY[b.src] = 0.5; });
 
   // The cold-open montage ("fig. 00 — things I've built"): one frame per 16th from the moment "builders" inks,
   // 2022 → 2026, builds and flights first, then the projects. Photos use their 600² crops (light, subject-
@@ -288,11 +322,12 @@
   const MF = id => ({ src: sq(id), year: PH[id].year, fy: PH[id].fy });
   // (a project's frame carries its START year, so the frame's year and the flip pitch only ever climb)
   const MP = id => { const p = PBY[id]; return { src: p.thumb || p.img || null, year: p.y0, draw: p.gen === 'code' ? 'code' : null, id }; };
+  // (the work, not the owner: the build photos are the parts, the tunnel and the flights, never him posing)
   const MONTAGE = [
-    MP('eyeda'), MF('rotors'), MF('cluster'), MF('shop'), MF('metal'), MF('tunnelY'), MF('laser'),
-    MF('atrium'), MF('launch'), MF('aloft'), { src: ph('aerial'), year: 2024 }, MF('fair'), MP('idontwannadie'),
-    MP('radial-vcreg'), MP('connectu'), MP('resq'), MP('simpl'), MP('rectified-lpjepa'), MP('lpwm'),
-    MP('hermes'), MP('arbor'), MP('option-glass'), MP('central-america-drift'),
+    MP('eyeda'), MF('rotors'), MF('boards'), MF('bench'), MF('metal'), MF('tunnelF'),
+    MF('atrium'), MF('low'), MF('skyline'), MF('high'), MP('idontwannadie'),
+    MP('radial-vcreg'), MP('connectu'), MP('resq'), MP('wesifted'), MP('simpl'), MP('rectified-lpjepa'), MP('lpwm'),
+    MP('hermes'), MP('arbor'), MP('option-glass'), MP('blinket'), MP('central-america-drift'),
     Object.assign(MP('biped'), { fy: FY[IMG.robotSq] }), // (the last frame, on the cut to bar 5: what I'm building now)
   ];
   PROJECTS.slice().reverse().forEach(p => { if (p.film && !MONTAGE.some(m => m.id === p.id) && (p.img || p.gen === 'code')) MONTAGE.push(MP(p.id)); });
@@ -309,23 +344,23 @@
   const SWF_HREF = 'https://youtu.be/Z6k2j59-ubo'; // the flight video is SkyWindFarm's main link
   const HOVER = {
     'builders': { mode: 'flip', frames: MONTAGE, title: 'Stints, by year', meta: '2022 → 2026 · hover any blue phrase' },
-    'misfits': { mode: 'card', src: IMG.yash, title: 'Yash Dagade', meta: 'B.S. Math + Philosophy, Duke ’28 · research at NYU CILVR', w: 220 },
+    'misfits': { mode: 'card', src: IMG.drift, title: 'Central America Drift', meta: 'A rigid-body sim of Central America rifting into islands', href: 'https://github.com/YashDagade/central_america_drift', proj: ['central-america-drift'], w: 300 },
     'rebels': { mode: 'card', gen: 'code', title: 'LpWM — a case for sparse world models', meta: 'Sparse beats dense by up to +57 pts on PushT planning', href: 'https://arxiv.org/abs/2608.22764', proj: ['lpwm'] },
     'troublemakers': { mode: 'jump', proj: ['idontwannadie', 'resq'], cards: [
       { src: IMG.idw, title: 'idontwannadie.lol', meta: 'Google Maps, but optimized for safety · PennApps XXV', href: 'https://idontwannadie.lol/' },
       { src: IMG.resq, title: 'ResQ', meta: 'Flags crashes in live traffic-camera streams', href: 'https://res-q-eta.vercel.app/' }] },
     'round pegs in the square holes': { mode: 'card', src: IMG.radial, title: 'Radial-VCReg', meta: 'Feature norms pushed toward a Chi distribution · NeurIPS ’25 wkshp', href: 'https://arxiv.org/abs/2602.14272', proj: ['radial-vcreg'], w: 260 },
     'things differently': { mode: 'card', src: IMG.lpjepa, title: 'Rectified LpJEPA', meta: 'The same data, projected at four angles · ICML 2026', href: 'https://lpjepa.com', proj: ['rectified-lpjepa'], w: 280 },
-    'question everything': { mode: 'card', src: ph('pointing'), title: 'SkyWindFarm', meta: 'Why keep turbines on the ground? · flight test, 2024', href: SWF_HREF, proj: ['skywindfarm'], w: 230 },
+    'question everything': { mode: 'card', src: ph('low'), title: 'SkyWindFarm', meta: 'Why keep turbines on the ground? · flight test, 2024', href: SWF_HREF, proj: ['skywindfarm'], w: 300 },
     'laws of physics': { mode: 'jump', proj: ['skywindfarm'], cards: [
       { src: IMG.cfd, title: 'SkyWindFarm · URANS CFD', meta: 'Cluster Cp 0.43 at tip-speed ratio 3.0 (tunnel + CFD)', href: 'assets/swf.pdf' },
       { src: ph('gauss'), title: 'Gauss’s law, by hand', meta: 'Notes, 2026' }] },
     'first principles': { mode: 'jump', proj: ['skywindfarm'], cards: [
       { src: IMG.system, title: 'SkyWindFarm, from first principles', meta: 'Flotation · stability · energy · power transfer · ground', href: 'https://youtu.be/gDUk6V607js' },
       { src: ph('metal'), title: 'The metal flotation board', meta: 'Cut, wired and measured by hand · 2023' }] },
-    'non-mimetic': { mode: 'card', src: ph('atrium'), title: 'SkyWindFarm · indoor hang test, 2024', meta: 'First-author inventor · US 2025/0243843 A1', href: 'https://youtu.be/Z6k2j59-ubo', proj: ['skywindfarm'], w: 300 },
+    'non-mimetic': { mode: 'card', src: ph('atrium'), title: 'SkyWindFarm · indoor hang test, 2024', meta: 'Patent application · US 2025/0243843 A1', href: 'https://youtu.be/Z6k2j59-ubo', proj: ['skywindfarm'], w: 300 },
     'change the world': { mode: 'jump', proj: ['eyeda', 'idontwannadie', 'connectu'], cards: [
-      { src: IMG.eyeda, title: 'EyeDa', meta: 'Distracted-driving nonprofit · KARE11, CBS, Star Tribune', href: 'https://shreyadixit.org/shreya-innovation-lab/' },
+      { src: IMG.eyeda, title: 'EyeDa', meta: 'Distracted-driving nonprofit + detection device', href: 'https://shreyadixit.org/shreya-innovation-lab/' },
       { src: IMG.idw, title: 'idontwannadie.lol', meta: 'Safer routes from 3.1M+ MN crash records', href: 'https://idontwannadie.lol/' },
       { src: IMG.connectu, title: 'ConnectU', meta: 'Mentor matching: Hungarian algorithm over embeddings', href: 'https://connectu-frontend.vercel.app/' }] },
     // Will power → power and energy: the unit that harvests it, the units aloft, the ground station it
@@ -337,14 +372,15 @@
       { src: IMG.render, title: 'Energy Unit', meta: 'LTA shell · lift wing · 4 VAWTs', href: 'https://youtu.be/gDUk6V607js' },
       { src: IMG.ground, title: 'Power reaches the ground station', meta: '≈127 kW delivered per unit (est.)', href: 'assets/swf.pdf' }] },
     'no limits': { mode: 'jump', proj: ['skywindfarm'], cards: [
-      { src: ph('aloft'), title: 'SkyWindFarm · prototype aloft', meta: 'Flight test, May 2024', href: 'https://youtu.be/Z6k2j59-ubo' },
-      { src: ph('skyline'), title: 'Tethered, holding station', meta: '6-DoF sim: rejects harsh disturbances in ~7 s', href: 'https://youtu.be/Z6k2j59-ubo' }] },
+      { src: ph('high'), title: 'SkyWindFarm · prototype aloft', meta: 'Flight test, May 2024', href: 'https://youtu.be/Z6k2j59-ubo' },
+      { src: IMG.stability, title: 'Tethered, holding station', meta: '6-DoF sim: rejects harsh disturbances in ~7 s', href: 'assets/swf.pdf' }] },
     'high bar for quality': { mode: 'jump', proj: ['skywindfarm'], cards: [
-      { src: ph('tunnelY'), title: 'UMN wind tunnel · 2023', meta: 'Wind tunnel vs CFD: correlation > 0.95', href: 'assets/swf.pdf' },
+      { src: ph('tunnelF'), title: 'UMN wind tunnel · 2023', meta: 'Wind tunnel vs CFD: correlation > 0.95', href: 'assets/swf.pdf' },
       { src: IMG.cp, title: 'Power coefficient vs tip-speed ratio', meta: 'Cluster Cp 0.43 at TSR 3.0 (tunnel + CFD avg.)', href: 'assets/swf.pdf' }] },
-    'excellence': { mode: 'jump', proj: ['skywindfarm'], cards: [
-      { src: IMG.poster, title: 'ISEF 2023 + 2024', meta: 'Third Award ’23 · 3rd Grand Award + $10K Ricoh prize ’24', href: 'press.html' },
-      { src: ph('fair'), title: 'At the SkyWindFarm board', meta: 'Science fair, March 2024' }] },
+    // (the work only: the poster itself and another project; no award list, no photo of the owner at the board)
+    'excellence': { mode: 'jump', proj: ['skywindfarm', 'wesifted'], cards: [
+      { src: IMG.poster, title: 'SkyWindFarm · the poster', meta: 'ISEF 2023 + 2024', href: 'https://isef.net/project/egsd018-skywindfarm' },
+      { src: IMG.wesifted, title: 'WeSifted', meta: 'Federal bills and laws, briefed for your business', href: 'https://www.wesifted.com/' }] },
     // tools I built instead of searching for one
     'build before they search': { mode: 'jump', proj: ['hermes', 'arbor', 'option-glass', 'simpl'], cards: [
       { src: IMG.hermes, title: 'Hermes', meta: 'My own article reader · word-synced voice', href: 'https://github.com/YashDagade/browser-reader' },
@@ -355,19 +391,22 @@
     // (the biped: its one photo and its CAD render open the robot's own page, #robot; the render is optional: a card
     // whose image failed to load is left out, see phraseCfg)
     // (the two tall cards share the top row, so the short text card never leaves a hole under it in the 2 × 2 grid)
-    'And they yearn to build': { mode: 'jump', proj: ['lpwm', 'biped'], cards: [
+    'And they yearn to build': { mode: 'jump', proj: ['lpwm', 'biped', 'blinket'], cards: [
       { src: IMG.robot, title: 'My biped, in hand', meta: '45 cm · eight servos', href: '#robot' },
       { src: IMG.robotCad, title: 'The biped, from its CAD', meta: 'Open the robot page', href: '#robot', optional: true },
       { gen: 'text', head: 'Now building', title: 'Biped build log', meta: null, lines: ['World models for robots', 'NYU CILVR · Pantheon', 'Biped build log'], href: 'biped/' },
-      { src: ph('laser'), title: 'At the laser cutter', meta: 'SkyWindFarm, 2023' }] },
-    'the same life': { mode: 'friends', title: 'Fellow builders', meta: 'Marco · Pranav · Brian · Max' },
+      { src: IMG.blinket, title: 'Blinket', meta: 'Hands-free internet for ALS: blinks and winks on a webcam', href: 'https://blinketmed.com/apps' }] },
+    // The builders the poem is about (the owner's list: he hopes to become like them). 'the same life': their portraits
+    // flip through one frame, the name and years changing with the face; 'ignore them': all of them at once.
+    'the same life': { mode: 'flip', builders: true, every: 4, title: `${BUILDERS[0].name} · ${BUILDERS[0].years}`, meta: 'One frame, seven lives · 1769 → today' },
     'race unrelentingly toward creating value': { mode: 'jump', proj: ['skywindfarm', 'rectified-lpjepa'], cards: [
       { src: ph('aerial'), title: 'Energy · SkyWindFarm', meta: 'Flight test, 2024', href: SWF_HREF },
       { src: IMG.lpjepa, title: 'Intelligence · Rectified LpJEPA', meta: 'ICML 2026', href: 'https://arxiv.org/abs/2602.01456' }] },
-    'ignore them': { mode: 'jump', cards: [
-      { gen: 'text', head: 'Press', title: 'All press coverage', meta: null, lines: PRESS, href: 'press.html' },
-      { src: ph('fairDC'), title: 'Science expo, Washington DC', meta: 'April 2024' }] },
-    'change things': { mode: 'mosaic', srcs: [sq('aloft'), IMG.lpjepa, sq('cluster'), IMG.eyeda, IMG.idw, sq('tunnelY'), IMG.arbor, IMG.hermes, sq('fair')], title: 'So far', meta: '3 papers · 1 patent application · ISEF ’23 + ’24 · 1 nonprofit' },
+    'ignore them': { mode: 'mosaic', srcs: BUILDERS.map(b => b.src), cols: 4, rows: 2, cellAr: 4 / 5, title: 'Hard to ignore', meta: BUILDERS.map(b => b.short).join(' · ') },
+    // the owner's own line: the curve that approaches the builders and never quite reaches them
+    'asymptotically': { mode: 'card', art: 'asymptote', title: 'Asymptotically', meta: 'Closer every year, never quite there', w: 300 },
+    // (no trophies here: a quiet line drawing, Archimedes' lever lifting the world, as in the film's bar 41)
+    'change things': { mode: 'card', art: 'lever', title: 'A lever long enough', meta: '“Give me a place to stand and I will move the earth.” Archimedes', w: 300 },
   };
   // photos that only hover cards use: fetched after the film's own images (see preloadLater)
   const HOVER_SRCS = [];
@@ -412,6 +451,7 @@
     s10c: spec(CLOSING[0], { at: lb(3), rate: 6 }),
     s10d: spec(CLOSING[1], { at: lb(3, 3), rate: 10 }),
     s10e: spec(CLOSING[2], { at: lb(4), slam: true }),
+    s10h: spec(HUMBLE, { at: HUMBLE_AT - lb(41), slam: true, ink: [HUMBLE_AT - lb(41) + S16 * 2] }), // (the owner's line)
     // credits: the attribution types on from bar 43 (done by beat 4), the design credit lands an 8th after the
     // last line; both hold at full strength until the frame settles (drawn outside the end fade)
     s10f: spec(segs('attr', ATTRIBUTION), { at: lb(3), rate: 10 }),
@@ -432,10 +472,17 @@
   const toolT = i => (i ? TOOLS_T + (i - 1) * BEAT / 2 : 0);
   const CURIOUS_T = lb(2, 3), CURIOUS_STEP = S16 / 2; // the sheet fills in one beat (32nds) and is held for the last beat of bar 34
   // (the last cell is the accent. hack-electrodes-2026 is left out until its context is confirmed: photos manifest #27)
-  const CURIOUS = [['boards', 'printing'], ['bench', 'circuits'], ['selfieCam', 'flight'], ['whiteboard', 'research'],
-    ['gauss', 'physics'], ['rowing', 'rowing'], ['summit', 'hiking'], ['paint', 'art']];
-  const FILM_PHOTOS = [ph('aerial'), ph('tunnelY'), sq('fair')].concat(CURIOUS.map(c => sq(c[0])));
+  // (the things themselves, not the owner posing with them: research is a figure from the paper, hiking the ridges,
+  // art the painting on the table)
+  const CURIOUS = [[sq('boards'), 'printing'], [sq('bench'), 'circuits'], [sq('skyline'), 'flight'], [IMG.lpjepa, 'research'],
+    [sq('gauss'), 'physics'], [sq('rowing'), 'rowing'], [sq('ridges'), 'hiking'], [sq('paintTable'), 'art']];
+  const FILM_PHOTOS = [ph('aerial'), ph('tunnelF')].concat(CURIOUS.map(c => c[0]), BUILDERS.map(b => b.src));
   const NAME_T = NAMES.map((_, k) => (k < 6 ? lb(4, 1) + k * BEAT / 2 : lb(4, 4) + (k - 6) * S16));
+  // Bar 37: the builders flip through one frame, one per 8th from the downbeat; bar 40: all seven, one per 16th from
+  // beat 3 (times local to section 9). Bar 41: the lever's beam travels once the push lands (local to section 10).
+  const BLD_T = BUILDERS.map((_, k) => lb(1) + k * BEAT / 2), STRIP_T = lb(4, 3);
+  const BLD_CAP = 'fig. 11 — the same life', BLD_EYEBROW = 'SOME OF THEM';
+  const LEV = { t0: BEAT * 1.25, t1: BEAT * 3.25 }, LEV_CAP = 'fig. 12 — Archimedes’ lever';
   const GLITCHES = [[lb(9), 0.5], [lb(13), 0.45], [lb(16, 2), 0.8], [lb(17), 1], [lb(21), 1], [lb(29), 0.5], [lb(33), 0.7], [lb(37), 0.8], [lb(41), 1]];
 
   /* ================================================================== bits & atoms */
@@ -549,9 +596,9 @@
 
   /* ================================================================== captions + css */
   // (lines ≤ 32 characters, so the caption ends well left of the poem's stanza numbers at x ≈ 284)
-  const CAP_FILM = 'Here’s to the builders: my\nbuild manifesto in bits and\natoms, and every stint so far.';
-  const CAP_SET = 'Here’s to the builders. Hover a\nblue phrase to see what I built;\nthe stints list every project.';
-  const CAP_SET_TOUCH = 'Here’s to the builders. Tap a\nblue phrase to see what I built;\nthe stints list every project.';
+  const CAP_FILM = 'Here’s to the builders: a poem\non the people I hope to be\nlike, and my stints so far.';
+  const CAP_SET = 'Here’s to the builders. Hover a\nblue phrase for what I’ve built\nso far; Stints lists it all.';
+  const CAP_SET_TOUCH = 'Here’s to the builders. Tap a\nblue phrase for what I’ve built\nso far; Stints lists it all.';
 
   const CSS = `
 .scene--build .bd-film { transition: opacity .7s ease; }
@@ -580,6 +627,7 @@
 .scene--build .bd-st--open .bd-sn { top: 11px; }
 .scene--build .bd-st:hover .bd-sn { color: var(--ink); }
 .scene--build .bd-close p { font-style: italic; }
+.scene--build .bd-me { margin-top: 30px; } /* the owner's own line: roman, a breath after the poem */
 .scene--build .bd-em { color: var(--accent); cursor: crosshair; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
   text-decoration-color: rgba(20, 50, 245, .32); border-radius: 1px; transition: background-color .15s ease, text-decoration-color .15s ease; outline: none; }
 .scene--build .bd-em:hover, .scene--build .bd-em.is-lit, .scene--build .bd-em:focus-visible { background: var(--accent-soft); text-decoration-color: var(--accent); }
@@ -759,11 +807,11 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       const ready = im => im && im.complete && im.naturalWidth > 0;
       const loaded = im => new Promise(res => { if (!im) return res(); if (im.complete) return res(); im.addEventListener('load', res, { once: true }); im.addEventListener('error', res, { once: true }); });
       // Loading is chained so the montage (needed from bar 3 beat 3, ~5 s in) never competes with later images:
-      // the montage first; then the photos of the first bars (bar 5: headshot, idontwannadie); then the film's other
+      // the montage first; then the photos of the first bars (bar 5: Central America Drift, idontwannadie); then the film's other
       // images; the photos only the hover cards use when the page settles (or after 12 s).
       let laterT = 0;
       Promise.all(MONTAGE.map(m => loaded(img(m.src))))
-        .then(() => Promise.all([loaded(img(IMG.yash)), loaded(img(IMG.idw))]))
+        .then(() => Promise.all([loaded(img(IMG.drift)), loaded(img(IMG.idw))]))
         .then(() => { Object.values(IMG).forEach(img); FILM_PHOTOS.forEach(img); });
       function preloadLater() { clearTimeout(laterT); Object.values(IMG).forEach(img); HOVER_SRCS.forEach(img); }
       laterT = setTimeout(preloadLater, 12000);
@@ -1226,7 +1274,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         const fs = tall ? 0.36 : 0.47; // (portrait: a tall frame, so the figure starts nearer the text)
         const FIG = mobile ? { x: F.x0, y: F.y0 + F.h * fs, w: F.w, h: F.h * (1 - fs) } : { x: F.x0 + F.w * 0.61, y: F.y0 + 26, w: F.w * 0.39, h: F.h - 52 };
         const VR = mobile ? { x: F.x0, y: F.y0 + F.h * 0.3, w: F.w, h: F.h * 0.7 } : { x: F.x0, y: F.y0 + 96, w: F.w, h: F.h - 110 };
-        G = { w, h, mobile, phone, tall, F, sz, TX, TY, TW, FIG, VR, cw: w, ch: h };
+        G = { w, h, mobile, phone, tall, F, sz, TX, TY, TW, FIG, VR, cw: w, ch: h }; // (G.eng, G.end: cached layouts)
         STREAM = null;
       }
 
@@ -1355,41 +1403,6 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           mlabel('turb.law', '$P/A = \\tfrac{1}{2}\\,\\rho\\, v^{3}$', R.x + R.w, nw ? R.y - 12 : R.y - 16, { size: 17, align: 'right', alpha: la });
           if (!nw) label('wind power grows with the cube of speed', R.x + R.w, R.y + 5, { align: 'right', color: T2 });
         }
-      }
-
-      // V4 — Robot: the biped's CAD, as the #robot page exports it (a toon-shaded render, white ground). It prints on
-      // top-down under an accent scan line (1½ beats from u = 0), washed 42 % toward white so its black servo blocks read
-      // as mid-grey, the weight of the other panels' hairlines (white stays white, so no box shows round it). A wide,
-      // short panel (a landscape phone) shows the torso and thighs across the panel's width, cropped by its bottom
-      // edge, instead of a whole robot a few px tall. Until the file has loaded (or if it is missing): a hairline biped
-      // glyph in the same box, so the panel is never empty.
-      const ROBOT_BOX = [270, 88, 660, 1334]; // (the render's content box, px of the 1200 × 1500 file)
-      function vRobot(R, u) {
-        const im = img(IMG.robotCad), k = api.reduced ? 1 : eOut((u || 0) / (BEAT * 1.5));
-        let [sx, sy, sw, sh] = ROBOT_BOX;
-        // (the same ~80 % content box as the other panels, standing on a hairline ground where theirs sits)
-        let h = R.h * 0.82, w = h * sw / sh;
-        if (w > R.w * 0.84) { w = R.w * 0.84; h = w * sh / sw; }
-        let gy = R.y + R.h * 0.93, x = R.x + (R.w - w) / 2, y = gy - h;
-        const crop = ready(im) && w < R.w * 0.4;
-        if (crop) { // (top-anchored cover crop: as wide as the others' drawings, running off the panel's bottom)
-          w = Math.min(R.w * 0.62, R.h * 1.1); x = R.x + (R.w - w) / 2; y = R.y + R.h * 0.08; h = R.y + R.h + 6 - y;
-          sh = Math.min(sh, sw * h / w);
-        } else seg(R.x + R.w * 0.06, Math.round(gy) + 0.5, R.x + R.w * 0.94, Math.round(gy) + 0.5, C.g400);
-        ctx.save(); ctx.beginPath(); ctx.rect(x - 4, y - 4, w + 8, (h + 8) * k); ctx.clip();
-        if (ready(im)) {
-          ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(im, sx, sy, sw, sh, x, y, w, h);
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.42)'; ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
-        } else { // torso box on two legs of three segments, a foot each (proportions of the render)
-          const tw = w, th = h * 0.13, lw = w * 0.2, ly = y + th, lh = h - th - h * 0.06;
-          srect(x, y, tw, th, C.ink);
-          [x + w * 0.2, x + w * 0.6].forEach(lx => {
-            for (let s = 0; s < 3; s++) srect(lx, ly + s * lh / 3 + 2, lw, lh / 3 - 4, C.g500);
-            srect(lx - w * 0.04, y + h - h * 0.06, lw + w * 0.08, h * 0.06, C.ink);
-          });
-        }
-        ctx.restore();
-        if (k < 1) { ctx.fillStyle = C.accent; ctx.fillRect(x - 6, y - 4 + (h + 8) * k, w + 12, 1); }
       }
 
       // V1 — LpWM: dense latent → rectified sparse code → predictor rollout (toy). Rows = time, columns = dims.
@@ -2041,7 +2054,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       }
 
       /* ---------------------------------------------------------- bits & atoms: the engine (bar 42) */
-      // the layout of bars 41–42 (the two lines, then the strip of four scenes / the engine under them)
+      // the layout of bars 41–42 (the two lines, then the lever / the engine under them)
       function s10Layout() {
         const { TY, TW, sz, F } = G, size = sz.L, tw10 = G.mobile ? TW : Math.max(TW, F.w * 0.8); // (nothing beside these lines)
         const lab = 22, minH = G.mobile ? 170 : 110;
@@ -2226,7 +2239,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         const c = typed(SP.s1c, lt, TX, b.vis ? b.bottom + size * 1.25 : a.bottom + size * 1.25, size, TW);
         const act = c.vis ? c : b.vis ? b : a;
         cursor(act.cx, act.cy, size, !act.done, t);
-        const FL1 = [['yash', lb(1, 1), 'fig. 01 — Yash Dagade'], ['code', lb(1, 3), G.mobile ? 'fig. 02 — LpWM (toy)' : 'fig. 02 — LpWM, sparse latent (toy)'], ['idw', lb(2, 1), 'fig. 03 — idontwannadie.lol']];
+        const FL1 = [['drift', lb(1, 1), 'fig. 01 — Central America Drift'], ['code', lb(1, 3), G.mobile ? 'fig. 02 — LpWM (toy)' : 'fig. 02 — LpWM, sparse latent (toy)'], ['idw', lb(2, 1), 'fig. 03 — idontwannadie.lol']];
         if (lt < lb(3)) {
           const FR = { x: FIG.x, y: FIG.y + FIG.h * 0.12, w: FIG.w, h: FIG.h * 0.66 };
           // the flash up this frame (with its frame, accents and caption row): a thumb it would cover is not drawn,
@@ -2640,8 +2653,8 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           let g8 = null;
           if (lt >= lb(2)) {
             const side = G.mobile && FIG.h * 0.4 + 66 + Math.min(FIG.w * 0.7, FIG.h * 0.42) > FIG.h;
-            const f = side ? fit(AR[ph('tunnelY')], { x: FIG.x, y: FIG.y, w: FIG.w * 0.4, h: FIG.h * 0.62 }, 0.4)
-              : fit(AR[ph('tunnelY')], { x: FIG.x, y: FIG.y, w: FIG.w, h: FIG.h * 0.4 }, 0.3);
+            const f = side ? fit(AR[ph('tunnelF')], { x: FIG.x, y: FIG.y, w: FIG.w * 0.4, h: FIG.h * 0.62 }, 0.4)
+              : fit(AR[ph('tunnelF')], { x: FIG.x, y: FIG.y, w: FIG.w, h: FIG.h * 0.4 }, 0.3);
             if (side) f.x = FIG.x + 4;
             // side by side: the plot's "tunnel" axis label clears the photo, "y = x" ends inside the frame
             const sx0 = side ? f.x + f.w + 12 + mw(monoF(12), 'tunnel') + 8 : 0;
@@ -2663,7 +2676,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
             Ed.forEach(([i, j], k) => drawOn([V[i], V[j]], eOut((lt - k * S16) / S16), k === 11 ? C.accent : C.ink));
             label(`edges ${Math.min(12, Math.max(0, Math.floor(lt / S16) + 1))} / 12`, FIG.x + FIG.w / 2, cy + s * 1.1 + 20, { align: 'center', color: T2 });
           } else { // wind tunnel photo + tunnel-vs-CFD points snapping onto y = x
-            const u = lt - lb(2), im = img(ph('tunnelY')), { side, f, ps, px, py } = g8;
+            const u = lt - lb(2), im = img(ph('tunnelF')), { side, f, ps, px, py } = g8;
             photo(im, f.x, FIG.y + 4, f.w, f.h, { u, wipe: S16 * 1.2, cap: side ? 'fig. 08' : G.mobile ? 'fig. 08 — wind tunnel, 2023' : 'fig. 08 — UMN wind tunnel, 2023', capMax: side ? f.w + 8 : null });
             seg(px, py + ps, px + ps, py + ps, C.ink); seg(px, py, px, py + ps, C.ink);
             drawOn([[px, py + ps], [px + ps, py]], eOut(u / BEAT), C.g500, [3, 3]);
@@ -2693,14 +2706,14 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           }
         } else {
           const u = lt - lb(3);
-          // "excellence": the ISEF poster, then Yash at his board (the square crop: no other people). Both land in
+          // "excellence": the SkyWindFarm poster, then another project's work (WeSifted). Both land in
           // the negative half of the histogram, which the rectification has just emptied, so the payoff (the spike at
           // 0, its labels and the half-tail) stays in view. They start below the vignette's two header lines.
           const hg = histGeom(VR, false);
           const PR = { x: VR.x, y: VR.y + 58, w: Math.max(120, hg.X(0) - 28 - VR.x), h: hg.axY - 14 - (VR.y + 58) };
           const po = { maxWf: G.mobile ? 0.5 : 0.36, keepW: true, top: true, capMax: hg.X(0) - 12 - (PR.x - 4) };
-          const FL = [[IMG.poster, lb(4, 2), BEAT, PR, G.mobile ? 'fig. 09 — ISEF poster' : 'fig. 09 — ISEF poster, 2024', Object.assign({ wipe: S16 * 0.6 }, po)],
-            [sq('fair'), lb(4, 3), BEAT * 2, PR, 'fig. 10 — at the board, 2024', po]];
+          const FL = [[IMG.poster, lb(4, 2), BEAT, PR, G.mobile ? 'fig. 09 — SkyWindFarm poster' : 'fig. 09 — the SkyWindFarm poster, 2024', Object.assign({ wipe: S16 * 0.6 }, po)],
+            [IMG.wesifted, lb(4, 3), BEAT * 2, PR, G.mobile ? 'fig. 10 — WeSifted' : 'fig. 10 — WeSifted, 2025', po]];
           flashes(FL, lt, false);
           label('“high bar for quality” · “excellence”', TX, F.y0 + 14, { color: T2 });
           const c = typed(SP.s7c, lt, TX, F.y0 + 30 + sz.S, sz.S, F.w * 0.92, { tag: ['→ figs. 09–10'] });
@@ -2734,11 +2747,11 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         const lw = Math.max(...CURIOUS.map(c => mw(monoF(12), c[1]))), labN = cw + gx - 8 >= lw + 18, labW = labN || cw + gx - 8 >= lw;
         const hy = y0 - 12;
         label(mob ? 'curious about everything · 2023 → 2026' : 'curious about everything', x0 - 4, hy, { color: T2 });
-        CURIOUS.forEach(([id, word], k) => {
+        CURIOUS.forEach(([src, word], k) => {
           const uk = u - k * CURIOUS_STEP;
           if (uk < 0) return;
           const x = x0 + (k % cols) * (cw + gx), y = y0 + Math.floor(k / cols) * (cw + gy);
-          photo(img(sq(id)), x, y, cw, cw, { u: uk, pop: true });
+          photo(img(src), x, y, cw, cw, { u: uk, pop: true });
           if (lab) {
             ctx.save(); ctx.globalAlpha *= clamp01(uk / 0.12);
             if (labN || !labW) label(pad2(k + 1), x - 4, y + cw + 19, { size: 11, color: C.g500 });
@@ -2842,43 +2855,63 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         }
       };
 
-      // S9 — The same life: friends callouts; energy × intelligence split; quote/disagree/glorify/vilify; press
+      // Bar 37 ("…the same life."): the builders' portraits flip through ONE frame, one per 8th from the downbeat (the
+      // same frame, the same life), the name and years under it changing with the face; the last holds for a beat.
+      // Desktop: a 4:5 frame in the figure column, the phrase's underline running on to it as a leader. Stacked: under
+      // the line's final layout.
+      function sameLife(lt, a) {
+        const { F, FIG, TY, TW, sz } = G, n = BUILDERS.length;
+        let k = -1; for (let i = 0; i < n; i++) if (lt >= BLD_T[i]) k = i;
+        if (k < 0) return;
+        let R;
+        if (G.mobile) { const top = TY + lay(SP.s9a.segs, serifF(sz.L), sz.L, TW).last + sz.L * 0.3 + 40; R = { x: F.x0, y: top, w: F.w, h: F.y1 - 30 - top }; }
+        else R = { x: FIG.x, y: FIG.y + 20, w: FIG.w, h: FIG.h - 50 };
+        const h = Math.min(R.h, R.w * 1.25 * (G.mobile ? 0.66 : 0.8)), w = h * 0.8;
+        if (h < 60) return;
+        const x = G.mobile ? R.x + 4 : R.x + (R.w - w) / 2, y = G.mobile ? R.y : R.y + (R.h - h) / 2;
+        const b = BUILDERS[k];
+        photo(img(b.src), x, y, w, h, { u: k ? 10 : lt - BLD_T[0], wipe: S16 * 1.2 });
+        // over the frame: the figure's caption and the counter; under it: the name, the years (a second line if the two
+        // would not fit side by side)
+        const cap = mw(monoF(12), BLD_CAP) + mw(monoF(11), '07 / 07') + 20 <= w + 8 ? BLD_CAP : BLD_CAP.split(' — ')[0];
+        label(cap, x - 4, y - 14, { color: T2, noKO: true });
+        label(`${pad2(k + 1)} / ${pad2(n)}`, x + w + 4, y - 14, { align: 'right', size: 11, color: C.g500, noKO: true });
+        const nw = mw(monoF(12), b.name), yw = mw(monoF(12), b.years), two = nw + yw + 16 > w + 8;
+        label(b.name, x - 4, y + h + 21, { noKO: true });
+        label(b.years, two ? x - 4 : x + w + 4, y + h + (two ? 38 : 21), { align: two ? 'left' : 'right', color: C.accent, noKO: true });
+        // the leader: from "the same life" (once it has inked) to the frame
+        const td = charTime(SP.s9a, SP.s9a.n - 2), sr = spanRect(a, 0);
+        if (!G.mobile && sr && lt >= td) leader(sr, { x: x - 4, y: y - 4, w: w + 8, h: h + 8, a: 1 }, lt - td);
+      }
+      // Bar 40 ("…ignore them."): the same seven together, one per 16th from beat 3, under a small eyebrow (where a
+      // list of the owner's press used to be). Desktop: one row; stacked: rows of four.
+      function builderStrip(u, y0) {
+        const { F, TX } = G, n = BUILDERS.length, mob = G.mobile, gap = mob ? 12 : 20, lab = 22;
+        const cols = mob && F.w < 560 ? 4 : n, rowsN = Math.ceil(n / cols);
+        let w = Math.min(mob ? 120 : 112, (F.w - 8 - (cols - 1) * gap) / cols);
+        w = Math.min(w, (F.y1 - 6 - y0 - rowsN * lab - (rowsN - 1) * gap) / rowsN / 1.25);
+        if (w < 26 || u < 0) return;
+        const h = w * 1.25;
+        tracked(BLD_EYEBROW, TX, y0 - 16);
+        BUILDERS.forEach((b, i) => {
+          const ui = u - i * S16;
+          if (ui < 0) return;
+          const x = TX + 4 + (i % cols) * (w + gap), y = y0 + Math.floor(i / cols) * (h + lab + gap);
+          photo(img(b.src), x, y, w, h, { u: ui, pop: true });
+          ctx.save(); ctx.globalAlpha *= clamp01(ui / 0.12);
+          label(b.short, x - 4, y + h + 20, { size: w < 70 ? 11 : 12, color: i === 0 ? C.ink : T2, noKO: true });
+          ctx.restore();
+        });
+      }
+
+      // S9 — The same life: the builders flip through one frame; energy × intelligence split; quote/disagree/glorify/
+      // vilify; "ignore them": the seven together
       SEC[9] = (lt, t) => {
         const { TX, TY, TW, sz, F } = G;
         if (lt < lb(2)) {
           const size = sz.L, a = typed(SP.s9a, lt, TX, TY, size, TW);
           cursor(a.cx, a.cy, size, !a.done, t);
-          const sr = spanRect(a, 0), td = charTime(SP.s9a, 50);
-          if (sr && lt > td) {
-            const ax = (sr.x0 + sr.x1) / 2, ay = sr.y + 8;
-            // a callout above the phrase (desktop: Marco, top right) never crosses the lines: its leader leaves from
-            // the right end of the phrase's underline (as the film's other leaders do), runs right under the line's
-            // end to 14 px past the widest line, and only then climbs to its name
-            const uy = Math.round(sr.y + size * 0.16) + 0.5;
-            const xB = TX + Math.max(...a.L.toks.filter(q => !q.sp && !q.hide && TY + q.y <= sr.y + 1).map(q => q.x + q.w)) + 14;
-            const urlOf = f => f.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
-            const wOf = f => Math.max(mw(monoF(12), f.label), mw(monoF(12), urlOf(f)));
-            // stacked (phone / portrait): a spine drops from the anchor, and each callout branches off it on its own
-            // row — Marco and Pranav to the right, Brian and Max (right-aligned) to the left where they fit there,
-            // else to the right as well — so no leader ever runs through another callout's name or url
-            const leftOK = ax - 18 - Math.max(wOf(FRIENDS[2]), wOf(FRIENDS[3])) >= F.x0;
-            const rowsM = leftOK ? [0.58, 0.76, 0.67, 0.85] : [0.45, 0.57, 0.69, 0.81]; // (two sides: the rows alternate R, L, R, L)
-            const spots = [[F.x1 - 150, F.y0 + 30], [F.x1 - 60, F.y0 + F.h * 0.45], [F.x0 + F.w * 0.62, F.y1 - 30], [F.x0 + 40, F.y1 - 60]];
-            FRIENDS.forEach((f, i) => {
-              const p = (lt - td - i * S16) / (S16 * 1.25); // (each draws on in 1¼ 16ths: the fourth completes inside the bar)
-              if (p <= 0) return;
-              const url = urlOf(f);
-              if (G.mobile) {
-                const left = leftOK && i >= 2, ly = F.y0 + F.h * rowsM[i], lx = left ? ax - 14 : Math.min(ax + 14, F.x1 + 2 - wOf(f));
-                callout(ax, ay, lx, ly, f.label, url, p, { tcol: C.accent, via: [[ax, ly]], align: left ? 'right' : null });
-                return;
-              }
-              // (a callout's name and its url end inside the frame: its spot moves left where they would not)
-              const [lx0, ly] = spots[i], lx = Math.min(lx0, F.x1 + 2 - wOf(f));
-              if (ly < sr.y - size * 0.5 && lx > xB + 20) callout(sr.x1 + 1, uy, lx, ly, f.label, url, p, { tcol: C.accent, via: [[xB, uy]], noDot: true });
-              else callout(ax, ay, lx, ly, f.label, url, p, { tcol: C.accent });
-            });
-          }
+          sameLife(lt, a);
         } else if (lt < lb(3)) {
           const size = sz.M, b = typed(SP.s9b, lt, TX, TY, size, G.mobile ? F.w : F.w * 0.9);
           cursor(b.cx, b.cy, size, false, t);
@@ -2901,79 +2934,126 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         } else {
           const size = sz.L, d = typed(SP.s9d, lt, TX, TY, size, TW);
           cursor(d.cx, d.cy, size, !d.done, t);
-          const py = d.bottom + 48;
-          // every layout: an item that would run past the frame starts a second row (or, with no room under the
-          // frame's foot for one, is left out)
-          let x = TX, y = py;
-          PRESS.forEach((p, i) => {
-            const w = mw(monoF(12), p);
-            if (x > TX && x + w + 14 > F.x1 + 4) { if (y + 22 <= F.y1 - 4) { x = TX; y += 22; } else return; }
-            if (lt >= lb(4, 3) + i * S16) {
-              srect(x, y - 9, 8, 8, i === PRESS.length - 1 ? C.accent : C.ink);
-              label(p, x + 14, y, { color: C.ink });
-            }
-            x += w + 14 + (G.mobile ? 12 : 24);
-          });
-          if (lt >= lb(4, 3)) tracked('PRESS', TX, py - 22);
+          builderStrip(lt - STRIP_T, d.bottom + 60);
           if (!G.mobile) ticker(t, F.x0, F.x0 + F.w * 0.55, F.y1 - 2);
         }
       };
 
-      // S10 — Change things: all four vignettes at once; closing lines; dissolve into the interactive page
+      // Archimedes' lever ("Because they change things."): a long beam on a fulcrum; a small push on the long arm (the
+      // accent square) lifts the world on the short one. Drawn with any 2D context g (the film, the 'change things'
+      // card). o.draw 0..1: the hairlines drawing on; o.lift 0..1: the beam's travel. Returns the pivot and the ground.
+      function drawLever(g, R, o) {
+        o = o || {};
+        const ink = o.ink || C.ink, acc = o.accent || C.accent, bg = o.bg || C.bg, g3 = o.g300 || C.g300;
+        const dr = o.draw == null ? 1 : clamp01(o.draw), lift = o.lift == null ? 1 : clamp01(o.lift);
+        const gy = Math.round(R.y + R.h - 4) + 0.5, fh = Math.max(14, Math.min(R.h * 0.3, 70)), fw = fh * 1.15;
+        const Lb = Math.min(R.w * 0.9, (R.h - 12) * 4.2), ls = Math.max(fh + 8, Lb * 0.3), ll = Lb - ls;
+        const px = R.x + (R.w - Lb) / 2 + ls, py = gy - fh, rG = Math.max(6, Math.min(ls * 0.5, R.h * 0.24));
+        const p0 = Math.asin(-(fh - 2) / ls), p1 = Math.asin((fh - 2) / ll), ph = lerp(p0, p1, eIO(lift));
+        const c = Math.cos(ph), sn = Math.sin(ph), nx = sn, ny = -c; // (nx, ny): the beam's upward normal
+        const Lx = px - ls * c, Ly = py - ls * sn, Rx = px + ll * c, Ry = py + ll * sn;
+        g.save(); g.lineWidth = 1; g.lineCap = 'butt';
+        // the ground, hatched, drawing on from the left
+        const gx1 = R.x + R.w * dr;
+        g.strokeStyle = ink; g.beginPath(); g.moveTo(R.x, gy); g.lineTo(gx1, gy); g.stroke();
+        g.strokeStyle = g3; g.beginPath();
+        for (let x = R.x + 6; x < gx1; x += 12) { g.moveTo(x, gy + 1); g.lineTo(x - 5, gy + 6); }
+        g.stroke();
+        const a2 = clamp01((dr - 0.25) / 0.35), a3 = clamp01((dr - 0.55) / 0.45);
+        // the right end's path (dashed): where the push goes
+        if (a3 > 0) {
+          g.globalAlpha = a3; g.strokeStyle = g3; g.setLineDash([3, 4]);
+          g.beginPath(); g.arc(px, py, ll, Math.min(p0, p1), Math.max(p0, p1)); g.stroke(); g.setLineDash([]);
+        }
+        // the fulcrum
+        if (a2 > 0) {
+          g.globalAlpha = a2; g.fillStyle = bg; g.strokeStyle = ink;
+          g.beginPath(); g.moveTo(px, py); g.lineTo(px + fw / 2, gy); g.lineTo(px - fw / 2, gy); g.closePath(); g.fill(); g.stroke();
+        }
+        if (a3 > 0) {
+          g.globalAlpha = a3;
+          // the beam
+          g.strokeStyle = ink; g.lineWidth = 1.5; g.beginPath(); g.moveTo(Lx, Ly); g.lineTo(Rx, Ry); g.stroke(); g.lineWidth = 1;
+          // the world, sitting on the short end: an outline, its equator and two meridians
+          const cx = Lx + c * rG * 0.35 + nx * (rG + 1), cy = Ly + sn * rG * 0.35 + ny * (rG + 1);
+          g.fillStyle = bg; g.beginPath(); g.arc(cx, cy, rG, 0, Math.PI * 2); g.fill();
+          g.strokeStyle = ink; g.stroke();
+          g.save(); g.beginPath(); g.arc(cx, cy, rG - 0.5, 0, Math.PI * 2); g.clip();
+          g.strokeStyle = g3;
+          [[0, 1], [0.55, 1], [0, 0.45]].forEach(([k, e], i) => {
+            g.beginPath();
+            if (i === 0) { g.moveTo(cx - rG, cy); g.lineTo(cx + rG, cy); } // (equator)
+            else if (i === 1) g.ellipse(cx, cy, rG * k, rG, 0, 0, Math.PI * 2); // (a meridian)
+            else g.ellipse(cx, cy, rG, rG * e, 0, 0, Math.PI * 2); // (a parallel band)
+            g.stroke();
+          });
+          g.restore();
+          // the push: a small accent square pressing on the long end, and its arrow
+          const q = Math.max(5, Math.min(9, fh * 0.16)), qx = Rx - c * q * 0.8 + nx * (q * 0.5 + 1), qy = Ry - sn * q * 0.8 + ny * (q * 0.5 + 1);
+          g.fillStyle = acc; g.fillRect(Math.round(qx - q / 2), Math.round(qy - q / 2), q, q);
+          const ay0 = qy - q / 2 - 22, ay1 = qy - q / 2 - 5;
+          g.strokeStyle = acc; g.beginPath(); g.moveTo(qx, ay0); g.lineTo(qx, ay1); g.moveTo(qx - 3.5, ay1 - 4); g.lineTo(qx, ay1); g.lineTo(qx + 3.5, ay1 - 4); g.stroke();
+        }
+        g.restore();
+        return { px, py, gy, R };
+      }
+      // "I strive, asymptotically, …": a curve rising toward a dashed line it never reaches. o.p 0..1: how much of the
+      // curve is drawn (its head, the accent square, rides it); o.t creeps the head on slowly afterwards. The dashed line
+      // is labelled "the builders", the head "me".
+      function drawAsym(g, R, o) {
+        o = o || {};
+        const ink = o.ink || C.ink, acc = o.accent || C.accent, g4 = o.g400 || C.g400, t2 = o.t2 || T2, f = monoF(o.size || 12);
+        const p = clamp01(o.p == null ? 1 : o.p), yA = Math.round(R.y + 18) + 0.5, y0 = R.y + R.h - 6, K = 3.4;
+        const yAt = xn => yA + 3 + (y0 - yA - 3) * Math.exp(-K * xn);
+        g.save(); g.lineWidth = 1; g.font = f; g.textBaseline = 'alphabetic';
+        g.strokeStyle = g4; g.setLineDash([4, 4]); g.beginPath(); g.moveTo(R.x, yA); g.lineTo(R.x + R.w * Math.min(1, p * 1.6), yA); g.stroke(); g.setLineDash([]);
+        const xe = Math.min(0.97, p * 0.9 + (o.creep || 0));
+        g.strokeStyle = ink; g.beginPath(); g.moveTo(R.x, yAt(0));
+        for (let i = 1; i <= 64; i++) { const xn = xe * i / 64; g.lineTo(R.x + R.w * xn, yAt(xn)); }
+        g.stroke();
+        if (p > 0) {
+          const hx = R.x + R.w * xe, hy = yAt(xe);
+          g.fillStyle = acc; g.fillRect(Math.round(hx - 2.5), Math.round(hy - 2.5), 5, 5);
+          g.globalAlpha = clamp01(p * 3); g.fillStyle = acc; g.textAlign = 'left'; g.fillText('me', Math.round(hx - 4), Math.round(hy + 18));
+          g.globalAlpha = clamp01(p * 2.2 - 0.4); g.fillStyle = t2; g.textAlign = 'right'; g.fillText('the builders', R.x + R.w, yA - 7);
+        }
+        g.restore();
+      }
+
+      // S10 — Change things: Archimedes' lever; the engine; the closing lines; then the owner's own line and the curve
+      // that approaches the builders; the credits; a quiet coda through the score's ring-out, then the page
       SEC[10] = (lt, t) => {
-        const { TX, TY, TW, sz, FIG, F } = G;
+        const { TX, TY, sz, F } = G;
         if (lt < lb(3)) {
-          // The strip of four panels starts under the two lines' final layout: lower where they need it (down to
-          // its minimum height), and where even that is not enough the two lines start higher (s10Layout).
-          const { size, tw10, lab, ty, Ry, yEnd } = s10Layout();
+          // The lever's band starts under the two lines' final layout: lower where they need it (down to its minimum
+          // height), and where even that is not enough the two lines start higher (s10Layout).
+          const { size, tw10, ty, Ry, yEnd } = s10Layout();
           const a = typed(SP.s10a, lt, TX, ty, size, tw10, { dimAt: lb(2) });
           const b = typed(SP.s10b, lt, TX, a.bottom + size * 1.25, size, tw10);
           const act = b.vis ? b : a;
           cursor(act.cx, act.cy, size, false, t);
-          // bar 42 ("They push the human race forward."): a hard cut on the downbeat from the four scenes to the
-          // assembly engine, the crescendo
+          // bar 42 ("They push the human race forward."): a hard cut on the downbeat to the assembly engine, the crescendo
           if (lt >= lb(2)) { engine(t); return; }
-          ctx.save();
-          const R = { x: F.x0, y: Ry, w: F.w, h: yEnd - Ry };
-          const cols = G.mobile ? 2 : 4, rowsN = G.mobile ? 2 : 1, gap = G.mobile ? 14 : 22;
-          const gw = (R.w - (cols - 1) * gap) / cols, gh = (R.h - rowsN * lab - (rowsN - 1) * gap) / rowsN;
-          // (each panel's drawing fills the same ~80 % content box: the LpWM rollout spreads over the panel's height,
-          // the radial burst is scaled so its 95 % shell spans ~80 % of the width)
-          // (the four scenes on keys 1–4, in key order, read from the registry: SN. The robot's panel is its CAD
-          // render. A page that is not on a key only fills a slot the keys leave empty, unnumbered.)
-          const VIG = {
-            lpwm: ['LpWM', (r) => vCode(r, BEAT * 7.5, t, { mini: true, fill: true })],
-            lpjepa: ['Rectified LpJEPA', (r) => vHist(r, BAR * 1.5 + lt, t, { mini: true, fill: BAR, rect: BAR })],
-            swf: ['SkyWindFarm', (r) => vTurb(r, BAR * 2, t, { mini: true })],
-            robot: ['Robot', (r, u) => vRobot(r, u)],
-            radial: ['Radial-VCReg', (r) => vRadial(r, BAR + 0.1 + lt * 0.8, t, { mini: true, burst: BAR })],
-          };
-          const cells = Object.keys(VIG).filter(k => SN[k]).sort((a, b) => SN[a] - SN[b]).slice(0, 4).map(k => [SN[k], ...VIG[k]]);
-          Object.keys(VIG).forEach(k => { if (cells.length < 4 && !SN[k]) cells.push([null, ...VIG[k]]); });
-          cells.forEach(([n, name, fn], i) => {
-            const u = lt - i * S16;
-            if (u < 0) return;
-            const r = { x: R.x + (i % cols) * (gw + gap), y: R.y + Math.floor(i / cols) * (gh + lab + gap) + lab, w: gw, h: gh };
-            srect(r.x, r.y, r.w, r.h, C.g300);
-            plus(r.x, r.y, 3, C.accent);
-            // the panel's name, or a shorter one, or just its number: never wider than the panel
-            const chip = n ? `[${n}]` : '', nm = [name, name.replace('Rectified ', '')].find(q => mixW([[`${chip} ${q}`.trim()]]) <= r.w + 2);
-            labelMix([[chip, C.accent], [nm ? (chip ? ' ' : '') + nm : '', C.ink]], r.x, r.y - 8);
-            ctx.save(); ctx.beginPath(); ctx.rect(r.x + 1, r.y + 1, r.w - 2, r.h - 2); ctx.clip();
-            fn({ x: r.x + 6, y: r.y + 6, w: r.w - 12, h: r.h - 12 }, u);
+          // bar 41: the lever (no photos, nothing of the owner's: the builders move the world)
+          const R = { x: F.x0, y: Ry + 10, w: F.w, h: yEnd - Ry - 34 };
+          const L = drawLever(ctx, R, { draw: lt / (BEAT * 1.1), lift: (lt - LEV.t0) / (LEV.t1 - LEV.t0) });
+          if (lt > BEAT * 0.5) {
+            ctx.save(); ctx.globalAlpha *= clamp01((lt - BEAT * 0.5) / (BEAT * 0.5));
+            label(G.mobile ? 'fig. 12 — a lever' : LEV_CAP, F.x0 - 4, L.gy + 22, { color: T2 });
+            if (!G.mobile) mlabel('lev.law', '$W\\,\\ell = F\\,L$', F.x1 + 4, L.gy + 23, { size: 13, align: 'right', color: T2 });
             ctx.restore();
-          });
-          ctx.restore();
+          }
         } else {
-          const size = sz.M;
-          const c = typed(SP.s10c, lt, TX, TY, size, G.mobile ? F.w : F.w * 0.8, { italic: true });
-          const d = typed(SP.s10d, lt, TX, c.bottom + size * 1.2, size, G.mobile ? F.w : F.w * 0.8, { italic: true });
-          const e = typed(SP.s10e, lt, TX, (d.vis ? d.bottom : c.bottom) + sz.XL * 1.4, sz.XL, F.w, { italic: true });
+          const E = endLayout(), H0 = SP.s10h.at;
+          const c = typed(SP.s10c, lt, TX, E.yc, E.size, E.cw, { italic: true, dimAt: H0 });
+          const d = typed(SP.s10d, lt, TX, E.yd, E.size, E.cw, { italic: true, dimAt: H0 });
+          const e = typed(SP.s10e, lt, TX, E.ye, sz.XL, F.w, { italic: true, dimAt: H0 });
           const act = e.vis ? e : d.vis ? d : c;
-          cursor(act.cx, act.cy, act === e ? sz.XL : size, act !== e && !act.done, t);
+          if (lt < H0) cursor(act.cx, act.cy, act === e ? sz.XL : E.size, act !== e && !act.done, t);
           engine(t); // "system active", then the engine powers down (gone by beat 3)
-          // credits, bottom-left: the poem's attribution types on, then the design credit (Paradigm). They are drawn
-          // after the frame's end fade (render → afterFade), so they hold at full strength until the page settles.
+          // credits, bottom-left: the poem's attribution types on, then the design credit (Paradigm); and from bar 44
+          // beat 4 the owner's line and its curve. All of them are drawn after the frame's end fade (render → afterFade),
+          // so they hold at full strength until the page settles.
           // (short screens: the attribution starts 3 16ths late, once the engine has cleared its band; the closing lines
           // type on those 16ths, so every keystroke heard is still one seen)
           const lf = lt - (engGeom().early ? 3 * S16 : 0);
@@ -2982,15 +3062,46 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
             if (lf >= SP.s10f.at) { const k = eOut((lf - SP.s10f.at) / BEAT); seg(F.x0, yf - 22.5, F.x0 + 48 * k, yf - 22.5, C.g400); }
             typed(SP.s10f, lf, F.x0, yf, fs, cw, { mono: true, color: T2, lhf });
             typed(SP.s10g, lt, F.x0, yg, fs, cw, { mono: true, color: T2, lhf });
+            if (lt >= H0) {
+              const h = typed(SP.s10h, lt, TX, E.yh, E.hs, E.hw);
+              cursor(h.cx, h.cy, E.hs, false, t);
+              if (E.AR) drawAsym(ctx, E.AR, { p: eOut((lt - H0) / (BEAT * 3)), creep: Math.max(0, lt - H0 - BEAT * 3) * 0.004 });
+            }
           };
         }
       };
+      // the end's layout (bars 43–44 and the coda): the closing lines, "are the ones who do." (XL), then the owner's line
+      // (roman, smaller) and its curve: beside it where there is room, else under it; all above the credits' rule.
+      // Where the frame is short the block starts higher, and the curve is left out before anything is squeezed.
+      function endLayout() {
+        if (G.end) return G.end;
+        const { TY, TX, sz, F } = G, size = sz.M, cw = G.mobile ? F.w : F.w * 0.8, cr = creditsLayout();
+        const Lc = lay(SP.s10c.segs, serifF(size, true), size, cw), Ld = lay(SP.s10d.segs, serifF(size, true), size, cw);
+        const Le = lay(SP.s10e.segs, serifF(sz.XL, true), sz.XL, F.w);
+        const hs = G.mobile ? sz.S : Math.round(sz.M * 0.8), hf = serifF(hs);
+        const hw = Math.min(F.w, Math.max(mw(hf, 'I strive, asymptotically,'), mw(hf, 'to become one of these builders.')) + 2);
+        const Lh = lay(SP.s10h.segs, serifF(hs), hs, hw);
+        const side = !G.mobile && F.w - hw - 56 >= 200, aw = side ? Math.min(300, F.w - hw - 56) : Math.min(F.w, 300), ah = side ? 96 : 76;
+        const hTo = y => { // from the first baseline y: every line's baseline, and the bottom of the block
+          const yc = y, yd = yc + Lc.last + size * 0.3 + size * 1.2, ye = yd + Ld.last + size * 0.3 + sz.XL * 1.4;
+          const yh = ye + Le.last + sz.XL * 0.3 + hs * 2.2, hb = yh + Lh.last + hs * 0.3;
+          return { yc, yd, ye, yh, hb };
+        };
+        const limit = cr.rule - 18;
+        let y = TY, Y = hTo(y), AR = null;
+        const need = b => (side ? b.hb : b.hb + 22 + ah);
+        if (need(Y) > limit) { y = Math.max(F.y0 + size, TY - (need(Y) - limit)); Y = hTo(y); }
+        if (side) AR = { x: TX + hw + 56, y: Y.yh - hs - 30, w: aw, h: ah };
+        else if (Y.hb + 22 + ah <= limit) AR = { x: TX, y: Y.hb + 22, w: aw, h: ah };
+        G.end = Object.assign({ size, cw, hs, hw, AR }, Y);
+        return G.end;
+      }
 
       /* ---------------------------------------------------------- HUD, marks, glitch */
       function drawMarks(t) {
         const F = G.F, bt = Math.floor(t / BEAT) % 4, s16 = (t / BEAT) % 1;
         const P = [[F.x0 - 12, F.y0 - 4], [F.x1 + 12, F.y0 - 4], [F.x1 + 12, F.y1 + 8], [F.x0 - 12, F.y1 + 8]];
-        P.forEach(([x, y], i) => plus(x, y, 4, i === bt && s16 < 0.25 ? (bt === 0 ? C.accent : C.ink) : C.g300));
+        P.forEach(([x, y], i) => plus(x, y, 4, i === bt && s16 < 0.25 && t < DUR ? (bt === 0 ? C.accent : C.ink) : C.g300));
       }
       // eyebrow text: UPPERCASE mono with .06em tracking, set glyph by glyph (canvas letterSpacing is not everywhere)
       const trackW = (s, sz) => { const f = monoF(sz || 12); let w = 0; for (const ch of s) w += mw(f, ch); return w + Math.max(0, s.length - 1) * (sz || 12) * 0.06; };
@@ -3008,8 +3119,8 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       // All 12 px mono, #555. Where a line would run into the other, the eyebrow drops its stanza, then its name.
       // Phone: one line (the counter carries the state when paused) and the hairline with the beat squares.
       function drawHud(t, si) {
-        const F = G.F, S = SECTIONS[si], ph = G.phone, f12 = monoF(12);
-        const bar = Math.floor(t / BAR) + 1, beat = (Math.floor(t / BEAT) % 4) + 1, s16 = (Math.floor(t / S16) % 4) + 1;
+        const F = G.F, S = SECTIONS[si], ph = G.phone, f12 = monoF(12), tm = Math.min(t, DUR - 1e-3); // (the coda: 44.4.4)
+        const bar = Math.floor(tm / BAR) + 1, beat = (Math.floor(tm / BEAT) % 4) + 1, s16 = (Math.floor(tm / S16) % 4) + 1;
         let k = 0; for (let i = 0; i < STEPS.length; i++) if (t >= lb(STEPS[i].bar) - 1e-6) k = i;
         const k0 = lb(STEPS[k].bar), k1 = k + 1 < STEPS.length ? lb(STEPS[k + 1].bar) : SETTLE_AT, prog = clamp01((t - k0) / (k1 - k0));
         const xr = ph ? G.w - 16 : G.w - 40, y1 = ph ? 86 : HUD.y1, yb = ph ? 94 : HUD.bar;
@@ -3060,7 +3171,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         ovBegin();
         KO.length = 0; afterFade = null;
         ctx.save();
-        const fade = 1 - clamp01((t - lb(44, 3)) / BEAT);
+        const fade = 1 - clamp01((t - (SETTLE_AT - BEAT)) / BEAT);
         ctx.globalAlpha = fade;
         drawMarks(t);
         drawHud(t, si);
@@ -3078,8 +3189,8 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       /* ---------------------------------------------------------- controls */
       const st = api.stepper({ items: STEPS.map(s => s.label), onSelect: i => seek(lb(STEPS[i].bar), true) });
       const sl = api.slider({
-        min: 0, max: DUR, step: 0, value: 0,
-        label: v => `${fmt(v)} / ${fmt(DUR)}`, left: 'Start', right: 'End',
+        min: 0, max: SETTLE_AT, step: 0, value: 0,
+        label: v => `${fmt(v)} / ${fmt(SETTLE_AT)}`, left: 'Start', right: 'End',
         onInput: v => scrub(v),
       });
       const group = st.el.parentNode;
@@ -3191,7 +3302,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           }
         };
         [[0, 's0'], [1, 's1a'], [1, 's1b'], [1, 's1c'], [2, 's2a'], [2, 's2b'], [3, 's3a'], [3, 's3b'], [3, 's3c'], [4, 's4a'], [4, 's4b'], [5, 's5a'], [5, 's5b'],
-          [6, 's6a'], [6, 's6b'], [6, 's6c'], [7, 's7a'], [7, 's7b'], [7, 's7c'], [8, 's8b'], [8, 's8c'], [9, 's9a'], [9, 's9b'], [9, 's9d'], [10, 's10a'], [10, 's10b'], [10, 's10c'], [10, 's10d'], [10, 's10e'], [10, 's10f'], [10, 's10g']]
+          [6, 's6a'], [6, 's6b'], [6, 's6c'], [7, 's7a'], [7, 's7b'], [7, 's7c'], [8, 's8b'], [8, 's8c'], [9, 's9a'], [9, 's9b'], [9, 's9d'], [10, 's10a'], [10, 's10b'], [10, 's10c'], [10, 's10d'], [10, 's10e'], [10, 's10f'], [10, 's10g'], [10, 's10h']]
           .forEach(([sec, k]) => typedSpec(sec, SP[k]));
         SP.s9c.forEach(s => typedSpec(9, s));
         // montage: a tick per frame (≤ 8/s at 16ths; every other frame if the catalog ever forces faster flips)
@@ -3207,8 +3318,9 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         for (let i = 0; i < 8; i++) add(7, lb(3) + i * 2 * S16, 'hist', i * 2);      // every other 16th (the line types on the others)
         add(7, lb(4), 'snap');
         NAME_T.forEach((t, i) => add(8, t, 'name', i));
-        for (let i = 0; i < 4; i++) add(9, charTime(SP.s9a, 50) + i * S16 + S16, 'ping', i);
-        PRESS.forEach((p, i) => add(9, lb(4, 3) + i * S16, 'press', i));
+        BLD_T.forEach((t, i) => add(9, t, 'bflip', i));
+        BUILDERS.forEach((_, i) => add(9, STRIP_T + i * S16, 'strip', i));
+        add(10, LEV.t0, 'lever', 0, { dur: LEV.t1 - LEV.t0 }); add(10, LEV.t1, 'levered');
         for (let i = 0; i < HERMES_WORDS.length; i++) add(8, i * BEAT / 2, 'word', i);
         [lb(4, 2), lb(4, 3), lb(4, 4)].forEach((t, i) => add(5, t, 'energy', i));
         add(5, WP.ink, 'powered');
@@ -3328,8 +3440,13 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           case 'shell': play('tick', D(e.p / 3, 0), { when, gain: 0.24, pan: pan, dest }); break;
           case 'hist': play('click', { when, gain: 0.12, freq: 1200 + ((e.p * 0.37) % 1) * 1300, pan, dest }); break;
           case 'name': play('tick', D(e.p, 0), { when, gain: 0.24, dest }); break;
-          case 'ping': play('grain', D(e.p * 2, 0), { when, gain: 0.3, bright: 0.2, pan: [0.7, 0.9, 0.3, -0.7][e.p], dest }); break;
-          case 'press': play('bit', D(e.p, 0), { when, gain: 0.15, dest }); break;
+          // the builders: a soft grain per face as they flip through the frame, climbing a step per generation; the
+          // strip at "ignore them": a quiet bit per portrait
+          case 'bflip': play('grain', D([0, 1, 2, 3, 4, 0, 2][e.p % 7], e.p >= 5 ? 1 : 0), { when, gain: 0.3, bright: 0.18, pan: -0.6 + (e.p % 7) * 0.2, dest }); break;
+          case 'strip': play('bit', D(e.p % 5, 0), { when, gain: 0.15, pan: -0.45 + (e.p % 7) * 0.15, dest }); break;
+          // the lever: the beam's travel (an arm glide), and the long end settling on the ground
+          case 'lever': fx('arm', { when, dur: e.dur, to: 55, gain: 0.42, pan: 0.25, dest }); break;
+          case 'levered': fx('snap', { when, size: 0.5, metal: 0.4, gain: 0.4, pan: 0.35, heavy: true, dest }); break;
           case 'word': play('click', { when, gain: 0.1, freq: 1500, dest }); break;
           // will power → power: energy reaching the ground = a clean sub pulse + a low tick
           case 'energy': play('sub', D(0, -2), { when, dur: 0.3, gain: 0.22, dest }); play('tick', D(0, 1), { when, gain: 0.18, pan: -0.3, dest }); break;
@@ -3556,14 +3673,14 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       let mode = 'film', pos = 0, playing = false, bedTimer = 0, tailTimer = 0, watched = false, shownT = 0, hintUntil = 0, settledAt = -1e9;
       function seek(at, fromUser) {
         if (mode !== 'film') { mode = 'film'; el.classList.remove('is-settled', 'is-shown'); clearTimeout(shownT); showControls(); api.caption(CAP_FILM); stopBed(); }
-        pos = Math.max(0, Math.min(DUR - 0.01, at));
+        pos = Math.max(0, Math.min(SETTLE_AT - 0.01, at));
         lastSlider = -1;
         if (fromUser) pillTaken();
         if (fromUser && soundOn && playing) { scoreStop(0.05); scorePlay(pos); }
         render(); syncControls();
       }
       function scrub(v) {
-        pos = Math.max(0, Math.min(DUR - 0.01, v));
+        pos = Math.max(0, Math.min(SETTLE_AT - 0.01, v));
         lastSlider = pos;
         pillTaken();
         if (playing) scoreRestartSoon();
@@ -3647,19 +3764,34 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       const clo = H('div', { class: 'bd-st bd-close' }, H('span', { class: 'bd-sn', text: '—' }));
       const cp = H('p');
       CLOSING.forEach((ln, li) => { if (li) cp.append(H('br')); cp.append(ln.map(g => g.text).join('')); });
-      cp.append(H('span', { class: 'bd-cur', 'aria-hidden': 'true' }));
       clo.append(cp); clo.style.setProperty('--d', (dly += 0.035).toFixed(3) + 's');
       poem.append(clo); stanzaEls.push(clo);
-      // attribution (exact text) + design credit, discreetly after the poem
+      // the owner's own line after the poem (roman, in his voice: he hopes to become one of these builders), with the
+      // film's block cursor; "asymptotically" is a blue phrase (its card: the curve and its asymptote)
+      const me = H('div', { class: 'bd-st bd-me' });
+      const mp = H('p');
+      HUMBLE.forEach(g => {
+        if (!g.em) { mp.append(g.text); return; }
+        const sp = H('span', { class: 'bd-em is-nw', tabindex: '0', text: g.text });
+        sp.dataset.ph = g.text; emSpans.push(sp); mp.append(sp);
+      });
+      mp.append(H('span', { class: 'bd-cur', 'aria-hidden': 'true' }));
+      me.append(mp); me.style.setProperty('--d', (dly += 0.035).toFixed(3) + 's');
+      poem.append(me); stanzaEls.push(me);
+      // the footnote (why the poem was written), then the design credit and the portraits' credits, discreetly
       const credA = H('a', { href: CREDIT.href, target: '_blank', rel: 'noopener' }, CREDIT.link);
-      const attr = H('div', { class: 'bd-attr' }, H('p', { text: ATTRIBUTION }), H('p', null, CREDIT.pre, credA, CREDIT.post));
-      credA.addEventListener('pointerenter', () => ui('hover'));
-      credA.addEventListener('click', () => ui('select'));
+      const credP = H('p', null, 'Portraits via Wikimedia Commons, cropped and set in black and white (the CC BY-SA ones under the same licence): ');
+      BUILDERS.forEach((b, i) => {
+        credP.append(i ? '; ' : '', H('a', { href: b.page, target: '_blank', rel: 'noopener' }, b.short), `, ${b.by}, `,
+          b.licUrl ? H('a', { href: b.licUrl, target: '_blank', rel: 'noopener' }, b.lic) : b.lic);
+      });
+      credP.append('.');
+      const attr = H('div', { class: 'bd-attr' }, ...FOOTNOTE.map(t => H('p', { text: t })), H('p', null, CREDIT.pre, credA, CREDIT.post), credP);
+      attr.querySelectorAll('a').forEach(a => { a.addEventListener('pointerenter', () => ui('hover')); a.addEventListener('click', () => ui('select')); });
       attr.style.setProperty('--d', (dly += 0.035).toFixed(3) + 's');
       poem.append(attr);
 
       // side: index
-      const nPapers = 3;
       const sortY = H('button', { type: 'button', class: 'is-on', text: 'Year' });
       const sortF = H('button', { type: 'button', text: 'Field' });
       const secIndex = H('section', { class: 'bd-index' });
@@ -3750,7 +3882,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         r.dataset.id = p.id;
         rows[p.id] = r; list.append(r);
       });
-      const secElse = H('section', { class: 'bd-else' }, H('div', { class: 'bd-sh' }, H('span', { text: 'ELSEWHERE' }), H('span', { class: 'm', text: `${nPapers} papers · 1 patent application` })));
+      const secElse = H('section', { class: 'bd-else' }, H('div', { class: 'bd-sh' }, H('span', { text: 'ELSEWHERE' })));
       // (the social links are pinned bottom-right on desktop, so here they only show on phones, where the pinned list is hidden)
       const ll = H('div', { class: 'bd-links bd-links--soc' });
       SOCIALS.forEach(s => {
@@ -3758,7 +3890,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         ll.append(H('a', { href: s.href, target: ext ? '_blank' : null, rel: ext ? 'noopener' : null }, H('span', { text: s.label })));
       });
       const ll2 = H('div', { class: 'bd-links bd-links--sub' },
-        H('a', { href: 'press.html' }, H('span', { text: 'Press' })), H('a', { href: 'build.html' }, H('span', { text: 'Read as text' })), H('a', { href: 'me.html' }, H('span', { text: 'About' })));
+        H('a', { href: 'build.html' }, H('span', { text: 'Read as text' })), H('a', { href: 'me.html' }, H('span', { text: 'About' })));
       secElse.append(ll, ll2);
       // friends' sites: just their names (no pointing arrows). (The owner's "get rid of this section about friends" was
       // the About page's list, gone in b28cd17; here only the arrows went.)
@@ -3905,7 +4037,9 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         const cfg = HOVER[ph];
         let j;
         if (cfg.mode === 'flip') {
-          j = Object.assign({}, cfg, { meta: TOUCH ? cfg.meta.replace('hover', 'tap') : cfg.meta, frames: MONTAGE.map(m => ({ src: m.draw === 'code' ? codeURL() : m.src, fy: m.fy })).filter(f => f.src) });
+          const frames = cfg.builders ? BUILDERS.map(b => ({ src: b.src, title: `${b.name} · ${b.years}` }))
+            : MONTAGE.map(m => ({ src: m.draw === 'code' ? codeURL() : m.src, fy: m.fy })).filter(f => f.src);
+          j = Object.assign({}, cfg, { meta: TOUCH ? cfg.meta.replace('hover', 'tap') : cfg.meta, frames, ar: cfg.builders ? 0.8 : 1.5 });
         } else if (cfg.mode === 'jump' || cfg.mode === 'friends') {
           // an optional card (an image another page exports) is shown only once its image has loaded; while it is still
           // loading, this phrase's config is not kept, so the next hover tries again; if it failed, it stays out
@@ -3917,9 +4051,13 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           }) });
           if (pend) return j; // (not kept: see above)
         } else { // one image → one card
-          let it = { src: cfg.src || null, ar: AR[cfg.src] || null, title: cfg.title, meta: cfg.meta, href: cfg.href || null }, w = cfg.w || 280;
+          let it = { src: cfg.src || null, ar: AR[cfg.src] || null, title: cfg.title, meta: cfg.meta, href: cfg.href || null, art: cfg.art || null }, w = cfg.w || 280;
           if (cfg.gen === 'code') { it.src = codeURL(); it.ar = 600 / 375; }
-          if (cfg.mode === 'mosaic') { it = { mosaic: cfg.srcs, ar: (3 * 200 + 6) / (3 * 140 + 6), title: cfg.title, meta: cfg.meta }; w = 320; }
+          if (cfg.mode === 'mosaic') {
+            // (a 3 × 3 of landscape cells by default; the builders: 4 × 2 portrait cells, the eighth left as paper)
+            const cols = cfg.cols || 3, rows = cfg.rows || 3, ch = 140, cwd = cfg.cellAr ? ch * cfg.cellAr : 200;
+            it = { mosaic: cfg.srcs, cols, rows, ar: (cols * cwd + (cols - 1) * 3) / (rows * ch + (rows - 1) * 3), title: cfg.title, meta: cfg.meta, href: cfg.href || null }; w = 320;
+          }
           j = Object.assign({}, cfg, { mode: 'jump', single: true, cw: w, cards: [it] });
         }
         JC.set(ph, j);
@@ -4039,13 +4177,13 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         if (jState && jState.span === span) { clearTimeout(jState.hideT); return; }
         jumpHide();
         const mob = innerWidth < 800;
-        const items = cfg.mode === 'flip' ? [{ flip: cfg.frames, title: cfg.title, meta: cfg.meta }]
+        const items = cfg.mode === 'flip' ? [{ flip: cfg.frames, title: cfg.title, meta: cfg.meta, ar: cfg.ar }]
           : cfg.mode === 'friends' ? FRIENDS.map(f => ({ text: f.label, title: f.href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''), href: f.href })) // (the name is in the box: the caption is the site)
-          : cfg.cards.map(c => (c.art && !(artFn('swfUnit') && artFn('swfTether')) ? Object.assign({}, c, { art: null, src: c.alt }) : c));
+          : cfg.cards.map(c => (c.art === 'energy' && !(artFn('swfUnit') && artFn('swfTether')) ? Object.assign({}, c, { art: null, src: c.alt }) : c));
         const rects = span.getClientRects(), r = rects[rects.length - 1] || span.getBoundingClientRect(), r0 = rects[0] || r; // r0: first line of a wrapped phrase
         const vw = innerWidth, vh = innerHeight, n = items.length;
         const textual = cfg.mode === 'friends';
-        let cw = textual ? (mob ? Math.min(160, (vw - 44) / 2) : 150) : cfg.mode === 'flip' ? (mob ? 220 : 280)
+        let cw = textual ? (mob ? Math.min(160, (vw - 44) / 2) : 150) : cfg.mode === 'flip' ? (cfg.builders ? (mob ? 200 : 230) : mob ? 220 : 280)
           : cfg.single ? (mob ? Math.min(cfg.cw, vw - 32, 300) : cfg.cw) : (mob ? Math.min(180, (vw - 44) / 2) : 250);
         const st0 = { span, cfg, nodes: [], timers: [], hideT: 0, flipImgs: null, flipI: 0, flipAt: 0 };
         // build the cards first (hidden) so the layout uses their real heights (title + meta wrap at 12px)
@@ -4054,20 +4192,25 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           const fr = H('span', { class: 'fr' });
           let im = null;
           if (it.text) fr.append(H('span', { class: 'tx', text: it.text }));
-          else if (it.art) { im = H('span', { class: 'im' }); const c2 = H('canvas', { 'aria-hidden': 'true' }); im.append(c2); fr.append(im); st0.art = { c: c2, kind: it.art }; }
-          else if (it.mosaic) { im = H('span', { class: 'im mz' }); it.mosaic.forEach(src => im.append(cardImg(src))); fr.append(im); }
+          else if (it.art) { im = H('span', { class: 'im' }); const c2 = H('canvas', { 'aria-hidden': 'true' }); im.append(c2); fr.append(im); st0.art = { c: c2, kind: it.art, t0: -1 }; }
+          else if (it.mosaic) {
+            im = H('span', { class: 'im mz' }); it.mosaic.forEach(src => im.append(cardImg(src))); fr.append(im);
+            if (it.cols) { im.style.gridTemplateColumns = `repeat(${it.cols}, minmax(0, 1fr))`; im.style.gridTemplateRows = `repeat(${it.rows}, minmax(0, 1fr))`; }
+          }
           else {
             im = H('span', { class: 'im' });
             if (it.flip) { st0.flipImgs = it.flip.map((f, j) => { const e = cardImg(f.src, '', j === 0 ? 'on' : ''); if (f.fy != null) e.style.objectPosition = `50% ${Math.round(f.fy * 100)}%`; im.append(e); return e; }); }
             else im.append(cardImg(it.src, it.title || ''));
             fr.append(im);
           }
-          c.append(fr, H('span', { class: 'mt' }, H('span', { class: 't', text: it.title || '' }), it.meta ? H('span', { class: 'm', text: it.meta }) : null, it.meta2 ? H('span', { class: 'm2', text: it.meta2 }) : null));
+          const tEl = H('span', { class: 't', text: it.title || '' });
+          if (it.flip && it.flip[0] && it.flip[0].title) st0.flipTitle = tEl; // (the builders: the name follows the face)
+          c.append(fr, H('span', { class: 'mt' }, tEl, it.meta ? H('span', { class: 'm', text: it.meta }) : null, it.meta2 ? H('span', { class: 'm2', text: it.meta2 }) : null));
           c.style.visibility = 'hidden';
           jl.append(c); st0.nodes.push(c);
           return { it, c, im };
         });
-        const arOf = it => (it.flip ? 1.5 : it.art ? 1.5 : it.ar || AR[it.src] || aspect(img(it.src)));
+        const arOf = it => (it.flip ? it.ar || 1.5 : it.art ? 1.5 : it.ar || AR[it.src] || aspect(img(it.src)));
         const sizeTo = w => {
           cards.forEach(k => { k.c.style.width = Math.round(w) + 'px'; if (k.im) k.im.style.height = Math.round((w - 10) / arOf(k.it)) + 'px'; });
           return cards.map(k => k.c.offsetHeight);
@@ -4271,6 +4414,29 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
         g.beginPath(); g.moveTo(gx + 2, gy - 9); g.lineTo(gx - 3, gy - 5); g.lineTo(gx + 3, gy - 5); g.lineTo(gx - 2, gy - 1); g.stroke();
         return true;
       }
+      // the 'change things' card: Archimedes' lever, drawing on and lifting the world once (then still); 'asymptotically':
+      // the curve drawing on toward its dashed asymptote, then creeping on very slowly (never reaching it)
+      function artCanvas(A) {
+        const c = A.c, w = c.clientWidth, h = c.clientHeight;
+        if (!w || !h) return null;
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+        if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+        const g = c.getContext('2d');
+        g.setTransform(dpr, 0, 0, dpr, 0, 0); g.fillStyle = C.bg; g.fillRect(0, 0, w, h);
+        return { g, w, h };
+      }
+      function drawLeverCard(A, t, u) {
+        const K = artCanvas(A);
+        if (!K) return false;
+        drawLever(K.g, { x: 12, y: 14, w: K.w - 24, h: K.h - 26 }, { draw: u / 0.5, lift: (u - 0.45) / 1.3 });
+        return true;
+      }
+      function drawAsymCard(A, t, u) {
+        const K = artCanvas(A);
+        if (!K) return false;
+        drawAsym(K.g, { x: 16, y: 12, w: K.w - 34, h: K.h - 22 }, { p: eOut(u / 1.4), creep: Math.max(0, u - 1.4) * 0.002 });
+        return true;
+      }
       // output latency (s): what is scheduled now is heard this much later (Bluetooth: 150–250 ms)
       function outLat() {
         try { if (score && typeof score.latency === 'function') { const v = +score.latency(); if (isFinite(v)) return Math.max(0, v); } } catch (e) {}
@@ -4280,15 +4446,21 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
       function settledTick(t) {
         const J = jState;
         // the live 'will power' card; reduced motion: drawn once, still
-        if (J && J.art && !(api.reduced && J.artDrawn)) { try { J.artDrawn = drawEnergyCard(J.art, api.reduced ? 1.2 : t) || J.artDrawn; } catch (e) { J.art = null; } }
+        if (J && J.art && !(api.reduced && J.artDrawn)) {
+          try {
+            if (J.art.t0 < 0) J.art.t0 = t;
+            const fn = J.art.kind === 'lever' ? drawLeverCard : J.art.kind === 'asymptote' ? drawAsymCard : drawEnergyCard;
+            J.artDrawn = fn(J.art, api.reduced ? 1.2 : t, api.reduced ? 99 : t - J.art.t0) || J.artDrawn;
+          } catch (e) { J.art = null; }
+        }
         // The 'builders' flipbook: one frame per 16th of the shared audio clock, phase-locked to what is HEARD
         // (frame k shows when its tick is audible); a tick on every other frame for one pass of the frames, then
         // it flips on silently. Reduced motion: frame 0 only, no ticks.
         if (J && J.flipImgs && !api.reduced) {
-          const a = aud(), n = J.flipImgs.length;
+          const a = aud(), n = J.flipImgs.length, every = J.cfg.every || 1; // (every: 16ths per frame; the builders: a beat)
           let fi;
           if (a && a.clock && soundOn) {
-            const sd = a.clock.stepDur, lat = outLat();
+            const sd = a.clock.stepDur * every, lat = outLat();
             if (J.flipT0 == null) { J.flipT0 = qwhen(0) + sd; J.flipNext = 1; }
             while (J.flipNext <= n && J.flipT0 + (J.flipNext - 1) * sd < a.now() + 0.12) { // schedule ahead, on the grid
               const k = J.flipNext++, wt = J.flipT0 + (k - 1) * sd;
@@ -4299,9 +4471,13 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           } else {
             const now = performance.now();
             if (J.flipAt0 == null) J.flipAt0 = now;
-            fi = Math.floor((now - J.flipAt0) / (S16 * 1000)) % n;
+            fi = Math.floor((now - J.flipAt0) / (S16 * every * 1000)) % n;
           }
-          if (fi !== J.flipI) { J.flipImgs[J.flipI].classList.remove('on'); J.flipI = fi; J.flipImgs[fi].classList.add('on'); }
+          if (fi !== J.flipI) {
+            J.flipImgs[J.flipI].classList.remove('on'); J.flipI = fi; J.flipImgs[fi].classList.add('on');
+            const fr = J.cfg.frames && J.cfg.frames[fi];
+            if (J.flipTitle && fr && fr.title) J.flipTitle.textContent = fr.title;
+          }
         }
       }
 
@@ -4344,9 +4520,11 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
           if (soundOn && sPlaying() && !stalled) {
             const sp = sHeard();
             // (never more than 30 ms ahead of what is heard: at a start the picture waits for the score's first sound)
-            if (isFinite(sp)) { const err = sp - p; p = Math.abs(err) > 0.35 ? sp : Math.min(p + err * 0.12, sp + 0.03); }
+            // (the coda: once the score has played its last bar, its position stays at DUR while it rings out, and the
+            // film runs on its own clock)
+            if (isFinite(sp) && !(sp >= DUR - 0.02 && p >= sp)) { const err = sp - p; p = Math.abs(err) > 0.35 ? sp : Math.min(p + err * 0.12, sp + 0.03); }
           }
-          pos = Math.max(0, Math.min(DUR, p));
+          pos = Math.max(0, Math.min(SETTLE_AT, p));
           if (pos >= SETTLE_AT) { settle('end'); return; }
         } else {
           // paused: film time stands still, and so does the frame (a seek, a scrub, a resize or play redraws at once);
