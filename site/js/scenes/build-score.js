@@ -42,14 +42,16 @@
                           (1.2 s after the settle): the crossfade
 
    Handoff (build.js): Site.BuildScore.resolves = true, so build.js leaves the "system active" chime to the score
-   (it still plays its relay + compile ticks on the same downbeat). Times: activeAt (bar 43), settleAt (bar 44
-   beat 4 = build.js SETTLE_AT), handoffAt (settleAt + 1.2 s, when build.js's startBed() enters). Cues fire
-   for each: onCue(c) gets { type: 'active' | 'settle' | 'handoff', t, time }. The score rings out until
+   (it still plays its relay + compile ticks on the same downbeat). Times: activeAt (bar 43), doneAt (bar 44 beat 4 =
+   build.js HUMBLE_AT: the rising "done" chime, as the owner's own line lands), settleAt (DUR + 1.5 bars = build.js
+   SETTLE_AT: the frame dissolves into the page, after a quiet coda in the ring-out), handoffAt (settleAt + 1.2 s, when
+   build.js's startBed() enters). Cues fire
+   for each: onCue(c) gets { type: 'active' | 'done' | 'settle' | 'handoff', t, time }. The score rings out until
    duration + tail; build.js fades whatever is left from settle + 4.5 s over 3 s.
 
    Interface (used by build.js):
      Site.BuildScore = { bpm, bars, duration, tail, sections: [{ name, bar, bars }], resolves, activeAt,
-                         settleAt, handoffAt, accel: [film s], create(audio, dest, opts), events() }
+                         doneAt, settleAt, handoffAt, accel: [film s], create(audio, dest, opts), events() }
      create(audio, dest, opts?) → {
        play(fromSec), stop(fadeSec = 0.3), playing, onCue(fn), pump(),
        position()       film seconds at the audio clock (ctx.currentTime). Use it (or timeAt) to
@@ -87,7 +89,8 @@
   var TICK_MS = 25;         // scheduler period (ms)
   function T(bar, step) { return ((bar - 1) * 16 + (step || 0)) * SD; }
   var ACTIVE_AT = T(43);            // "system active": the engine's last part is placed, the chime
-  var SETTLE_AT = T(44, 12);        // build.js SETTLE_AT = lb(44, 4): the frame dissolves into the poem
+  var DONE_AT = T(44, 12);          // build.js HUMBLE_AT = lb(44, 4): the "done" chime as the owner's line lands
+  var SETTLE_AT = DUR + 1.5 * BAR;  // build.js SETTLE_AT: after a coda in the ring-out, the frame dissolves into the poem
   var HANDOFF_AT = SETTLE_AT + 1.2; // build.js starts its settled (chill) bed 1.2 s after the settle
   // group trims (mix) and the score's output level
   var TRIM = { drums: 1, low: 1.15, micro: 1.5, bed: 1.8, keys: 2.7, fx: 0.85 };
@@ -647,11 +650,11 @@
 
     /* ---- the server fan: a continuous bed (Site.audio.fan) steered by keyframes [film s, speed, gain] */
     FAN = {
-      on: T(2), off: SETTLE_AT, release: 2.6,
+      on: T(2), off: DONE_AT, release: 2.6,
       keys: [[T(2), 0.12, 0.35], [T(5), 0.3, 0.55], [T(9), 0.4, 0.65], [T(11), 0.42, 0.65], [T(13), 0.78, 1.05], [T(14), 0.5, 0.75],
         [T(17), 0.5, 0.75], [T(21) - 0.05, 0.85, 1.2], [T(21), 0.5, 0.75], [T(28), 0.5, 0.75], [T(28) + 0.45, 0.15, 0.45],
         [T(29), 0.42, 0.7], [T(33), 0.3, 0.6], [T(36), 0.3, 0.6], [T(37), 0.78, 1.1], [T(37) + 0.05, 0.52, 0.8],
-        [T(41), 0.75, 1.1], [ACTIVE_AT, 1, 1.4], [SETTLE_AT, 0.12, 0.35]]
+        [T(41), 0.75, 1.1], [ACTIVE_AT, 1, 1.4], [DONE_AT, 0.12, 0.35]]
     };
     ev.push({ t: FAN.on, k: 'bed', op: 'on', r: 'fan', g: 'bed' });
     for (var fk = 0; fk + 1 < FAN.keys.length; fk++) {
@@ -666,7 +669,8 @@
     [13, 21, 27, 37, 41].forEach(function (b) { cue(T(b), { type: 'impact', name: 'impact', bar: b }); });
     cue(ACTIVE_AT, { type: 'active', name: 'system active', bar: 43 });
     cue(T(44), { type: 'final', name: 'final chord', bar: 44 });
-    cue(SETTLE_AT, { type: 'settle', name: 'settle', bar: 44 });
+    cue(DONE_AT, { type: 'done', name: 'done', bar: 44 });
+    cue(SETTLE_AT, { type: 'settle', name: 'settle', bar: 45 });
     cue(HANDOFF_AT, { type: 'handoff', name: 'chill bed', bar: 44 });
 
     ev.sort(function (a, b) { return a.t - b.t; });
@@ -682,7 +686,7 @@
         [T(28), 2400, 'set'], [T(28, 2), 900, 'exp'], [T(29), 900, 'set'], [T(29, 4), 2000, 'exp'],
         [T(33), 2000, 'set'], [T(35), 1000, 'exp'], [T(36), 1000, 'set'], [T(37) - 0.01, 2800, 'exp'], [T(37), 2400, 'set'],
         [T(41), 2400, 'set'], [ACTIVE_AT - 0.01, 3400, 'exp'], [ACTIVE_AT, 2800, 'set'], [T(44), 1800, 'exp'],
-        [SETTLE_AT, 1300, 'exp'], [DUR + TAIL, 450, 'exp']]
+        [DONE_AT, 1300, 'exp'], [DUR + TAIL, 450, 'exp']]
     };
   }
 
@@ -1056,7 +1060,8 @@
     // the resolution is the score's: build.js leaves its "system active" chime to it (see scoreResolves())
     resolves: true,
     activeAt: ACTIVE_AT,     // bar 43 downbeat: "system active / compile success" (cue { type: 'active' })
-    settleAt: SETTLE_AT,     // bar 44 beat 4 = build.js SETTLE_AT (cue { type: 'settle' })
+    doneAt: DONE_AT,         // bar 44 beat 4 = build.js HUMBLE_AT (cue { type: 'done' })
+    settleAt: SETTLE_AT,     // DUR + 1.5 bars = build.js SETTLE_AT (cue { type: 'settle' })
     handoffAt: HANDOFF_AT,   // when build.js's chill bed comes in (settle + 1.2 s; cue { type: 'handoff' })
     // the Enter line's accelerando (film seconds, bar 41 step 2 → the last 32nd before bar 43): build.js times the
     // assembly engine's rams and snap-fits on its bar-42 onsets
