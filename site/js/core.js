@@ -1023,13 +1023,22 @@
     }, { passive: true });
   }
 
-  /* ------------------------------------------------------------------ wordmark: always "Yash Dagade"; a click types the next phrase */
+  /* ------------------------------------------------------------------ wordmark */
+  // "Yash Dagade", constant, wherever something is already moving (the scenes, the film, the other pages): there a
+  // click is just the way home (on the home page: scene [1]). On the quiet About page (/me) it types its way through
+  // the phrases by itself, one every few seconds (a click moves it on at once); reduced motion: the name, still.
 
-  const WORDMARK = ['Yash Dagade', 'Energy and Intelligence', 'Models and Robots', 'Bits and Atoms', 'Dream and Build'];
+  const WORDMARK = ['Yash Dagade', 'Energy and Intelligence', 'Models and Robots', 'Bits and Atoms', 'Dreamers and Builders'];
+  const WM_HOLD = 3400; // ms a phrase stays once typed (the name: a little longer)
 
-  function startWordmark() {
+  function startWordmark(page) {
     const wm = $('.wordmark');
     if (!wm) return;
+    if (page !== 'me') {
+      wm.setAttribute('aria-label', 'Yash Dagade, home');
+      if (!pageMode) wm.addEventListener('click', e => { const d = numbered()[0]; if (d) { e.preventDefault(); sfx('tick'); go(d.id, true); } });
+      return;
+    }
     wm.textContent = '';
     const text = h('span', { class: 'wm-text', text: WORDMARK[0] });
     const caret = h('span', { class: 'wm-caret', 'aria-hidden': 'true' });
@@ -1056,6 +1065,14 @@
       }
       wm.classList.toggle('is-long', next.length > 14);
       if (my === run) setTimeout(() => { if (my === run) wm.classList.remove('is-typing'); }, 700);
+      if (my === run) later();
+    }
+    // the next phrase, once this one has been read (paused while the tab is hidden: it picks up when it is back)
+    let timer = 0;
+    function later() {
+      clearTimeout(timer);
+      if (reduced) return;
+      timer = setTimeout(() => { if (document.hidden) { later(); return; } i = (i + 1) % WORDMARK.length; typeTo(WORDMARK[i]); }, WM_HOLD + (i === 0 ? 1200 : 0));
     }
     wm.addEventListener('click', e => {
       e.preventDefault();
@@ -1063,6 +1080,7 @@
       sfx('tick');
       typeTo(WORDMARK[i]);
     });
+    later();
   }
 
   /* ------------------------------------------------------------------ boot */
@@ -1073,7 +1091,7 @@
     pageMode = !!opts.page;
     document.body.classList.toggle('page-mode', pageMode);
     grabChrome();
-    startWordmark();
+    startWordmark(opts.page);
 
     buildPalette();
     buildMenu();
