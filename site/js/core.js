@@ -1024,9 +1024,9 @@
   }
 
   /* ------------------------------------------------------------------ wordmark */
-  // "Yash Dagade", constant, wherever something is already moving (the scenes, the film, the other pages): there a
-  // click is just the way home (on the home page: scene [1]). On the quiet About page (/me) it types its way through
-  // the phrases by itself, one every few seconds (a click moves it on at once); reduced motion: the name, still.
+  // "Yash Dagade" everywhere; a click (a tap) types the next phrase, on every page. It never moves by itself where
+  // something is already moving (the scenes, the film, the other pages); only on the quiet About page (/me) does it
+  // also type its way through the phrases on its own, one every few seconds. Reduced motion: the name, still.
 
   const WORDMARK = ['Yash Dagade', 'Energy and Intelligence', 'Models and Robots', 'Bits and Atoms', 'Dreamers and Builders'];
   const WM_HOLD = 3400; // ms a phrase stays once typed (the name: a little longer)
@@ -1034,11 +1034,7 @@
   function startWordmark(page) {
     const wm = $('.wordmark');
     if (!wm) return;
-    if (page !== 'me') {
-      wm.setAttribute('aria-label', 'Yash Dagade, home');
-      if (!pageMode) wm.addEventListener('click', e => { const d = numbered()[0]; if (d) { e.preventDefault(); sfx('tick'); go(d.id, true); } });
-      return;
-    }
+    const auto = page === 'me';
     wm.textContent = '';
     const text = h('span', { class: 'wm-text', text: WORDMARK[0] });
     const caret = h('span', { class: 'wm-caret', 'aria-hidden': 'true' });
@@ -1071,7 +1067,7 @@
     let timer = 0;
     function later() {
       clearTimeout(timer);
-      if (reduced) return;
+      if (reduced || !auto) return;
       timer = setTimeout(() => { if (document.hidden) { later(); return; } i = (i + 1) % WORDMARK.length; typeTo(WORDMARK[i]); }, WM_HOLD + (i === 0 ? 1200 : 0));
     }
     wm.addEventListener('click', e => {
