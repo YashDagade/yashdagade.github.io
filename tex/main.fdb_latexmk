@@ -1,8 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1774212236.3073 "/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex" "main.pdf" "main" 1774212236.9065 0
-  "/Users/yd211/Documents/GitHub/yashdagade.github.io/tex/main.tex" 1774212236.13137 11128 48eacee907dd2c218b59263e12f29c80 ""
+["pdflatex"] 1790568425.35065 "main.tex" "main.pdf" "main" 1790568425.90014 0
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/sourcesanspro/a_4jropk.enc" 1587936753 3267 177411e539fcc6ace86309ff03b22da6 ""
-  "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/sourcesanspro/a_5ponh6.enc" 1587936753 3344 37c976a8b2fa4b8f132a488735054f7d ""
   "/usr/local/texlive/2025/texmf-dist/fonts/enc/dvips/sourcesanspro/a_emkxm5.enc" 1587936753 3021 665788e9679767ade2a71155215d25e0 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/sourcesanspro/SourceSansPro-Bold-tlf-t1--base.tfm" 1587936753 1648 77a748afe0a406be1ac3f29e1cd365cb ""
@@ -13,8 +11,6 @@
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/sourcesanspro/SourceSansPro-Regular-tlf-sc-t1.tfm" 1587936753 38620 f169de344947771df64b8724cde8c161 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/sourcesanspro/SourceSansPro-Regular-tlf-t1--base.tfm" 1587936753 1652 31b9d596c0c8dcc7bcfc0431833ece08 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/sourcesanspro/SourceSansPro-Regular-tlf-t1.tfm" 1587936753 37576 ac3ddef6397b06e0361b81f77f4ab180 ""
-  "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/sourcesanspro/SourceSansPro-Regular-tlf-ts1--base.tfm" 1587936753 1412 e24b33fd82f97dba88bed325a6ef668a ""
-  "/usr/local/texlive/2025/texmf-dist/fonts/tfm/adobe/sourcesanspro/SourceSansPro-Regular-tlf-ts1.tfm" 1587936753 1448 4cf5933f0c7b241dc5473033d34eb07e ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/jknappen/ec/ecrm1095.tfm" 1136768653 3584 929cdff2b7a8c11bd4d49fd68cb0ae70 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1136768653 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
   "/usr/local/texlive/2025/texmf-dist/fonts/tfm/public/latex-fonts/lasy10.tfm" 1136768653 520 82a3d37183f34b6eb363a161dfc002c2 ""
@@ -30,7 +26,6 @@
   "/usr/local/texlive/2025/texmf-dist/fonts/vf/adobe/sourcesanspro/SourceSansPro-It-tlf-t1.vf" 1587936753 1728 cd0ad4aba341a5f4c4f098074aa956aa ""
   "/usr/local/texlive/2025/texmf-dist/fonts/vf/adobe/sourcesanspro/SourceSansPro-Regular-tlf-sc-t1.vf" 1587936753 1720 edb492fd2440e27332799bec9e83eaf3 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/vf/adobe/sourcesanspro/SourceSansPro-Regular-tlf-t1.vf" 1587936753 1732 92bc4ab7a012370b497bd8030a4c8332 ""
-  "/usr/local/texlive/2025/texmf-dist/fonts/vf/adobe/sourcesanspro/SourceSansPro-Regular-tlf-ts1.vf" 1587936753 632 c406e254c5ef15dbce683d16d93fdafe ""
   "/usr/local/texlive/2025/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1461363279 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "/usr/local/texlive/2025/texmf-dist/tex/generic/atbegshi/atbegshi.sty" 1575674566 24708 5584a51a7101caf7e6bbf1fc27d8f7b1 ""
   "/usr/local/texlive/2025/texmf-dist/tex/generic/babel-english/english.ldf" 1496785618 7008 9ff5fdcc865b01beca2b0fe4a46231d4 ""
@@ -91,7 +86,6 @@
   "/usr/local/texlive/2025/texmf-dist/tex/latex/refcount/refcount.sty" 1576624809 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "/usr/local/texlive/2025/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1657483315 9714 ba3194bd52c8499b3f1e3eb91d409670 ""
   "/usr/local/texlive/2025/texmf-dist/tex/latex/sourcesanspro/T1SourceSansPro-TLF.fd" 1587936753 6595 d29a190e70dfce87f0c64c45977f2f94 ""
-  "/usr/local/texlive/2025/texmf-dist/tex/latex/sourcesanspro/TS1SourceSansPro-TLF.fd" 1587936753 5210 97df5f34cd246b2f22b7e78f491a733d ""
   "/usr/local/texlive/2025/texmf-dist/tex/latex/sourcesanspro/sourcesanspro.sty" 1587936753 6172 8007ee7cf6262667ed58bbed36a42c35 ""
   "/usr/local/texlive/2025/texmf-dist/tex/latex/titlesec/titlesec.sty" 1736023606 48766 87a17a4ef312a39cd43896e34a679a56 ""
   "/usr/local/texlive/2025/texmf-dist/tex/latex/tools/array.sty" 1730496337 14552 27664839421e418b87f56fa4c6f66b1a ""
@@ -104,9 +98,9 @@
   "/usr/local/texlive/2025/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1744997576 5521867 6304ab00c2e80e2083791ee20c6f762c ""
   "/usr/local/texlive/2025/texmf-var/web2c/pdftex/pdflatex.fmt" 1744997810 3561460 150f6c5c1f27856810e56ebab3590c4e ""
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
-  "main.aux" 1774212236.82808 700 ac47f0dc4ec7918cbf7339134ab94a7b "pdflatex"
-  "main.out" 1774212236.82859 332 3c37d1be4700a8da7e11d4c0ab2abd2d "pdflatex"
-  "main.tex" 1774212236.13137 11128 48eacee907dd2c218b59263e12f29c80 ""
+  "main.aux" 1790568425.83374 700 ac47f0dc4ec7918cbf7339134ab94a7b "pdflatex"
+  "main.out" 1790568425.83413 332 3c37d1be4700a8da7e11d4c0ab2abd2d "pdflatex"
+  "main.tex" 1790568419.041 11414 c71ebb64d9b42ab35995f355d997b494 ""
   (generated)
   "main.aux"
   "main.log"
