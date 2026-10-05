@@ -129,7 +129,11 @@
     if (booted && !pageMode) renderIndex();
   };
   Site.scenes = () => defs.slice();
-  const numbered = () => defs.filter(d => !d.hidden);
+  // hidden: no key (menu and Find only); secret: no key, not in the menu or Find either — only its own URL (/build)
+  const numbered = () => defs.filter(d => !d.hidden && !d.secret);
+  // after the numbered scenes, one more key: the About page ([5] while there are four scenes)
+  const ABOUT = { title: 'About', path: '/me', href: 'me.html' };
+  const aboutN = () => numbered().length + 1;
 
   /* ------------------------------------------------------------------ chrome refs */
 
@@ -165,6 +169,10 @@
       a.addEventListener('pointerenter', () => sfx('hover'));
       ui.index.append(a);
     }
+    const ab = h('a', { href: ABOUT.href, 'aria-label': `${aboutN()}. ${ABOUT.title}`, title: ABOUT.title },
+      '[', h('span', { class: 'n', text: String(aboutN()) }), ']');
+    ab.addEventListener('pointerenter', () => sfx('hover'));
+    ui.index.append(ab);
   }
 
   let captionTimer = 0;
@@ -636,7 +644,7 @@
     if (!raw) return null;
     const byId = defs.find(d => d.id === raw || (d.path && d.path.replace(/^\//, '') === raw));
     if (byId) return byId.id;
-    const byN = defs.find(d => String(d.n) === raw);
+    const byN = numbered().find(d => String(d.n) === raw);
     return byN ? byN.id : null;
   }
 
@@ -787,11 +795,13 @@
   const pal = { q: '', sel: 0, items: [], list: null, typed: null, input: null };
 
   function paletteEntries() {
-    const scenes = defs.map(d => ({
+    const scenes = defs.filter(d => !d.secret).map(d => ({
       group: d.hidden ? 'Pages' : 'Work', title: d.title, path: d.path || '/' + d.id, key: d.hidden ? null : String(d.n),
       run: () => { if (pageMode) location.href = 'index.html#' + d.id; else go(d.id, true); },
     }));
-    const rest = DESTINATIONS.map(d => ({
+    // ([5] About right after the numbered scenes, in the same Work group)
+    scenes.splice(numbered().length, 0, { group: 'Work', title: ABOUT.title, path: ABOUT.path, key: String(aboutN()), run: () => { location.href = ABOUT.href; } });
+    const rest = DESTINATIONS.filter(d => d.href !== ABOUT.href).map(d => ({
       group: d.group, title: d.title, path: d.path,
       run: () => { if (d.ext) window.open(d.href, '_blank', 'noopener'); else location.href = d.href; },
     }));
@@ -905,12 +915,12 @@
       });
       panel.append(a);
     }
-    for (const d of defs.filter(x => x.hidden)) {
+    panel.append(link(h('span', null, h('span', { class: 'k', text: `[${aboutN()}]` }), ABOUT.title), ABOUT.href, 'indent'));
+    for (const d of defs.filter(x => x.hidden && !x.secret)) {
       const a = link(d.title, (pageMode ? 'index.html' : '') + '#' + d.id);
       a.addEventListener('click', e => { if (!pageMode) { e.preventDefault(); close(true); go(d.id, true); } });
       panel.append(a);
     }
-    panel.append(link('About', 'me.html'));
     panel.append(link('Books', 'books.html'));
     panel.append(h('div', { class: 'sep' }));
     const small = h('div', { class: 'small' },
@@ -997,6 +1007,7 @@
     if (!pageMode && /^[1-9]$/.test(k)) {
       const d = numbered().find(x => String(x.n) === k);
       if (d) { go(d.id, true); e.preventDefault(); return; }
+      if (k === String(aboutN())) { sfx('select'); location.href = ABOUT.href; e.preventDefault(); return; }
     }
     if (!pageMode && k === 'ArrowRight') { step(1); e.preventDefault(); return; }
     if (!pageMode && k === 'ArrowLeft') { step(-1); e.preventDefault(); return; }
