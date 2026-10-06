@@ -161,6 +161,7 @@ button {
 .chrome-index a:hover .n { color: var(--accent); }
 .chrome-index a .n { display: inline-block; min-width: 7px; }
 .chrome-index a[aria-current="page"] .n { visibility: hidden; }
+.chrome-index.is-off { visibility: hidden; } /* (the Build film: no row) */
 
 .chrome-caption {
   position: fixed;

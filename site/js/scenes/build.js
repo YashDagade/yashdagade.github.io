@@ -763,7 +763,7 @@ body:has(.scene--build.is-active.is-waiting) #hint { visibility: hidden !importa
 
   /* ================================================================== scene */
   Site.register({
-    id: 'build', n: 7, secret: true, title: 'Build', path: '/build', // (secret: only at /build — no key, not in the menu or Find)
+    id: 'build', n: 5, hidden: true, bare: true, title: 'Build', path: '/build', // (no key; in the menu and Find; no [1]–[5] row)
     caption: CAP_FILM,
     create(el, api) {
       const C = api.colors, FN = api.fonts, H = Site.h;
