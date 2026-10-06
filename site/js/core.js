@@ -697,11 +697,19 @@
   Site.go = go;
   Site.active = () => activeId;
 
+  // ← / → (and swipes) walk the ring [1] … [4] → [5] About → [1]: past the last scene (or before the first) is About;
+  // from About, → is [1] and ← is [4]
   function step(delta) {
     const list = numbered();
     if (!list.length) return;
+    if (pageMode) { // (About only: the other text pages keep their arrows)
+      if (pageName !== 'me') return;
+      sfx('select'); location.href = 'index.html#' + list[delta > 0 ? 0 : list.length - 1].id;
+      return;
+    }
     const i = list.findIndex(d => d.id === activeId);
-    const j = i < 0 ? (delta > 0 ? 0 : list.length - 1) : (i + delta + list.length) % list.length;
+    const j = i < 0 ? (delta > 0 ? 0 : list.length - 1) : i + delta;
+    if (j < 0 || j >= list.length) { sfx('select'); location.href = ABOUT.href; return; }
     go(list[j].id, true);
   }
 
@@ -1014,8 +1022,8 @@
       if (d) { if (pageMode) { sfx('select'); location.href = 'index.html#' + d.id; } else go(d.id, true); e.preventDefault(); return; }
       if (k === String(aboutN()) && pageName !== 'me') { sfx('select'); location.href = ABOUT.href; e.preventDefault(); return; }
     }
-    if (!pageMode && k === 'ArrowRight') { step(1); e.preventDefault(); return; }
-    if (!pageMode && k === 'ArrowLeft') { step(-1); e.preventDefault(); return; }
+    if ((!pageMode || pageName === 'me') && k === 'ArrowRight') { step(1); e.preventDefault(); return; }
+    if ((!pageMode || pageName === 'me') && k === 'ArrowLeft') { step(-1); e.preventDefault(); return; }
     if (k === 'f' || k === 'F' || k === '/') { open('find'); e.preventDefault(); return; }
     if (k === 'm' || k === 'M') { open('menu'); e.preventDefault(); return; }
     if (k === 's' || k === 'S') { toggleSound(); e.preventDefault(); return; }
