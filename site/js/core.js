@@ -1009,10 +1009,10 @@
     }
     if (isTyping(e)) return;
     const k = e.key;
-    if (!pageMode && /^[1-9]$/.test(k)) {
+    if (/^[1-9]$/.test(k)) {
       const d = numbered().find(x => String(x.n) === k);
-      if (d) { go(d.id, true); e.preventDefault(); return; }
-      if (k === String(aboutN())) { sfx('select'); location.href = ABOUT.href; e.preventDefault(); return; }
+      if (d) { if (pageMode) { sfx('select'); location.href = 'index.html#' + d.id; } else go(d.id, true); e.preventDefault(); return; }
+      if (k === String(aboutN()) && pageName !== 'me') { sfx('select'); location.href = ABOUT.href; e.preventDefault(); return; }
     }
     if (!pageMode && k === 'ArrowRight') { step(1); e.preventDefault(); return; }
     if (!pageMode && k === 'ArrowLeft') { step(-1); e.preventDefault(); return; }

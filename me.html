@@ -220,7 +220,7 @@
   </div>
 
   <script src="site/js/audio.js?v=r5"></script>
-  <script src="site/js/core.js?v=r9"></script>
+  <script src="site/js/core.js?v=r10"></script>
   <script src="site/js/stints.js?v=r9"></script>
   <script>
     // Scene metadata only (for the palette + menu); scenes themselves are not loaded here.
@@ -238,6 +238,44 @@
       new MutationObserver(function () {
         if (el.classList.contains('is-visible') && /^Press F\b/.test(el.textContent)) el.classList.remove('is-visible');
       }).observe(el, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    })();
+
+    // The music: the Build page's settled bed (after the film, on its index), whenever sound is on. Dark and low: a
+    // sparse grain cloud on D3–D4, a sub pulse every two bars (D2, then A1), a few low wooden ticks. Mostly negative
+    // space. It needs a gesture to start (the browser's rule): the first click or key on the page.
+    (function () {
+      'use strict';
+      var A = window.Site && Site.audio, bed = null, off = null;
+      if (!A) return;
+      function stop() {
+        if (bed) { try { bed.stop(1.2); } catch (e) {} bed = null; }
+        if (off) { try { off(); } catch (e) {} off = null; }
+      }
+      function play(name) { var f = A.play && A.play[name]; if (typeof f === 'function') { try { f.apply(null, [].slice.call(arguments, 1)); } catch (e) {} } }
+      function start() {
+        if (bed || off) return;
+        var dest = A.bus('about'), D = function (i, o) { return A.degree(i, o); };
+        try { A.fadeBus('about', 0.71, 0.6); } catch (e) {}
+        try {
+          if (typeof A.granular === 'function') bed = A.granular({ density: 2.2, pitch: [D(0, -1), D(2, -1), D(3, -1), D(0, 0)], dur: 0.24, window: 'tukey', octave: 0, detune: 3,
+            spread: 0.8, bright: 0.08, highpass: 70, attack: 2.5, gain: 0.16, dest: dest });
+        } catch (e) { bed = null; }
+        var from = A.now() + 2.4; // (the pulses and ticks wait for the cloud's 2.5 s fade-in)
+        off = A.clock && A.clock.on(function (step, time) {
+          if (time < from) return;
+          var s64 = step % 64;
+          if (s64 === 0) play('sub', D(0, -2), { when: time, dur: 1.1, gain: 0.17, dest: dest });
+          if (s64 === 32) play('sub', D(3, -3), { when: time, dur: 1.1, gain: 0.14, dest: dest });
+          if (step % 32 === 12) play('tick', D(4, 0), { when: time, gain: 0.1, pan: 0.45, dest: dest });
+          if (step % 32 === 22) play('tick', D(2, 0), { when: time, gain: 0.08, pan: -0.45, dest: dest });
+          if (s64 === 44) play('tick', D(0, 1), { when: time, gain: 0.06, pan: 0.1, dest: dest });
+          if (Math.random() < 0.03) play('click', { when: time, gain: 0.05, freq: 900 + Math.random() * 1100, pan: Math.random() * 2 - 1, dest: dest });
+        }) || null;
+      }
+      function sync() { if (A.ready && A.enabled && !document.hidden) start(); else stop(); }
+      A.onReady(sync);
+      A.onChange(sync);
+      document.addEventListener('visibilitychange', sync);
     })();
 
     // The taller top veil switches on once the page has scrolled.
