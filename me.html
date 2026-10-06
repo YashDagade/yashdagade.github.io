@@ -22,7 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="site/css/site.css?v=r5">
+  <link rel="stylesheet" href="site/css/site.css?v=r6">
   <style>
     /* About (/me): a quiet, mostly-text page for sharing. Page-private: every rule is scoped to .me. */
     .page.me {
@@ -44,29 +44,8 @@
       justify-content: center; align-items: start; padding: 132px 40px 160px;
     }
     .me-wrap .page.me { max-width: none; margin: 0; padding: 0; }
-    .stints { padding-top: 6px; font-family: var(--mono); animation: yd-fade-in .7s var(--ease) both; animation-delay: 160ms; }
-    .stints .st-head { padding-bottom: 7px; border-bottom: 1px solid var(--ink); font-size: 12px; line-height: 15px;
-      color: #555; text-transform: uppercase; letter-spacing: .06em; }
-    .stints .st-row { position: relative; display: grid; grid-template-columns: 22px 58px minmax(0, 1fr) auto; column-gap: 12px;
-      align-items: start; padding: 8px 0 9px; border-bottom: 1px solid var(--g200); color: var(--ink); text-decoration: none; outline: none; }
-    .stints .st-no { padding-top: 4px; font-size: 11px; line-height: 14px; color: var(--g500); font-variant-numeric: tabular-nums; }
-    .stints .st-th { display: block; width: 58px; height: 40px; margin-top: 1px; padding: 2px; border: 1px solid var(--g300); background: var(--bg); transition: border-color .15s ease; }
-    .stints .st-th img { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--g100); }
-    .stints .st-gen { display: flex; align-items: flex-end; width: 100%; height: 100%; padding: 0 0 1px 5px; box-sizing: border-box;
-      font: 400 24px/1 var(--serif); color: var(--ink);
-      background: radial-gradient(circle, var(--g300) 1px, transparent 1.2px) 0 0 / 8px 8px; }
-    .stints .st-gen--code { background: linear-gradient(90deg, var(--accent) 0 3px, transparent 3px) 4px 6px / 9px 8px,
-      radial-gradient(circle, var(--g300) 1px, transparent 1.2px) 0 0 / 8px 8px; opacity: .85; }
-    .stints .st-n { display: block; font-family: var(--serif); font-size: 17px; line-height: 21px; letter-spacing: 0; transition: color .15s ease; }
-    .stints .st-n em { font-style: normal; font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: #555; margin-left: 8px; }
-    .stints .st-chip { font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: var(--accent); margin-left: 8px; cursor: pointer;
-      border-bottom: 1px solid transparent; transition: border-color .15s ease; }
-    .stints .st-chip:hover { border-color: var(--accent); }
-    .stints .st-o { display: block; margin-top: 3px; font-size: 12px; line-height: 16px; color: #555; }
-    .stints .st-yr { padding-top: 4px; text-align: right; font-size: 12px; line-height: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
-    .stints .st-yr span { display: block; color: #555; }
-    .stints a.st-row:hover .st-n, .stints .st-row:focus-visible .st-n { color: var(--accent); }
-    .stints a.st-row:hover .st-th, .stints .st-row:focus-visible .st-th { border-color: var(--accent); }
+    .stints { padding-top: 6px; font-family: var(--mono); font-size: 12px; line-height: 15px; letter-spacing: .02em;
+      animation: yd-fade-in .7s var(--ease) both; animation-delay: 160ms; }
     @media (max-width: 1119px) {
       .me-wrap { grid-template-columns: minmax(0, 620px); padding: 132px 24px 160px; }
       .stints { margin-top: 56px; }
@@ -136,7 +115,7 @@
     }
     body.page-mode .hint.is-visible { transform: none; }
     @media (max-width: 800px) {
-      body.page-mode .hint { right: auto; left: 8px; bottom: 23px; }
+      body.page-mode .hint { right: auto; left: 8px; bottom: 56px; } /* (above the [1]–[5] row) */
     }
     @media (hover: none), (pointer: coarse) {
       body.page-mode .hint { display: none; }
@@ -166,7 +145,7 @@
     <img class="portrait" src="site/img/yash.jpg" width="906" height="1200" alt="Portrait of Yash Dagade">
     <h1>Hey, I’m Yash.</h1>
 
-    <p>I love building. I’m a junior at Duke. I am interested in energy and intelligence; I think they are the defining problems of our generation. I like to think deeply about the nature of intelligence. I am interested in the normative question of how we ought to build it. This has inspired my love for energy-based models and JEPAs. For the past year and a half or so, I have been fortunate to work with <a href="https://scholar.google.com/citations?user=kbxHcKEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Haoran Zhu</a>, <a href="https://yilunkuang.github.io/" target="_blank" rel="noopener">Yilun Kuang</a> and <a href="http://yann.lecun.com/" target="_blank" rel="noopener">Yann LeCun</a>. Our work probes the characteristics of optimal energy functions.</p>
+    <p>I love <a href="index.html#build">building</a>. I’m a junior at Duke. I am interested in energy and intelligence; I think they are the defining problems of our generation. I like to think deeply about the nature of intelligence. I am interested in the normative question of how we ought to build it. This has inspired my love for energy-based models and JEPAs. For the past year and a half or so, I have been fortunate to work with <a href="https://scholar.google.com/citations?user=kbxHcKEAAAAJ&amp;hl=en" target="_blank" rel="noopener">Haoran Zhu</a>, <a href="https://yilunkuang.github.io/" target="_blank" rel="noopener">Yilun Kuang</a> and <a href="http://yann.lecun.com/" target="_blank" rel="noopener">Yann LeCun</a>. Our work probes the characteristics of optimal energy functions.</p>
 
     <p>Intrinsically, I have always loved ambitious problems. I love pursuing dreams that keep me away from sleep. Ultimately, I think meaning in life comes from forming deep, meaningful relationships with the people around us. I have been fortunate to find a very fun way of doing this: working on big, ambitious problems with a small group of people who always seem to redefine what is possible.</p>
 
@@ -241,12 +220,13 @@
   </div>
 
   <script src="site/js/audio.js?v=r5"></script>
-  <script src="site/js/core.js?v=r8"></script>
-  <script src="site/js/stints.js?v=r8"></script>
+  <script src="site/js/core.js?v=r9"></script>
+  <script src="site/js/stints.js?v=r9"></script>
   <script>
     // Scene metadata only (for the palette + menu); scenes themselves are not loaded here.
     [['lpwm', 1, 'LpWM'], ['lpjepa', 2, 'Rectified LpJEPA'], ['skywindfarm', 3, 'SkyWindFarm'], ['robot', 4, 'Robot']]
       .forEach(function (s) { Site.register({ id: s[0], n: s[1], title: s[2], path: '/' + s[0], create: function () { return {}; } }); });
+    Site.register({ id: 'build', n: 5, hidden: true, title: 'Build', path: '/build', create: function () { return {}; } });
     Site.register({ id: 'radial-vcreg', n: 6, hidden: true, title: 'Radial-VCReg', path: '/radial-vcreg', create: function () { return {}; } });
     document.addEventListener('DOMContentLoaded', function () { Site.boot({ page: 'me', hint: false }); Site.renderStints(document.getElementById('stints')); });
 

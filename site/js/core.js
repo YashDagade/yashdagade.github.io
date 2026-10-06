@@ -60,7 +60,7 @@
   const inst = {}; // id -> instance record
   let activeId = null;
   let booted = false;
-  let pageMode = false;
+  let pageMode = false, pageName = null;
   const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -129,8 +129,8 @@
     if (booted && !pageMode) renderIndex();
   };
   Site.scenes = () => defs.slice();
-  // hidden: no key (menu and Find only); secret: no key, not in the menu or Find either — only its own URL (/build)
-  const numbered = () => defs.filter(d => !d.hidden && !d.secret);
+  // hidden: no key (menu and Find only); bare: the [1]–[5] row steps away while it is open (the Build film)
+  const numbered = () => defs.filter(d => !d.hidden);
   // after the numbered scenes, one more key: the About page ([5] while there are four scenes)
   const ABOUT = { title: 'About', path: '/me', href: 'me.html' };
   const aboutN = () => numbered().length + 1;
@@ -158,19 +158,23 @@
 
   /* ------------------------------------------------------------------ index + caption */
 
+  // The [1]–[5] row, bottom-left on every page: the scenes, then About. On a text page it links to the home page's
+  // scenes (and marks About when that is the page).
   function renderIndex() {
+    if (!ui.index && pageMode) { ui.index = h('nav', { class: 'chrome-index', id: 'index', 'aria-label': 'Projects' }); document.body.append(ui.index); }
     if (!ui.index) return;
     ui.index.textContent = '';
     for (const d of numbered()) {
-      const a = h('a', { href: '#' + d.id, 'aria-label': `${d.n}. ${d.title}`, title: d.title },
+      const a = h('a', { href: (pageMode ? 'index.html' : '') + '#' + d.id, 'aria-label': `${d.n}. ${d.title}`, title: d.title },
         '[', h('span', { class: 'n', text: String(d.n) }), ']');
       if (d.id === activeId) a.setAttribute('aria-current', 'page');
-      a.addEventListener('click', e => { e.preventDefault(); go(d.id, true); });
+      a.addEventListener('click', e => { if (!pageMode) { e.preventDefault(); go(d.id, true); } });
       a.addEventListener('pointerenter', () => sfx('hover'));
       ui.index.append(a);
     }
     const ab = h('a', { href: ABOUT.href, 'aria-label': `${aboutN()}. ${ABOUT.title}`, title: ABOUT.title },
       '[', h('span', { class: 'n', text: String(aboutN()) }), ']');
+    if (pageName === 'me') ab.setAttribute('aria-current', 'page');
     ab.addEventListener('pointerenter', () => sfx('hover'));
     ui.index.append(ab);
   }
@@ -674,6 +678,7 @@
     rec.headlineEl.classList.add('is-active');
     setCaption(rec.caption);
     renderIndex();
+    if (ui.index) ui.index.classList.toggle('is-off', !!def.bare);
     document.title = def.n === 1 && !fromUser && !prev ? 'Yash Dagade' : `${def.title} — Yash Dagade`;
 
     const newHash = '#' + def.id;
@@ -795,7 +800,7 @@
   const pal = { q: '', sel: 0, items: [], list: null, typed: null, input: null };
 
   function paletteEntries() {
-    const scenes = defs.filter(d => !d.secret).map(d => ({
+    const scenes = defs.map(d => ({
       group: d.hidden ? 'Pages' : 'Work', title: d.title, path: d.path || '/' + d.id, key: d.hidden ? null : String(d.n),
       run: () => { if (pageMode) location.href = 'index.html#' + d.id; else go(d.id, true); },
     }));
@@ -916,7 +921,7 @@
       panel.append(a);
     }
     panel.append(link(h('span', null, h('span', { class: 'k', text: `[${aboutN()}]` }), ABOUT.title), ABOUT.href, 'indent'));
-    for (const d of defs.filter(x => x.hidden && !x.secret)) {
+    for (const d of defs.filter(x => x.hidden)) {
       const a = link(d.title, (pageMode ? 'index.html' : '') + '#' + d.id);
       a.addEventListener('click', e => { if (!pageMode) { e.preventDefault(); close(true); go(d.id, true); } });
       panel.append(a);
@@ -1096,6 +1101,7 @@
     if (booted) return;
     booted = true;
     pageMode = !!opts.page;
+    pageName = opts.page || null;
     document.body.classList.toggle('page-mode', pageMode);
     grabChrome();
     startWordmark(opts.page);
@@ -1124,6 +1130,7 @@
     renderSound();
 
     if (pageMode) {
+      renderIndex();
       if (!(a && a.ready)) setTimeout(() => { if (!unlocked) hint('Press F to find anything', 3200); }, 1200);
       return;
     }
